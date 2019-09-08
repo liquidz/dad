@@ -16,7 +16,13 @@
  :directory-create {:command ["mkdir -p %path%" :chmod :chown :chgrp]}
  :directory {:command :directory-create}
 
- :git-clone {:command "git clone %url% %path%"}
- :git-checkout {:command "(cd %path% && git checkout %revision%)" :requires #{:revision}}
- :git {:command [:git-clone :git-checkout]}
+ :template {:command [:chmod :chown :chgrp]
+            :requires #{:source}}
+
+ :git-clone {:command "git clone %url% %path%"
+             :requires #{:url :path}}
+ :git-checkout {:command "(cd %path% && git checkout %revision%)"
+                :requires #{:revision}}
+ :git {:command [:git-clone :git-checkout]
+       :requires #{:url :path}}
  }

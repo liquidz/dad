@@ -6,10 +6,13 @@
 (defn- directory* [path & [option]]
   {:pre [(or (nil? option) (map? option))
          (contains? #{nil :create :delete :remove} (:action option))]}
-  (let [{:keys [action] :or {action :create}} option]
-    {:type :directory
-     :action action
-     :path path}))
+  (let [{:keys [action mode owner group] :or {action :create}} option]
+    (cond-> {:type :directory
+             :action action
+             :path path}
+      mode (assoc :mode mode)
+      owner (assoc :owner owner)
+      group (assoc :group group))))
 
 (defn- execute* [option]
   {:pre [(map? option)
@@ -47,6 +50,19 @@
      :name pkg-name
      :action action}))
 
+(defn- template* [path & [option]]
+  {:pre [(or (nil? option) (map? option))
+         (contains? option :source)
+         (.exists (io/file (:source option)))]}
+  (let [{:keys [source mode owner group variables]} option]
+    (cond-> {:type :template
+             :path path
+             :source source}
+      variables (assoc :variables variables)
+      mode (assoc :mode mode)
+      owner (assoc :owner owner)
+      group (assoc :group group))))
+
 (def ^:private task-bindings
   {
    'directory directory*
@@ -54,6 +70,7 @@
    'file file*
    'git git*
    'package package*
+   'template template*
    })
 
 (def ^:private util-bindings

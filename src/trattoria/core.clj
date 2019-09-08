@@ -9,6 +9,7 @@
             [trattoria.runner.git]
             [trattoria.runner.file]
             [trattoria.runner.package]
+            [trattoria.runner.template]
             ))
 
 (def cli-options
