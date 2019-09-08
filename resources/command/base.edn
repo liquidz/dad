@@ -1,0 +1,22 @@
+{
+ ;; <<<< DEFINITIONS FOR TEST >>>>
+ :__test1__ {:command "^ %foo% body %bar% $"}
+ :__test2__ {:command :__test1__}
+ :__test3__ {:command [:__test1__ :__test2__]}
+ ;; <<<< /DEFINITIONS FOR TEST >>>>
+
+ :chmod {:command "chmod -R %mode% %path%" :requires #{:mode :path}}
+ :chown {:command "chown -R %owner% %path%" :requires #{:owner :path}}
+ :chgrp {:command "chgrp -R %group% %path%" :requires #{:group :path}}
+ :file-create {:command ["touch %path%" :chmod :chown :chgrp]}
+ :file-delete {:command "rm -f %path%"}
+ :file {:command :file-create}
+
+ :directory-delete {:command "rm -rf %path%"}
+ :directory-create {:command ["mkdir -p %path%" :chmod :chown :chgrp]}
+ :directory {:command :directory-create}
+
+ :git-clone {:command "git clone %url% %path%"}
+ :git-checkout {:command "(cd %path% && git checkout %revision%)" :requires #{:revision}}
+ :git {:command [:git-clone :git-checkout]}
+ }
