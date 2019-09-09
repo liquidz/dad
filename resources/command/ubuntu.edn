@@ -1,5 +1,0 @@
-{
- :package-install {:command "apt install %name%"}
- :package-update {:command "apt upgrade %name%"}
- :package {:command :package-install}
- }

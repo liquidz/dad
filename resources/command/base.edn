@@ -3,6 +3,8 @@
  :__test1__ {:command "^ %foo% body %bar% $"}
  :__test2__ {:command :__test1__}
  :__test3__ {:command [:__test1__ :__test2__]}
+
+ :__once-test__ {:command "foobar" :once? true}
  ;; <<<< /DEFINITIONS FOR TEST >>>>
 
  :chmod {:command "chmod -R %mode% %path%" :requires #{:mode :path}}
@@ -25,4 +27,11 @@
                 :requires #{:revision}}
  :git {:command [:git-clone :git-checkout]
        :requires #{:url :path}}
+
+ :apt-update {:command "apt update" :once? true}
+ :package-install {:command [:apt-update "apt install -f %name%"]}
+ :package-uninstall {:command "apt remove -f %name%"}
+ :package-update {:command "apt upgrade -f %name%"}
+ :package-exist? {:command "dpkg -l %name%"}
+ :package {:command :package-install}
  }
