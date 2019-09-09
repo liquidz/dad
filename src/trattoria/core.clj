@@ -2,6 +2,7 @@
   (:gen-class)
   (:require [clojure.java.io :as io]
             [clojure.tools.cli :as cli]
+            [trattoria.os :as t.os]
             [trattoria.reader :as t.reader]
             [trattoria.runner :as t.runner]
             [trattoria.runner.directory]
@@ -14,11 +15,16 @@
 
 (def cli-options
   [["-d" "--dryrun"]
-   ["-h" "--help"]])
+   ["-h" "--help"]
+   ["-v" "--version"]])
+
+(defn- print-version []
+  (println "FIXME")
+  (println (name t.os/os-type)))
 
 (defn -main [& args]
   (let [{:keys [arguments options summary errors]} (cli/parse-opts args cli-options)
-        {:keys [help]} options]
+        {:keys [help version]} options]
     (cond
       errors (doseq [e errors] (println e))
       help (println (str "Usage:\n" summary))

@@ -1,9 +1,9 @@
-.PHONY: native-image
+.PHONY: native-image clean
 
 target/trattoria.jar:
 	lein uberjar
 
-target/trattoria: target/trattoria.jar
+trattoria: target/trattoria.jar
 	$(GRAALVM_HOME)/bin/native-image \
 		-jar target/trattoria.jar \
 		-H:Name=trattoria \
@@ -16,6 +16,11 @@ target/trattoria: target/trattoria.jar
 		--verbose \
 		--no-fallback \
 		--no-server \
+		--static \
 		"-J-Xmx3g"
 
 native-image: target/trattoria
+
+clean:
+	lein clean
+	\rm -f trattoria

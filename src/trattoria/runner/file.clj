@@ -1,5 +1,5 @@
 (ns trattoria.runner.file
-   (:require [trattoria.runner :as r]))
+  (:require [trattoria.runner :as r]))
 
 (defmethod r/run-task :file
   [{:keys [action] :as task}]
