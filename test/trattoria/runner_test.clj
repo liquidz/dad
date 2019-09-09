@@ -44,3 +44,20 @@
       (t/is (thrown-with-msg?
              ExceptionInfo #"Failed to run command"
              (sut/run-default {:type :__test1__}))))))
+
+(t/deftest run-default-with-once-option-test
+  (t/testing "no once?"
+    (with-sh-hook hooked
+      (sut/run-tasks []) ; clear sut/run-commands
+      (dotimes [_ 10]
+        (sut/run-default {:type :__test1__}))
+      (t/is (= 10 (count @hooked)))))
+
+  (t/testing "once?"
+    (with-sh-hook hooked
+      (sut/run-tasks []) ; clear sut/run-commands
+      (dotimes [_ 10]
+        (sut/run-default {:type :__once-test__}))
+      (t/is (= 1 (count @hooked))))))
+
+

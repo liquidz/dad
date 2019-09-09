@@ -6,6 +6,8 @@
             [trattoria.logger :as log]
             [trattoria.os :as t.os]))
 
+(def ^:private run-commands (atom #{}))
+
 (defn ensure-seq [x]
   (cond-> x
     (not (sequential? x)) vector))
@@ -34,24 +36,26 @@
    s (dissoc task :type)))
 
 (defn construct-commands [task]
-  (when-let [{:keys [command requires]} (find-command-def task)]
-    (when (or (empty? requires)
-              (every? #(contains? task %) requires))
-      (->> (for [cmd (ensure-seq command)]
-             (if (keyword? cmd)
-               (construct-commands (assoc task :type cmd))
-               (expand-task-vars cmd task)))
-           flatten
-           (remove nil?)))))
+  (if-let [{:keys [command requires once?] :or {once? false}} (find-command-def task)]
+    (when (and (or (empty? requires)
+                   (every? #(contains? task %) requires))
+               (or (not once?)
+                   (not (contains? @run-commands command))))
+      (when once? (swap! run-commands conj command))
+      (flatten
+       (for [cmd (ensure-seq command)]
+         (if (keyword? cmd)
+           (construct-commands (assoc task :type cmd))
+           (expand-task-vars cmd task)))))
+    (throw (ex-info "Failed to find command definition" {:task task}))))
 
 (defn run-default [task]
   (log/debug "Running default task" {:task task})
-  (if-let [commands (construct-commands task)]
-    (doseq [cmd commands]
+  (when-let [commands (construct-commands task)]
+    (doseq [cmd (remove nil? commands)]
       (let [res (sh cmd)]
         (when (failed? res)
-          (throw (ex-info "Failed to run command" {:task task :command cmd :result res})))))
-    (throw (ex-info "Failed to find command definition" {:task task}))))
+          (throw (ex-info "Failed to run command" {:task task :command cmd :result res})))))))
 
 (defmulti run-task :type)
 (defmethod run-task :default
@@ -59,6 +63,7 @@
   (throw (ex-info "Unknown task" {:task task})))
 
 (defn run-tasks [tasks]
+  (reset! run-commands #{})
   (doseq [task tasks]
     (log/info "Start to run task" {:task task})
     (run-task task)
