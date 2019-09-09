@@ -1,0 +1,23 @@
+#!/bin/bash
+
+if [ ! -d /tmp/foo/bar ]; then
+  echo "directory: /tmp/foo/bar is not found."
+  exit 1
+fi
+
+if [ ! -e /tmp/foo/bar/baz ]; then
+  echo "file: /tmp/foo/bar/baz is not found."
+  exit 1
+fi
+
+if [ ! -e /tmp/trattoria/project.clj ]; then
+  echo "git: /tmp/trattoria/project.clj is not found."
+  exit 1
+fi
+
+dpkg -l make
+if [ $? -ne 0 ]; then
+  echo "package: make is not installed."
+  exit 1
+fi
+
