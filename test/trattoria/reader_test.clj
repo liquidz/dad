@@ -7,6 +7,40 @@
     (t/is (= 1 (count res)))
     task))
 
+(t/deftest directory-test
+  (t/testing "no option"
+    (t/is (= {:type :directory :path "/tmp/foo/bar" :action :create}
+             (read-one-task "(directory \"/tmp/foo/bar\")"))))
+
+  (t/testing "invalid option"
+    (t/is (thrown? AssertionError
+                   (read-one-task "(directory \"/tmp/foo/bar\" 123)"))))
+
+  (t/testing "invalid action"
+    (t/is (thrown? AssertionError
+                   (read-one-task "(directory \"/tmp/foo/bar\" {:action :invalid})"))))
+
+  (t/testing "mode, owner, group"
+    (t/is (= {:type :directory :path "/tmp/foo" :mode "0755" :owner "bar" :group "baz" :action :create}
+             (read-one-task "(directory \"/tmp/foo\" {:mode \"0755\" :owner \"bar\" :group \"baz\"})")))))
+
+(t/deftest execute-test
+  (t/testing "no cwd"
+    (t/is (= {:type :execute :command "foo" :cwd nil}
+             (read-one-task "(execute {:command \"foo\"})"))))
+
+  (t/testing "cwd"
+    (t/is (= {:type :execute :command "foo" :cwd "bar"}
+             (read-one-task "(execute {:command \"foo\" :cwd \"bar\"})"))))
+
+  (t/testing "invalid option"
+    (t/is (thrown? AssertionError
+                   (read-one-task "(execute 123)"))))
+
+  (t/testing "no command"
+    (t/is (thrown? AssertionError
+                   (read-one-task "(execute {:cwd \"bar\"})")))))
+
 (t/deftest git-test
   (t/testing "no revision"
     (t/is (= {:type :git :url "foo" :path "bar" :revision "master"}
