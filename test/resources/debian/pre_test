@@ -1,0 +1,29 @@
+#!/bin/bash
+
+BASE_DIR=/tmp/trattoria_test
+
+mkdir -p ${BASE_DIR}/pre/a/b/c/d
+echo dummy > ${BASE_DIR}/pre/dummy
+
+if [ ! -d ${BASE_DIR}/pre/a/b/c/d ]; then
+    echo "pre: ${BASE_DIR}/pre/a/b/c/d is not found."
+fi
+
+if [ ! -e ${BASE_DIR}/pre/dummy ]; then
+    echo "pre: ${BASE_DIR}/pre/dummy is not found."
+    exit 1
+fi
+
+which make > /dev/null 2>&1
+if [ $? -eq 0 ]; then
+    echo "pre: make in already installed."
+    exit 1
+fi
+
+# apt update > /dev/null 2>&1
+# apt install -f wget > /dev/null 2>&1
+# dpkg -l wget > /dev/null 2>&1
+# if [ $? -ne 0 ]; then
+#   echo "package: wget is not installed."
+#   exit 1
+# fi

@@ -46,8 +46,9 @@ jobs:
           paths:
             - ~/.m2
           key: v1-dependencies-{{ checksum "project.clj" }}
+      - run: bash test/resources/debian/pre_test
       - run: lein run -- test/resources/debian/tasks.clj
-      - run: bash test/resources/debian/test
+      - run: bash test/resources/debian/post_test
 
 workflows:
     version: 2

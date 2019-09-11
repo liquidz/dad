@@ -1,0 +1,63 @@
+#!/bin/bash
+
+BASE_DIR=/tmp/trattoria_test
+
+### directory
+if [ ! -d ${BASE_DIR}/post ]; then
+    echo "directory: ${BASE_DIR}/post is not found."
+    exit 1
+fi
+
+if [ -d ${BASE_DIR}/pre/a ]; then
+    echo "directory: ${BASE_DIR}/pre/a exists yet."
+    exit 1
+fi
+
+### file
+if [ ! -e ${BASE_DIR}/foo ]; then
+    echo "file: ${BASE_DIR}/foo is not found."
+    exit 1
+fi
+
+if [ -e ${BASE_DIR}/pre/dummy ]; then
+    echo "file: ${BASE_DIR}/pre/dummy exists yet."
+    exit 1
+fi
+
+### git
+if [ ! -e ${BASE_DIR}/trattoria/project.clj ]; then
+    echo "git: ${BASE_DIR}/trattoria/project.clj is not found."
+    exit 1
+fi
+
+### execute
+if [ ! -e ${BASE_DIR}/hello ]; then
+    echo "execute: ${BASE_DIR}/hello is not found."
+    exit 1
+fi
+
+### link
+if [ ! -L ${BASE_DIR}/world ]; then
+    echo "link: ${BASE_DIR}/world is not a symbolic link."
+    exit 1
+fi
+
+ls -l ${BASE_DIR}/world | grep "\-> ${BASE_DIR}/hello" > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo "link: ${BASE_DIR}/world's destrination is not ${BASE_DIR}/hello."
+    exit 1
+fi
+
+### package
+#dpkg -l make > /dev/null 2>&1
+which make > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo "package: make is not installed."
+    exit 1
+fi
+
+# dpkg -l wget > /dev/null 2>&1
+# if [ $? -ne 0 ]; then
+#     echo "package: wget is not installed."
+#     exit 1
+# fi

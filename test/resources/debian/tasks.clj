@@ -1,8 +1,20 @@
-(let [base-dir "/tmp/foo/bar"]
-  (directory base-dir)
-  (file (str base-dir "/baz")))
+(defn base-dir [x]
+  (str "/tmp/trattoria_test/" x))
+
+(directory (base-dir "post"))
+(directory (base-dir "pre/a") {:action :delete})
+
+(file (base-dir "foo"))
+(file (base-dir "pre/dummy") {:action :delete})
 
 (git {:url "https://github.com/liquidz/trattoria"
-      :path "/tmp/trattoria"})
+      :path (base-dir "trattoria")})
 
-(package "make")
+(execute {:command "touch hello"
+          :cwd (base-dir "")})
+
+(link (base-dir "world") {:to (base-dir "hello")})
+
+;(package "make")
+
+;(template "/tmp/foo/bar/template")
