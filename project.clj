@@ -1,4 +1,5 @@
-(defproject trattoria "0.1.0-SNAPSHOT"
+(defproject trattoria
+  #=(clojure.string/trim #=(slurp "resources/version.txt"))
   :description "FIXME"
   :url "https://github.com/liquidz/trattoria"
   :license {:name "Eclipse Public License"
