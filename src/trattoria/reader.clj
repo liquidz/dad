@@ -42,6 +42,14 @@
      :path path
      :revision revision}))
 
+(defn- link* [path & [option]]
+  {:pre [(or (nil? option) (map? option))
+         (string? path)
+         (contains? option :to)]}
+  {:type :link
+   :path path
+   :to (:to option)})
+
 (defn- package* [pkg-name & [option]]
   {:pre [(or (nil? option) (map? option))
          (contains? #{nil :install :remove :uninstall} (:action option))]}
@@ -69,12 +77,14 @@
    'execute execute*
    'file file*
    'git git*
+   'link link*
    'package package*
    'template template*
    })
 
 (def ^:private util-bindings
   {
+   'env #(System/getenv %)
    'exists? #(.exists (io/file %))
    'os-type (name t.os/os-type)
    'println println

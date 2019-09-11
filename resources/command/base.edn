@@ -28,6 +28,8 @@
  :git {:command [:git-clone :git-checkout]
        :requires #{:url :path}}
 
+ :link {:command "ln -sfn %to% %path%" :requires #{:path :to}}
+
  :apt-update {:command "apt update" :once? true}
  :package-install {:command [:apt-update "apt install -f %name%"]}
  :package-uninstall {:command "apt remove -f %name%"}

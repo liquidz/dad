@@ -7,20 +7,23 @@
             [trattoria.runner :as t.runner]
             [trattoria.runner.directory]
             [trattoria.runner.execute]
-            [trattoria.runner.git]
             [trattoria.runner.file]
+            [trattoria.runner.git]
+            [trattoria.runner.link]
             [trattoria.runner.package]
             [trattoria.runner.template]
-            ))
+            [clojure.string :as str]))
 
 (def cli-options
-  [["-d" "--dryrun"]
+  [[nil "--test"]
+   ["-d" "--dryrun"]
    ["-h" "--help"]
    ["-v" "--version"]])
 
 (defn- print-version []
-  (println "FIXME")
-  (println (name t.os/os-type)))
+  (let [ver (-> "version.txt" io/resource slurp str/trim)]
+    (println (str "trattoria ver " ver))
+    (println (str "* Detected OS: " (name t.os/os-type)))))
 
 (defn -main [& args]
   (let [{:keys [arguments options summary errors]} (cli/parse-opts args cli-options)
@@ -28,15 +31,18 @@
     (cond
       errors (doseq [e errors] (println e))
       help (println (str "Usage:\n" summary))
+      version (print-version)
 
       :else
       (try
-        (some-> arguments first io/file slurp
-                t.reader/read-tasks
-                t.runner/run-tasks
-                )
+        (some->> arguments
+                 (map io/file)
+                 (filter #(.exists %))
+                 (map slurp)
+                 (str/join "\n")
+                 t.reader/read-tasks
+                 t.runner/run-tasks)
         (catch Exception ex
-          ;(.printStackTrace ex)
           (println (.getMessage ex) (ex-data ex))
           (System/exit 1))))
     (System/exit 0)))
