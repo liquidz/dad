@@ -20,10 +20,8 @@ if [ $? -eq 0 ]; then
     exit 1
 fi
 
-# apt update > /dev/null 2>&1
-# apt install -f wget > /dev/null 2>&1
-# dpkg -l wget > /dev/null 2>&1
-# if [ $? -ne 0 ]; then
-#   echo "package: wget is not installed."
-#   exit 1
-# fi
+dpkg --status git | grep -i status | grep -i installed > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo "package: git is not installed."
+    exit 1
+fi

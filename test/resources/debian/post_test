@@ -49,15 +49,14 @@ if [ $? -ne 0 ]; then
 fi
 
 ### package
-#dpkg -l make > /dev/null 2>&1
-which make > /dev/null 2>&1
+dpkg --status make | grep -i status | grep -i installed > /dev/null 2>&1
 if [ $? -ne 0 ]; then
     echo "package: make is not installed."
     exit 1
 fi
 
-# dpkg -l wget > /dev/null 2>&1
-# if [ $? -ne 0 ]; then
-#     echo "package: wget is not installed."
-#     exit 1
-# fi
+dpkg --status git | grep -i status | grep -i installed > /dev/null 2>&1
+if [ $? -eq 0 ]; then
+    echo "package: git is installed yet."
+    exit 1
+fi

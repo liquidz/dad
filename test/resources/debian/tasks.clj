@@ -15,6 +15,5 @@
 
 (link (base-dir "world") {:to (base-dir "hello")})
 
-;(package "make")
-
-;(template "/tmp/foo/bar/template")
+(package "make")
+(package "git" {:action :uninstall})
