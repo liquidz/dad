@@ -1,4 +1,11 @@
-.PHONY: native-image clean
+.PHONY: native-image circleci clean
+
+PLATFORM = $(shell uname -s)
+ifeq ($(PLATFORM), Darwin)
+	GRAAL_EXTRA_OPTION := ""
+else
+	GRAAL_EXTRA_OPTION := "--static"
+endif
 
 target/trattoria.jar:
 	lein uberjar
@@ -11,15 +18,19 @@ trattoria: target/trattoria.jar
 		-J-Dclojure.spec.skip-macros=true \
 		-J-Dclojure.compiler.direct-linking=true \
 		"-H:IncludeResources=command/.*" \
+		"-H:IncludeResources=version.txt" \
 		--initialize-at-build-time  \
 		-H:Log=registerResource: \
 		--verbose \
 		--no-fallback \
 		--no-server \
-		--static \
+		$(GRAAL_EXTRA_OPTION) \
 		"-J-Xmx3g"
 
-native-image: target/trattoria
+native-image: trattoria
+
+circleci:
+	circleci local execute --job debian
 
 clean:
 	lein clean
