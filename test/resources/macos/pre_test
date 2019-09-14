@@ -14,13 +14,13 @@ if [ ! -e ${BASE_DIR}/pre/dummy ]; then
     exit 1
 fi
 
-which make > /dev/null 2>&1
+which clojure > /dev/null 2>&1
 if [ $? -eq 0 ]; then
-    echo "pre: make in already installed."
+    echo "pre: clojure in already installed."
     exit 1
 fi
 
-dpkg --status git | grep -i status | grep -i installed > /dev/null 2>&1
+brew list git
 if [ $? -ne 0 ]; then
     echo "package: git is not installed."
     exit 1

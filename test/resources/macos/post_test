@@ -49,13 +49,13 @@ if [ $? -ne 0 ]; then
 fi
 
 ### package
-dpkg --status make | grep -i status | grep -i installed > /dev/null 2>&1
+brew list clojure
 if [ $? -ne 0 ]; then
-    echo "package: make is not installed."
+    echo "package: clojure is not installed."
     exit 1
 fi
 
-dpkg --status git | grep -i status | grep -i installed > /dev/null 2>&1
+brew list git
 if [ $? -eq 0 ]; then
     echo "package: git is installed yet."
     exit 1

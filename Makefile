@@ -2,7 +2,7 @@
 
 PLATFORM = $(shell uname -s)
 ifeq ($(PLATFORM), Darwin)
-	GRAAL_EXTRA_OPTION := ""
+	GRAAL_EXTRA_OPTION :=
 else
 	GRAAL_EXTRA_OPTION := "--static"
 endif

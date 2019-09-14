@@ -15,5 +15,5 @@
 
 (link (base-dir "world") {:to (base-dir "hello")})
 
-(package "make")
+(package "zsh")
 (package "git" {:action :uninstall})

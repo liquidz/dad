@@ -1,0 +1,70 @@
+name: CI
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install dependencies
+        run: lein deps
+      - name: Run tests
+        run: lein test
+
+  ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install GraalVM
+        run: |
+          cd /tmp
+          if ! [ -d /tmp/graalvm-ce-19.2.0 ]; then
+            curl -O -sL https://github.com/oracle/graal/releases/download/vm-19.2.0/graalvm-ce-linux-amd64-19.2.0.tar.gz
+            tar xzf graalvm-ce-linux-amd64-19.2.0.tar.gz
+          fi
+      - name: Build native image
+        env:
+          GRAALVM_HOME: /tmp/graalvm-ce-19.2.0
+        run: |
+          ${GRAALVM_HOME}/bin/gu install native-image
+          make native-image
+      - uses: actions/upload-artifact@master
+        with:
+          name: trattoria.ubuntu
+          path: ./trattoria
+      - name: Run pre tests
+        run: bash test/resources/ubuntu/pre_test
+      - name: Run test tasks
+        run: ./trattoria test/resources/ubuntu/tasks.clj
+      - name: Run post tests
+        run: bash test/resources/ubuntu/post_test
+
+  macos:
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install leiningen
+        run: brew install leiningen
+      - name: Install GraalVM
+        run: |
+          cd /tmp
+          if ! [ -d /tmp/graalvm-ce-19.2.0 ]; then
+            curl -O -sL https://github.com/oracle/graal/releases/download/vm-19.2.0/graalvm-ce-darwin-amd64-19.2.0.tar.gz
+            tar xzf graalvm-ce-darwin-amd64-19.2.0.tar.gz
+          fi
+      - name: Build native image
+        env:
+          GRAALVM_HOME: /tmp/graalvm-ce-19.2.0/Contents/Home
+        run: |
+          ${GRAALVM_HOME}/bin/gu install native-image
+          make native-image
+      - uses: actions/upload-artifact@master
+        with:
+          name: trattoria.macos
+          path: ./trattoria
+      - name: Run pre tests
+        run: bash test/resources/macos/pre_test
+      - name: Run test tasks
+        run: ./trattoria test/resources/macos/tasks.clj
+      - name: Run post tests
+        run: bash test/resources/macos/post_test

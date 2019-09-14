@@ -36,8 +36,6 @@
       :else
       (try
         (some->> arguments
-                 (map io/file)
-                 (filter #(.exists %))
                  (map slurp)
                  (str/join "\n")
                  t.reader/read-tasks

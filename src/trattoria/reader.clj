@@ -61,7 +61,7 @@
 (defn- template* [path & [option]]
   {:pre [(or (nil? option) (map? option))
          (contains? option :source)
-         (.exists (io/file (:source option)))]}
+         (some-> option :source io/file (.exists))]}
   (let [{:keys [source mode owner group variables]} option]
     (cond-> {:type :template
              :path path
@@ -85,7 +85,7 @@
 (def ^:private util-bindings
   {
    'env #(System/getenv %)
-   'exists? #(.exists (io/file %))
+   'exists? #(some-> % io/file (.exists))
    'os-type (name t.os/os-type)
    'println println
    })
