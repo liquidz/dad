@@ -1,7 +1,8 @@
 (ns trattoria.reader
-  (:require [sci.core :as sci]
-            [trattoria.os :as t.os]
-            [clojure.java.io :as io]))
+  (:require [clojure.java.io :as io]
+            [clojure.string :as str]
+            [sci.core :as sci]
+            [trattoria.os :as t.os]))
 
 (defn- directory* [path & [option]]
   {:pre [(or (nil? option) (map? option))
@@ -89,6 +90,7 @@
    'exists? #(some-> % io/file (.exists))
    'os-type (name t.os/os-type)
    'println println
+   'str/join str/join
    })
 
 (defn read-tasks [code-str]
