@@ -31,9 +31,9 @@
  :link {:command "ln -sfn %to% %path%" :requires #{:path :to}}
 
  :apt-update {:command "apt update" :once? true}
- :package-install {:command [:apt-update "apt install -f %name%"]}
- :package-uninstall {:command "apt remove -f %name%"}
- :package-update {:command "apt upgrade -f %name%"}
+ :package-install {:command [:apt-update "apt install -y %name%"]}
+ :package-uninstall {:command "apt remove -y %name%"}
+ :package-update {:command "apt upgrade -y %name%"}
  :package-exist? {:command "dpkg --status %name% | grep -i status | grep -i installed"}
  :package {:command :package-install}
  }
