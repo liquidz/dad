@@ -35,7 +35,7 @@ jobs:
       - name: Run pre tests
         run: bash test/resources/ubuntu/pre_test
       - name: Run test tasks
-        run: ./trattoria test/resources/ubuntu/tasks.clj
+        run: sudo ./trattoria test/resources/ubuntu/tasks.clj
       - name: Run post tests
         run: bash test/resources/ubuntu/post_test
 
