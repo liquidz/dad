@@ -1,8 +1,8 @@
 (ns trattoria.logger
   (:require [clojure.string :as str]))
 
-(def ^:dynamic *level* :trace)
-(def ^:private levels (zipmap [:trace :debug :info :warn :error :fatal] (range)) )
+(def ^:dynamic *level* :info)
+(def ^:private levels (zipmap [:trace :debug :info :warn :error :fatal :silent] (range)) )
 
 (defn- log [level msg more]
   (when (<= (get levels *level*) (get levels level))
