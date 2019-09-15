@@ -68,6 +68,20 @@
     (t/is (= {:type :package :name "foo" :action :remove}
              (read-one-task "(package \"foo\" {:action :remove})"))))
 
+  (t/testing "multiple packages"
+    (let [tasks (sut/read-tasks "(package [\"foo\" \"bar\"])")]
+      (t/is (= 2 (count tasks)))
+      (t/is (= [{:type :package :name "bar" :action :install}
+                {:type :package :name "foo" :action :install}]
+               (sort-by :name tasks)))))
+
+  (t/testing "multiple packages with action"
+    (let [tasks (sut/read-tasks "(package [\"bar\" \"baz\"] {:action :remove})")]
+      (t/is (= 2 (count tasks)))
+      (t/is (= [{:type :package :name "bar" :action :remove}
+                {:type :package :name "baz" :action :remove}]
+               (sort-by :name tasks)))))
+
   (t/testing "error"
     (t/testing "invalid action"
       (t/is (thrown? AssertionError

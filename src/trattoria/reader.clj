@@ -54,9 +54,10 @@
   {:pre [(or (nil? option) (map? option))
          (contains? #{nil :install :remove :uninstall} (:action option))]}
   (let [{:keys [action] :or {action :install}} (or option {})]
-    {:type :package
-     :name pkg-name
-     :action action}))
+    (for [name (if (sequential? pkg-name) pkg-name [pkg-name])]
+      {:type :package
+       :name name
+       :action action})))
 
 (defn- template* [path & [option]]
   {:pre [(or (nil? option) (map? option))
@@ -92,7 +93,11 @@
 
 (defn read-tasks [code-str]
   (let [tasks (atom [])
-        add-task #(and % (swap! tasks conj %))
+        add-task (fn [res]
+                   (when res
+                     (if (sequential? res)
+                       (swap! tasks #(vec (concat % res)))
+                       (swap! tasks conj res))))
         bindings (-> (reduce-kv #(assoc %1 %2 (comp add-task %3)) {} task-bindings)
                      (merge util-bindings))]
     (doall (sci/eval-string code-str {:bindings bindings}))
