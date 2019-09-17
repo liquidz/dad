@@ -11,7 +11,7 @@ jobs:
       - name: Run tests
         run: lein test
 
-  ubuntu:
+  linux-amd64:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -30,7 +30,7 @@ jobs:
           make native-image
       - uses: actions/upload-artifact@master
         with:
-          name: trattoria.ubuntu
+          name: trattoria.linux-amd64
           path: ./trattoria
       - name: Run pre tests
         run: bash test/resources/ubuntu/pre_test
@@ -39,7 +39,7 @@ jobs:
       - name: Run post tests
         run: bash test/resources/ubuntu/post_test
 
-  macos:
+  darwin-amd64:
     runs-on: macOS-latest
     steps:
       - uses: actions/checkout@v1
@@ -60,7 +60,7 @@ jobs:
           make native-image
       - uses: actions/upload-artifact@master
         with:
-          name: trattoria.macos
+          name: trattoria.darwin-amd64
           path: ./trattoria
       - name: Run pre tests
         run: bash test/resources/macos/pre_test
