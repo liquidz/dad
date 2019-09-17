@@ -2,7 +2,14 @@
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
             [sci.core :as sci]
-            [trattoria.os :as t.os]))
+            [trattoria.os :as t.os]
+            [trattoria.util :as t.util]))
+
+(defn- task-id [m]
+  (->> m
+       (sort-by (comp str first))
+       (map (comp str second))
+       (str/join "")))
 
 (defn- directory* [path & [option]]
   {:pre [(or (nil? option) (map? option))
@@ -97,10 +104,10 @@
   (let [tasks (atom [])
         add-task (fn [res]
                    (when res
-                     (if (sequential? res)
-                       (swap! tasks #(vec (concat % res)))
-                       (swap! tasks conj res))))
+                     (let [x (->> (if (sequential? res) res [res])
+                                  (map #(assoc % :id (task-id %))))]
+                       (swap! tasks #(vec (concat % x))))))
         bindings (-> (reduce-kv #(assoc %1 %2 (comp add-task %3)) {} task-bindings)
                      (merge util-bindings))]
     (doall (sci/eval-string code-str {:bindings bindings}))
-    @tasks))
+    (t.util/distinct-by :id @tasks)))

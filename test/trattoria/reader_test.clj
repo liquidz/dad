@@ -1,11 +1,38 @@
 (ns trattoria.reader-test
   (:require [clojure.test :as t]
-            [trattoria.reader :as sut]))
+            [trattoria.reader :as sut]
+            [clojure.string :as str]))
 
 (defn- read-one-task [code]
   (let [[task :as res] (sut/read-tasks code)]
     (t/is (= 1 (count res)))
-    task))
+    (dissoc task :id)))
+
+(t/deftest task-id-test
+  (let [[{:keys [id]}] (sut/read-tasks "(package \"foo\")")]
+    (t/is (and (string? id) (not (str/blank? id))))))
+
+(t/deftest distinct-by-task-id-test
+  (t/testing "duplicated tasks"
+    (let [tasks (sut/read-tasks "(package [\"foo\" \"bar\"])
+                                         (package \"foo\")")]
+      (t/is (= 2 (count tasks)))
+      (t/is (= [{:type :package :name "bar" :action :install}
+                {:type :package :name "foo" :action :install}]
+               (->> tasks
+                    (sort-by :name)
+                    (map #(dissoc % :id)))))))
+
+  (t/testing "different action tasks"
+    (let [tasks (sut/read-tasks "(package [\"foo\" \"bar\"])
+                                         (package \"foo\" {:action :remove})")]
+      (t/is (= 3 (count tasks)))
+      (t/is (= [{:type :package :name "bar" :action :install}
+                {:type :package :name "foo" :action :install}
+                {:type :package :name "foo" :action :remove}]
+               (->> tasks
+                    (sort-by #(str (:name %) (:action %)))
+                    (map #(dissoc % :id))))))))
 
 (t/deftest directory-test
   (t/testing "no option"
@@ -73,14 +100,18 @@
       (t/is (= 2 (count tasks)))
       (t/is (= [{:type :package :name "bar" :action :install}
                 {:type :package :name "foo" :action :install}]
-               (sort-by :name tasks)))))
+               (->> tasks
+                    (sort-by :name)
+                    (map #(dissoc % :id)))))))
 
   (t/testing "multiple packages with action"
     (let [tasks (sut/read-tasks "(package [\"bar\" \"baz\"] {:action :remove})")]
       (t/is (= 2 (count tasks)))
       (t/is (= [{:type :package :name "bar" :action :remove}
                 {:type :package :name "baz" :action :remove}]
-               (sort-by :name tasks)))))
+               (->> tasks
+                    (sort-by :name)
+                    (map #(dissoc % :id)))))))
 
   (t/testing "error"
     (t/testing "invalid action"
