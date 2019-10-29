@@ -10,10 +10,10 @@ endif
 target/trattoria.jar:
 	lein uberjar
 
-trattoria: target/trattoria.jar
+ttt: target/trattoria.jar
 	$(GRAALVM_HOME)/bin/native-image \
 		-jar target/trattoria.jar \
-		-H:Name=trattoria \
+		-H:Name=ttt \
 		-H:+ReportExceptionStackTraces \
 		-J-Dclojure.spec.skip-macros=true \
 		-J-Dclojure.compiler.direct-linking=true \
@@ -27,7 +27,7 @@ trattoria: target/trattoria.jar
 		$(GRAAL_EXTRA_OPTION) \
 		"-J-Xmx3g"
 
-native-image: trattoria
+native-image: ttt
 
 circleci:
 	circleci local execute --job debian
