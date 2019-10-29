@@ -1,4 +1,4 @@
-.PHONY: native-image circleci clean
+.PHONY: native-image circleci test clean
 
 PLATFORM = $(shell uname -s)
 ifeq ($(PLATFORM), Darwin)
@@ -27,10 +27,13 @@ ttt: target/trattoria.jar
 		$(GRAAL_EXTRA_OPTION) \
 		"-J-Xmx3g"
 
-native-image: ttt
+native-image: clean ttt
 
 circleci:
 	circleci local execute --job debian
+
+test:
+	lein test
 
 clean:
 	lein clean

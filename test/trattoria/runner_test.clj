@@ -59,5 +59,3 @@
       (dotimes [_ 10]
         (sut/run-default {:type :__once-test__}))
       (t/is (= 1 (count @hooked))))))
-
-

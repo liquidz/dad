@@ -1,7 +1,8 @@
 (ns trattoria.reader-test
   (:require [clojure.test :as t]
             [trattoria.reader :as sut]
-            [clojure.string :as str]))
+            [clojure.string :as str])
+  (:import clojure.lang.ExceptionInfo))
 
 (defn- read-one-task [code]
   (let [[task :as res] (sut/read-tasks code)]
@@ -15,7 +16,7 @@
 (t/deftest distinct-by-task-id-test
   (t/testing "duplicated tasks"
     (let [tasks (sut/read-tasks "(package [\"foo\" \"bar\"])
-                                         (package \"foo\")")]
+                                 (package \"foo\")")]
       (t/is (= 2 (count tasks)))
       (t/is (= [{:type :package :name "bar" :action :install}
                 {:type :package :name "foo" :action :install}]
@@ -35,24 +36,33 @@
                     (map #(dissoc % :id))))))))
 
 (t/deftest directory-test
-  (t/testing "no option"
+  (t/testing "only resource name"
     (t/is (= {:type :directory :path "/tmp/foo/bar" :action :create}
              (read-one-task "(directory \"/tmp/foo/bar\")"))))
 
+  (t/testing "no resource name"
+    (t/is (= {:type :directory :path "/tmp/foo/bar" :action :create}
+             (read-one-task "(directory {:path \"/tmp/foo/bar\"})"))))
+
   (t/testing "invalid option"
-    (t/is (thrown? AssertionError
+    (t/is (thrown? ExceptionInfo
                    (read-one-task "(directory \"/tmp/foo/bar\" 123)"))))
 
   (t/testing "invalid action"
-    (t/is (thrown? AssertionError
+    (t/is (thrown? ExceptionInfo
                    (read-one-task "(directory \"/tmp/foo/bar\" {:action :invalid})"))))
+
 
   (t/testing "mode, owner, group"
     (t/is (= {:type :directory :path "/tmp/foo" :mode "0755" :owner "bar" :group "baz" :action :create}
              (read-one-task "(directory \"/tmp/foo\" {:mode \"0755\" :owner \"bar\" :group \"baz\"})")))))
 
 (t/deftest execute-test
-  (t/testing "no cwd"
+  (t/testing "only resource name"
+    (t/is (= {:type :execute :command "foo" :cwd nil}
+             (read-one-task "(execute \"foo\")"))))
+
+  (t/testing "no resource name"
     (t/is (= {:type :execute :command "foo" :cwd nil}
              (read-one-task "(execute {:command \"foo\"})"))))
 
@@ -61,11 +71,11 @@
              (read-one-task "(execute {:command \"foo\" :cwd \"bar\"})"))))
 
   (t/testing "invalid option"
-    (t/is (thrown? AssertionError
+    (t/is (thrown? ExceptionInfo
                    (read-one-task "(execute 123)"))))
 
   (t/testing "no command"
-    (t/is (thrown? AssertionError
+    (t/is (thrown? ExceptionInfo
                    (read-one-task "(execute {:cwd \"bar\"})")))))
 
 (t/deftest git-test
@@ -79,11 +89,11 @@
 
   (t/testing "error"
     (t/testing "no url"
-      (t/is (thrown? AssertionError
+      (t/is (thrown? ExceptionInfo
                      (sut/read-tasks "(git {:_url_ \"foo\" :path \"bar\"})"))))
 
     (t/testing "no path"
-      (t/is (thrown? AssertionError
+      (t/is (thrown? ExceptionInfo
                      (sut/read-tasks "(git {:url \"foo\" :_path_ \"bar\"})"))))))
 
 (t/deftest package-test
@@ -115,7 +125,7 @@
 
   (t/testing "error"
     (t/testing "invalid action"
-      (t/is (thrown? AssertionError
+      (t/is (thrown? ExceptionInfo
                      (read-one-task "(package \"foo\" {:action \"remove\"})")))
-      (t/is (thrown? AssertionError
+      (t/is (thrown? ExceptionInfo
                      (read-one-task "(package \"foo\" {:action :invalid})"))))))

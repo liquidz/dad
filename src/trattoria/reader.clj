@@ -1,8 +1,10 @@
 (ns trattoria.reader
-  (:require [clojure.java.io :as io]
+  (:require [camel-snake-kebab.core :as csk]
+            [clojure.java.io :as io]
             [clojure.string :as str]
             [sci.core :as sci]
             [trattoria.os :as t.os]
+            [trattoria.reader.schema :as t.r.schema]
             [trattoria.util :as t.util]))
 
 (defn- task-id [m]
@@ -11,10 +13,8 @@
        (map (comp str second))
        (str/join "")))
 
-(defn- directory* [path & [option]]
-  {:pre [(or (nil? option) (map? option))
-         (contains? #{nil :create :delete :remove} (:action option))]}
-  (let [{:keys [action mode owner group] :or {action :create}} option]
+(defn- directory* [m]
+  (let [{:keys [path action mode owner group] :or {action :create}} m]
     (cond-> {:type :directory
              :action action
              :path path}
@@ -22,56 +22,43 @@
       owner (assoc :owner owner)
       group (assoc :group group))))
 
-(defn- execute* [option]
-  {:pre [(map? option)
-         (contains? option :command)]}
-  (let [{:keys [cwd command]} option]
+(defn- execute* [m]
+  (let [{:keys [cwd command]} m
+        command (cond->> command
+                  (sequential? command) (str/join "\n"))]
     {:type :execute
      :command command
      :cwd cwd}))
 
-(defn- file* [path & [option]]
-  {:pre [(or (nil? option) (map? option))
-         (string? path)
-         (contains? #{nil :create :delete :remove} (:action option))]}
-  (let [{:keys [action mode owner group] :or {action :create}} option]
+(defn- file* [m]
+  (let [{:keys [path action mode owner group] :or {action :create}} m]
     (cond-> {:type :file :path path :action action}
       mode (assoc :mode mode)
       owner (assoc :owner owner)
       group (assoc :group group))))
 
-(defn- git* [option]
-  {:pre [(map? option)
-         (contains? option :url)
-         (contains? option :path)]}
-  (let [{:keys [url path revision] :or {revision "master"}} option]
+(defn- git* [m]
+  (let [{:keys [path url revision] :or {revision "master"}} m]
     {:type :git
      :url url
      :path path
      :revision revision}))
 
-(defn- link* [path & [option]]
-  {:pre [(or (nil? option) (map? option))
-         (string? path)
-         (contains? option :to)]}
-  {:type :link
-   :path path
-   :to (:to option)})
+(defn- link* [m]
+  (let [{:keys [path to]} m]
+    {:type :link
+     :path path
+     :to to}))
 
-(defn- package* [pkg-name & [option]]
-  {:pre [(or (nil? option) (map? option))
-         (contains? #{nil :install :remove :uninstall} (:action option))]}
-  (let [{:keys [action] :or {action :install}} (or option {})]
-    (for [name (if (sequential? pkg-name) pkg-name [pkg-name])]
+(defn- package* [m]
+  (let [{:keys [name action] :or {action :install}} m]
+    (for [name (if (sequential? name) name [name])]
       {:type :package
        :name name
        :action action})))
 
-(defn- template* [path & [option]]
-  {:pre [(or (nil? option) (map? option))
-         (contains? option :source)
-         (some-> option :source io/file (.exists))]}
-  (let [{:keys [source mode owner group variables]} option]
+(defn- template* [m]
+  (let [{:keys [path source mode owner group variables]} m]
     (cond-> {:type :template
              :path path
              :source source}
@@ -80,25 +67,52 @@
       owner (assoc :owner owner)
       group (assoc :group group))))
 
-(def ^:private task-bindings
-  {
-   'directory directory*
-   'execute execute*
-   'file file*
-   'git git*
-   'link link*
-   'package package*
-   'template template*
-   })
+(defn- dispatch [config & args]
+  (let [{:keys [destination resource-name-key schema]} config
+        [resource-name m] (cond->> args
+                            (some-> args first map?) (cons nil))
+        arg-map (when (or (nil? m) (map? m))
+                  (cond-> (or m {})
+                    resource-name (assoc resource-name-key resource-name)))
+        arg-map (t.r.schema/validate arg-map schema)]
+    (destination arg-map)))
+
+(def ^:private task-configs
+  {'directory {:destination directory*
+               :resource-name-key :path
+               :schema t.r.schema/directory*}
+   'execute   {:destination execute*
+               :resource-name-key :command
+               :schema t.r.schema/execute*}
+   'file      {:destination file*
+               :resource-name-key :path
+               :schema t.r.schema/file*}
+   'git       {:destination git*
+               :resource-name-key :path
+               :schema t.r.schema/git*}
+   'link      {:destination link*
+               :resource-name-key :path
+               :schema t.r.schema/link*}
+   'package   {:destination package*
+               :resource-name-key :name
+               :schema t.r.schema/package*}
+   'template  {:destination template*
+               :resource-name-key :path
+               :schema t.r.schema/template*}})
 
 (def ^:private util-bindings
   {
-   'env #(System/getenv %)
+   ; '$env (reduce (fn [res [k v]] (assoc res
+   ;                                      (keyword k) v
+   ;                                      (csk/->kebab-case-keyword k) v))
+   ;               {} (System/getenv))
+   'env #(get (System/getenv) (csk/->SCREAMING_SNAKE_CASE_STRING %))
    'exists? #(some-> % io/file (.exists))
    'os-type (name t.os/os-type)
    'println println
-   'str/join str/join
-   })
+   'str/join str/join})
+
+
 
 (defn read-tasks [code-str]
   (let [tasks (atom [])
@@ -107,7 +121,9 @@
                      (let [x (->> (if (sequential? res) res [res])
                                   (map #(assoc % :id (task-id %))))]
                        (swap! tasks #(vec (concat % x))))))
-        bindings (-> (reduce-kv #(assoc %1 %2 (comp add-task %3)) {} task-bindings)
+        bindings (-> (reduce-kv (fn [res k v]
+                                  (assoc res k (comp add-task (partial dispatch v))))
+                                {} task-configs)
                      (merge util-bindings))]
     (doall (sci/eval-string code-str {:bindings bindings}))
     (t.util/distinct-by :id @tasks)))

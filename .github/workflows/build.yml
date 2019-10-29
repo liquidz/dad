@@ -1,16 +1,10 @@
 name: build
-on: [push]
+on:
+  push:
+    tags:
+      - *
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - name: Install dependencies
-        run: lein deps
-      - name: Run tests
-        run: lein test
-
   linux-amd64:
     runs-on: ubuntu-latest
     steps:
