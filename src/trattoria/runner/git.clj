@@ -5,5 +5,5 @@
 (defmethod r/run-task :git
   [{:keys [path] :as task}]
   (let [task (cond-> task
-               (.exists (io/file path)) (assoc :type :git-checkout))]
+               (some-> path io/file .exists) (assoc :type :git-checkout))]
     (r/run-default task)))
