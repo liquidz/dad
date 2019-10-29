@@ -16,8 +16,7 @@
             [trattoria.runner.template]))
 
 (def ^:private cli-options
-  [;[nil "--test"]
-   ["-s" "--silent"]
+  [["-s" "--silent"]
    [nil "--debug"]
    ["-h" "--help"]
    ["-v" "--version"]])
@@ -31,6 +30,10 @@
   (print-version)
   (println (str "* Usage:\n" summary)))
 
+(defn- show-read-tasks [tasks]
+  (doseq [task tasks]
+    (println (dissoc task :id))))
+
 (defn -main [& args]
   (let [{:keys [arguments options summary errors]} (cli/parse-opts args cli-options)
         {:keys [debug help silent version]} options
@@ -42,6 +45,16 @@
       errors (doseq [e errors] (println e))
       help (usage summary)
       version (print-version)
+      debug (try
+              (some->> arguments
+                       (map slurp)
+                       (str/join "\n")
+                       t.reader/read-tasks
+                       show-read-tasks
+                       )
+              (catch Exception ex
+                (println (.getMessage ex) (ex-data ex))
+                (System/exit 1)))
 
       :else
       (binding [t.logger/*level* log-level]
