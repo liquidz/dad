@@ -1,4 +1,4 @@
-(ns trattoria.logger
+(ns oton.logger
   (:require [clojure.string :as str]))
 
 (def ^:dynamic *level* :info)

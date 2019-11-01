@@ -24,12 +24,12 @@ jobs:
           make native-image
       - uses: actions/upload-artifact@master
         with:
-          name: trattoria.linux-amd64
-          path: ./trattoria
+          name: oton.linux-amd64
+          path: ./oton
       - name: Run pre tests
         run: bash test/resources/ubuntu/pre_test
       - name: Run test tasks
-        run: sudo ./trattoria test/resources/ubuntu/tasks.clj
+        run: sudo ./oton test/resources/ubuntu/tasks.clj
       - name: Run post tests
         run: bash test/resources/ubuntu/post_test
 
@@ -54,11 +54,11 @@ jobs:
           make native-image
       - uses: actions/upload-artifact@master
         with:
-          name: trattoria.darwin-amd64
-          path: ./trattoria
+          name: oton.darwin-amd64
+          path: ./oton
       - name: Run pre tests
         run: bash test/resources/macos/pre_test
       - name: Run test tasks
-        run: ./trattoria test/resources/macos/tasks.clj
+        run: ./oton test/resources/macos/tasks.clj
       - name: Run post tests
         run: bash test/resources/macos/post_test

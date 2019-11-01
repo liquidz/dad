@@ -1,8 +1,8 @@
-(ns trattoria.runner.file
-  (:require [trattoria.runner :as r]))
+(ns oton.runner.file
+  (:require [oton.runner :as o.r]))
 
-(defmethod r/run-task :file
+(defmethod o.r/run-task :file
   [{:keys [action] :as task}]
-  (r/run-default
+  (o.r/run-default
    (cond-> task
      (contains? #{:delete :remove} action) (assoc :type :file-delete))))

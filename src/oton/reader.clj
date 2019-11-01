@@ -1,11 +1,11 @@
-(ns trattoria.reader
+(ns oton.reader
   (:require [camel-snake-kebab.core :as csk]
             [clojure.java.io :as io]
             [clojure.string :as str]
-            [sci.core :as sci]
-            [trattoria.os :as t.os]
-            [trattoria.reader.schema :as t.r.schema]
-            [trattoria.util :as t.util]))
+            [oton.os :as o.os]
+            [oton.reader.schema :as o.r.schema]
+            [oton.util :as o.util]
+            [sci.core :as sci]))
 
 (defn- task-id [m]
   (->> m
@@ -74,31 +74,31 @@
         arg-map (when (or (nil? m) (map? m))
                   (cond-> (or m {})
                     resource-name (assoc resource-name-key resource-name)))
-        arg-map (t.r.schema/validate arg-map schema)]
+        arg-map (o.r.schema/validate arg-map schema)]
     (destination arg-map)))
 
 (def ^:private task-configs
   {'directory {:destination directory*
                :resource-name-key :path
-               :schema t.r.schema/directory*}
+               :schema o.r.schema/directory*}
    'execute   {:destination execute*
                :resource-name-key :command
-               :schema t.r.schema/execute*}
+               :schema o.r.schema/execute*}
    'file      {:destination file*
                :resource-name-key :path
-               :schema t.r.schema/file*}
+               :schema o.r.schema/file*}
    'git       {:destination git*
                :resource-name-key :path
-               :schema t.r.schema/git*}
+               :schema o.r.schema/git*}
    'link      {:destination link*
                :resource-name-key :path
-               :schema t.r.schema/link*}
+               :schema o.r.schema/link*}
    'package   {:destination package*
                :resource-name-key :name
-               :schema t.r.schema/package*}
+               :schema o.r.schema/package*}
    'template  {:destination template*
                :resource-name-key :path
-               :schema t.r.schema/template*}})
+               :schema o.r.schema/template*}})
 
 (def ^:private util-bindings
   {
@@ -108,7 +108,7 @@
    ;               {} (System/getenv))
    'env #(get (System/getenv) (csk/->SCREAMING_SNAKE_CASE_STRING %))
    'exists? #(some-> % io/file (.exists))
-   'os-type (name t.os/os-type)
+   'os-type (name o.os/os-type)
    'println println
    'str/join str/join})
 
@@ -126,4 +126,4 @@
                                 {} task-configs)
                      (merge util-bindings))]
     (doall (sci/eval-string code-str {:bindings bindings}))
-    (t.util/distinct-by :id @tasks)))
+    (o.util/distinct-by :id @tasks)))

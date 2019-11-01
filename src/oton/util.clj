@@ -1,4 +1,4 @@
-(ns trattoria.util)
+(ns oton.util)
 
 (defn distinct-by [f coll]
   (loop [[first-elm & rest-elms] coll

@@ -7,13 +7,13 @@ else
 	GRAAL_EXTRA_OPTION := "--static"
 endif
 
-target/trattoria.jar:
+target/oton.jar:
 	lein uberjar
 
-ttt: target/trattoria.jar
+oton: target/oton.jar
 	$(GRAALVM_HOME)/bin/native-image \
-		-jar target/trattoria.jar \
-		-H:Name=ttt \
+		-jar target/oton.jar \
+		-H:Name=oton \
 		-H:+ReportExceptionStackTraces \
 		-J-Dclojure.spec.skip-macros=true \
 		-J-Dclojure.compiler.direct-linking=true \
@@ -27,7 +27,7 @@ ttt: target/trattoria.jar
 		$(GRAAL_EXTRA_OPTION) \
 		"-J-Xmx3g"
 
-native-image: clean ttt
+native-image: clean oton
 
 circleci:
 	circleci local execute --job debian
@@ -37,4 +37,4 @@ test:
 
 clean:
 	lein clean
-	\rm -f trattoria
+	\rm -f oton

@@ -1,13 +1,13 @@
-(ns trattoria.runner-test
+(ns oton.runner-test
   (:require [clojure.java.shell :as sh]
             [clojure.test :as t]
-            [trattoria.os :as t.os]
-            [trattoria.runner :as sut])
+            [oton.os :as o.os]
+            [oton.runner :as sut])
   (:import clojure.lang.ExceptionInfo))
 
 (defmacro with-sh-hook [hooked-atom-sym & body]
   `(let [~hooked-atom-sym (atom [])]
-     (with-redefs [t.os/os-type ::testing
+     (with-redefs [o.os/os-type ::testing
                    sh/sh (fn [& args#]
                            (swap! ~hooked-atom-sym conj args#)
                            {:exit 0})]
@@ -35,7 +35,7 @@
                (second @hooked)))))
 
   (t/testing "failure"
-    (with-redefs [t.os/os-type ::testing
+    (with-redefs [o.os/os-type ::testing
                   sh/sh (constantly {:exit 1})]
       (t/is (thrown-with-msg?
              ExceptionInfo #"Failed to find command"

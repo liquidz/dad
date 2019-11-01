@@ -1,19 +1,20 @@
-(ns trattoria.core
+(ns oton.core
   (:gen-class)
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
             [clojure.tools.cli :as cli]
-            [trattoria.logger :as t.logger]
-            [trattoria.os :as t.os]
-            [trattoria.reader :as t.reader]
-            [trattoria.runner :as t.runner]
-            [trattoria.runner.directory]
-            [trattoria.runner.execute]
-            [trattoria.runner.file]
-            [trattoria.runner.git]
-            [trattoria.runner.link]
-            [trattoria.runner.package]
-            [trattoria.runner.template]))
+            [oton.logger :as o.logger]
+            [oton.os :as o.os]
+            [oton.reader :as o.reader]
+            [oton.runner :as o.runner]))
+
+(require 'oton.runner.directory
+         'oton.runner.execute
+         'oton.runner.file
+         'oton.runner.git
+         'oton.runner.link
+         'oton.runner.package
+         'oton.runner.template)
 
 (def ^:private cli-options
   [["-s" "--silent"]
@@ -23,8 +24,8 @@
 
 (defn- print-version []
   (let [ver (-> "version.txt" io/resource slurp str/trim)]
-    (println (str "trattoria ver " ver))
-    (println (str "* Detected OS: " (name t.os/os-type)))))
+    (println (str "oton ver " ver))
+    (println (str "* Detected OS: " (name o.os/os-type)))))
 
 (defn- usage [summary]
   (print-version)
@@ -49,7 +50,7 @@
               (some->> arguments
                        (map slurp)
                        (str/join "\n")
-                       t.reader/read-tasks
+                       o.reader/read-tasks
                        show-read-tasks
                        )
               (catch Exception ex
@@ -57,13 +58,13 @@
                 (System/exit 1)))
 
       :else
-      (binding [t.logger/*level* log-level]
+      (binding [o.logger/*level* log-level]
         (try
           (some->> arguments
                    (map slurp)
                    (str/join "\n")
-                   t.reader/read-tasks
-                   t.runner/run-tasks)
+                   o.reader/read-tasks
+                   o.runner/run-tasks)
           (catch Exception ex
             (println (.getMessage ex) (ex-data ex))
             (System/exit 1)))))

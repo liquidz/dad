@@ -1,6 +1,6 @@
-(ns trattoria.os
-  (:require [clojure.string :as str]
-            [clojure.java.io :as io]))
+(ns oton.os
+  (:require [clojure.java.io :as io]
+            [clojure.string :as str]))
 
 (def os-name
   (str/lower-case (System/getProperty "os.name")))

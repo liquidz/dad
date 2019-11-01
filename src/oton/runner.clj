@@ -1,10 +1,10 @@
-(ns trattoria.runner
+(ns oton.runner
   (:require [clojure.edn :as edn]
             [clojure.java.io :as io]
             [clojure.java.shell :as sh]
             [clojure.string :as str]
-            [trattoria.logger :as log]
-            [trattoria.os :as t.os]))
+            [oton.logger :as log]
+            [oton.os :as o.os]))
 
 (def ^:private run-commands (atom #{}))
 
@@ -22,7 +22,7 @@
   (not= 0 (:exit sh-result)))
 
 (defn find-command-def [task]
-  (let [x (some-> (io/resource (str "command/" (name t.os/os-type) ".edn"))
+  (let [x (some-> (io/resource (str "command/" (name o.os/os-type) ".edn"))
                   slurp edn/read-string)
         y (some-> (io/resource "command/base.edn")
                   slurp edn/read-string)]

@@ -1,6 +1,6 @@
-(ns trattoria.util-test
+(ns oton.util-test
   (:require [clojure.test :as t]
-            [trattoria.util :as sut]))
+            [oton.util :as sut]))
 
 (t/deftest distinct-by-test
   (let [test-data [{:a 1 :b 2}

@@ -1,6 +1,6 @@
-(ns trattoria.reader-test
+(ns oton.reader-test
   (:require [clojure.test :as t]
-            [trattoria.reader :as sut]
+            [oton.reader :as sut]
             [clojure.string :as str])
   (:import clojure.lang.ExceptionInfo))
 

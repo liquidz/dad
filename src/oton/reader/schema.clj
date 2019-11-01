@@ -1,4 +1,4 @@
-(ns trattoria.reader.schema
+(ns oton.reader.schema
   (:require [malli.core :as m]
             [malli.error :as me]))
 
