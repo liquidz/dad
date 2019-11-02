@@ -1,7 +1,0 @@
-{
- :package-install {:command "brew install -f %name%"}
- :package-uninstall {:command "brew uninstall -f %name%"}
- :package-update {:command "brew upgrade -f %name%"}
- :package-exist? {:command "brew list %name%"}
- :package {:command :package-install}
- }
