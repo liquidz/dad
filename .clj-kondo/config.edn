@@ -1,0 +1,6 @@
+{
+ :output
+ {:exclude-files ["test/resources"]}
+ }
+
+
