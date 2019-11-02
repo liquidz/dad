@@ -44,7 +44,7 @@
               (some->> arguments
                        (map slurp)
                        (str/join "\n")
-                       o.reader/read-tasks
+                       (o.reader/read-tasks config)
                        show-read-tasks)
               (catch Exception ex
                 (println (.getMessage ex) (ex-data ex))

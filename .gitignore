@@ -11,3 +11,4 @@ pom.xml.asc
 .hg/
 .eastwood
 oton
+.clj-kondo/.cache
