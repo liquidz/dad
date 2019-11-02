@@ -1,0 +1,4 @@
+{
+ :command #include "command.edn"
+ :schema #include "schema.edn"
+ }
