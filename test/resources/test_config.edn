@@ -1,0 +1,11 @@
+{
+ :command {:test1 {:command "^ %foo% body %bar% $"}
+           :success-test {:command "^ %foo% body %bar% $"
+                          :requires #{:foo :bar}}
+           :test2 {:command :test1}
+           :test3 {:command [:test1 :test2]}
+
+           :once-test {:command "foobar" :once? true}}
+
+ :schema #include "schema.edn"
+ }

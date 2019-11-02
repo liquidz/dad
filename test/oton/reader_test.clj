@@ -1,22 +1,25 @@
 (ns oton.reader-test
-  (:require [clojure.test :as t]
+  (:require [clojure.string :as str]
+            [clojure.test :as t]
             [oton.reader :as sut]
-            [clojure.string :as str])
+            [oton.test-helper :as h])
   (:import clojure.lang.ExceptionInfo))
 
+(def ^:private test-config (h/read-test-config))
+(def ^:private read-tasks (partial sut/read-tasks test-config))
 (defn- read-one-task [code]
-  (let [[task :as res] (sut/read-tasks code)]
+  (let [[task :as res] (read-tasks code)]
     (t/is (= 1 (count res)))
     (dissoc task :id)))
 
 (t/deftest task-id-test
-  (let [[{:keys [id]}] (sut/read-tasks "(package \"foo\")")]
+  (let [[{:keys [id]}] (read-tasks "(package \"foo\")")]
     (t/is (and (string? id) (not (str/blank? id))))))
 
 (t/deftest distinct-by-task-id-test
   (t/testing "duplicated tasks"
-    (let [tasks (sut/read-tasks "(package [\"foo\" \"bar\"])
-                                 (package \"foo\")")]
+    (let [tasks (read-tasks "(package [\"foo\" \"bar\"])
+                             (package \"foo\")")]
       (t/is (= 2 (count tasks)))
       (t/is (= [{:type :package :name "bar" :action :install}
                 {:type :package :name "foo" :action :install}]
@@ -25,8 +28,8 @@
                     (map #(dissoc % :id)))))))
 
   (t/testing "different action tasks"
-    (let [tasks (sut/read-tasks "(package [\"foo\" \"bar\"])
-                                         (package \"foo\" {:action :remove})")]
+    (let [tasks (read-tasks "(package [\"foo\" \"bar\"])
+                             (package \"foo\" {:action :remove})")]
       (t/is (= 3 (count tasks)))
       (t/is (= [{:type :package :name "bar" :action :install}
                 {:type :package :name "foo" :action :install}
@@ -44,6 +47,10 @@
     (t/is (= {:type :directory :path "/tmp/foo/bar" :action :create}
              (read-one-task "(directory {:path \"/tmp/foo/bar\"})"))))
 
+  (t/testing "string action"
+    (t/is (= {:type :directory :path "/tmp/foo/bar" :action :remove}
+             (read-one-task "(directory {:path \"/tmp/foo/bar\" :action \"remove\"})"))))
+
   (t/testing "invalid option"
     (t/is (thrown? ExceptionInfo
                    (read-one-task "(directory \"/tmp/foo/bar\" 123)"))))
@@ -51,7 +58,6 @@
   (t/testing "invalid action"
     (t/is (thrown? ExceptionInfo
                    (read-one-task "(directory \"/tmp/foo/bar\" {:action :invalid})"))))
-
 
   (t/testing "mode, owner, group"
     (t/is (= {:type :directory :path "/tmp/foo" :mode "0755" :owner "bar" :group "baz" :action :create}
@@ -90,11 +96,11 @@
   (t/testing "error"
     (t/testing "no url"
       (t/is (thrown? ExceptionInfo
-                     (sut/read-tasks "(git {:_url_ \"foo\" :path \"bar\"})"))))
+                     (read-tasks "(git {:_url_ \"foo\" :path \"bar\"})"))))
 
     (t/testing "no path"
       (t/is (thrown? ExceptionInfo
-                     (sut/read-tasks "(git {:url \"foo\" :_path_ \"bar\"})"))))))
+                     (read-tasks "(git {:url \"foo\" :_path_ \"bar\"})"))))))
 
 (t/deftest package-test
   (t/testing "no action"
@@ -106,7 +112,7 @@
              (read-one-task "(package \"foo\" {:action :remove})"))))
 
   (t/testing "multiple packages"
-    (let [tasks (sut/read-tasks "(package [\"foo\" \"bar\"])")]
+    (let [tasks (read-tasks "(package [\"foo\" \"bar\"])")]
       (t/is (= 2 (count tasks)))
       (t/is (= [{:type :package :name "bar" :action :install}
                 {:type :package :name "foo" :action :install}]
@@ -115,7 +121,7 @@
                     (map #(dissoc % :id)))))))
 
   (t/testing "multiple packages with action"
-    (let [tasks (sut/read-tasks "(package [\"bar\" \"baz\"] {:action :remove})")]
+    (let [tasks (read-tasks "(package [\"bar\" \"baz\"] {:action :remove})")]
       (t/is (= 2 (count tasks)))
       (t/is (= [{:type :package :name "bar" :action :remove}
                 {:type :package :name "baz" :action :remove}]
@@ -126,6 +132,6 @@
   (t/testing "error"
     (t/testing "invalid action"
       (t/is (thrown? ExceptionInfo
-                     (read-one-task "(package \"foo\" {:action \"remove\"})")))
+                     (read-one-task "(package \"foo\" {:action \"invalid\"})")))
       (t/is (thrown? ExceptionInfo
                      (read-one-task "(package \"foo\" {:action :invalid})"))))))
