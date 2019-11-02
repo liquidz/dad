@@ -3,18 +3,11 @@
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
             [clojure.tools.cli :as cli]
-            [oton.logger :as o.logger]
+            [oton.config :as o.config]
+            [oton.logger :as o.log]
             [oton.os :as o.os]
             [oton.reader :as o.reader]
             [oton.runner :as o.runner]))
-
-(require 'oton.runner.directory
-         'oton.runner.execute
-         'oton.runner.file
-         'oton.runner.git
-         'oton.runner.link
-         'oton.runner.package
-         'oton.runner.template)
 
 (def ^:private cli-options
   [["-s" "--silent"]
@@ -38,6 +31,7 @@
 (defn -main [& args]
   (let [{:keys [arguments options summary errors]} (cli/parse-opts args cli-options)
         {:keys [debug help silent version]} options
+        config (o.config/read-config)
         log-level (cond
                     silent :silent
                     debug :debug
@@ -51,20 +45,19 @@
                        (map slurp)
                        (str/join "\n")
                        o.reader/read-tasks
-                       show-read-tasks
-                       )
+                       show-read-tasks)
               (catch Exception ex
                 (println (.getMessage ex) (ex-data ex))
                 (System/exit 1)))
 
       :else
-      (binding [o.logger/*level* log-level]
+      (binding [o.log/*level* log-level]
         (try
           (some->> arguments
                    (map slurp)
                    (str/join "\n")
-                   o.reader/read-tasks
-                   o.runner/run-tasks)
+                   (o.reader/read-tasks config)
+                   (o.runner/run-tasks config))
           (catch Exception ex
             (println (.getMessage ex) (ex-data ex))
             (System/exit 1)))))
