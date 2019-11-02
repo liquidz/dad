@@ -1,0 +1,45 @@
+{
+ :chmod {:command "chmod -R %mode% %path%" :requires #{:mode :path}}
+ :chown {:command "chown -R %owner% %path%" :requires #{:owner :path}}
+ :chgrp {:command "chgrp -R %group% %path%" :requires #{:group :path}}
+ :file-create {:command ["touch %path%" :chmod :chown :chgrp]}
+ :file-delete {:command "rm -f %path%"}
+ :file {:command :file-create}
+
+ :directory-delete {:command "rm -rf %path%"}
+ :directory-create {:command ["mkdir -p %path%" :chmod :chown :chgrp]}
+ :directory {:command :directory-create}
+
+ :execute-at {:command "(cd %cwd% && %command%)" :requires #{:command :cwd}}
+ :execute {:command "(%command%)" :requires #{:command}}
+
+ :template {:command [:chmod :chown :chgrp]
+            :requires #{:source}}
+
+ :git-clone {:command "git clone %url% %path%"
+             :requires #{:url :path}}
+ :git-checkout {:command "(cd %path% && git checkout %revision%)"
+                :requires #{:revision}}
+ :git {:command [:git-clone :git-checkout]
+       :requires #{:url :path}}
+
+ :link {:command "ln -sfn %to% %path%" :requires #{:path :to}}
+
+ :apt-update {:command "apt update" :once? true}
+
+ :package-exist? {:command #profile {:default "dpkg --status %name% | grep -i status | grep -i installed"
+                                     :mac "brew list %name%"}}
+
+ :package-install {:pre-not [:package-exist?]
+                   :command #profile {:default [:apt-update
+                                                "apt install -y %name%"]
+                                      :mac "brew install -f %name%"}}
+
+ :package-uninstall {:pre [:package-exist?]
+                     :command #profile {:default "apt remove -y %name%"
+                                        :mac "brew uninstall -f %name%"}}
+
+ :package-update {:command #profile {:default "apt upgrade -y %name%"
+                                     :mac "brew upgrade -f %name%"}}
+ :package {:command :package-install}
+ }
