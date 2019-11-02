@@ -1,0 +1,49 @@
+{
+ :path-action [:action {:optional true} [:enum
+                                         :create :delete :remove
+                                         "create" "delete" "remove"]]
+ :path-mode [:mode {:optional true} string?]
+ :path-owner [:owner {:optional true} string?]
+ :path-group [:group {:optional true} string?]
+
+ directory [:map
+             [:path string?]
+             #ref [:path-action]
+             #ref [:path-mode]
+             #ref [:path-owner]
+             #ref [:path-group]]
+
+ execute [:map
+           [:command [:or string? [:vector string?]]]
+           [:cwd {:optional true} string?]]
+
+ file [:map
+        [:path string?]
+        #ref [:path-action]
+        #ref [:path-mode]
+        #ref [:path-owner]
+        #ref [:path-group]]
+
+ git [:map
+       [:path string?]
+       [:url string?]
+       [:revision {:optional true} string?]]
+
+ link [:map
+        [:path string?]
+        [:to string?]]
+
+ package [:map
+           [:name [:or string? [:vector string?]]]
+           [:action {:optional true} [:enum
+                                      :install :remove :uninstall
+                                      "install" "remove" "uninstall"]]]
+
+ template [:map
+            [:path string?]
+            [:source string?]
+            [:variables {:optional true} map?]
+            #ref [:path-mode]
+            #ref [:path-owner]
+            #ref [:path-group]]
+ }
