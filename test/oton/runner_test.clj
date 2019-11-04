@@ -21,11 +21,11 @@
 
 (t/deftest run-tasks-test
   (h/with-test-sh true
-    (let [res (run-tasks [{:type :success-test :foo "neko" :bar "inu"}])]
-      (t/is (= 1 (count res)))
-      (t/is (= ["sh" "-c" "^ neko body inu $"]
-               (-> res first :args))))
-
+    (t/testing "success"
+      (let [res (run-tasks [{:type :success-test :foo "neko" :bar "inu"}])]
+        (t/is (= 1 (count res)))
+        (t/is (= ["sh" "-c" "^ neko body inu $"]
+                 (-> res first :args)))))
 
     (t/testing "必須キーが足りない"
       (let [res (run-tasks [{:type :success-test :foo "neko"}])]
@@ -33,31 +33,41 @@
         ; (t/is (= ["sh" "-c" "^ neko body inu $"]
         ;          (-> res first :args)))
         ))
+
+    (t/testing "one ref"
+      (let [res (run-tasks [{:type :one-ref-test :foo "one" :bar "ref"}])]
+        (t/is (= 1 (count res)))
+        (t/is (= ["sh" "-c" "^ one body ref $"]
+                 (-> res first :args)))))
+
+    (t/testing "multi ref"
+      (let [res (run-tasks [{:type :multi-ref-test :foo "multi" :bar "ref"}])]
+        (t/is (= 2 (count res)))
+        (t/is (= [["sh" "-c" "foo multi"]
+                  ["sh" "-c" "bar ref"]]
+                 (map :args res))))
+
+      (let [res (run-tasks [{:type :multi-ref-test :foo "multi"}])]
+        (t/is (= 1 (count res)))
+        (t/is (= ["sh" "-c" "foo multi"]
+                 (-> res first :args))))
+
+      (let [res (run-tasks [{:type :multi-ref-test :bar "ref"}])]
+        (t/is (= 1 (count res)))
+        (t/is (= ["sh" "-c" "bar ref"]
+                 (-> res first :args)))))))
+
+
+(t/deftest run-tasks-once-test
+  (h/with-test-sh
+    (run-tasks [{:type :foo-once-test :foo "hello"}
+                {:type :bar-once-test :bar "world"}
+                ])
     )
-
-
   )
-
 ; (t/deftest run-default-test
 ;   (t/testing "success"
-;     (h/with-sh-hook hooked
-;       (sut/run-default {:type :__test1__ :foo "neko" :bar "inu"})
-;       (t/is (= 1 (count @hooked)))
-;       (t/is (= ["sh" "-c" "^ neko body inu $"]
-;                (first @hooked))))
 ;
-;     (h/with-sh-hook hooked
-;       (sut/run-default {:type :__test2__ :foo "neko" :bar "inu"})
-;       (t/is (= 1 (count @hooked)))
-;       (t/is (= ["sh" "-c" "^ neko body inu $"]
-;                (first @hooked))))
-;
-;     (h/with-sh-hook hooked
-;       (sut/run-default {:type :__test3__ :foo "neko" :bar "inu"})
-;       (t/is (= 2 (count @hooked)))
-;       (t/is (= ["sh" "-c" "^ neko body inu $"]
-;                (first @hooked)
-;                (second @hooked)))))
 ;
 ;   (t/testing "failure"
 ;     (h/with-fail-sh

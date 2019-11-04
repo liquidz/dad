@@ -1,11 +1,19 @@
 {
- :command {:test1 {:command "^ %foo% body %bar% $"}
+ :command {
+           :foo-test {:command "foo %foo%" :requires #{:foo}}
+           :bar-test {:command "bar %bar%" :requires #{:bar}}
+
            :success-test {:command "^ %foo% body %bar% $"
                           :requires #{:foo :bar}}
-           :test2 {:command :test1}
-           :test3 {:command [:test1 :test2]}
 
-           :once-test {:command "foobar" :once? true}}
+           :one-ref-test {:command :success-test}
+
+           :multi-ref-test {:command [:foo-test :bar-test]}
+
+           :once-test {:command "foobar" :once? true}
+           :foo-once-test {:command [:once-test :foo-test]}
+           :bar-once-test {:command [:once-test :bar-test]}
+           }
 
  :schema #include "schema.edn"
  }
