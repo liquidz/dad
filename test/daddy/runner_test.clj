@@ -1,7 +1,7 @@
-(ns oton.runner-test
+(ns daddy.runner-test
   (:require [clojure.test :as t]
-            [oton.runner :as sut]
-            [oton.test-helper :as h])
+            [daddy.runner :as sut]
+            [daddy.test-helper :as h])
   (:import clojure.lang.ExceptionInfo))
 
 (def ^:private run-tasks

@@ -1,4 +1,4 @@
-(ns oton.util
+(ns daddy.util
   (:require [clojure.string :as str]))
 
 (defn distinct-by [f coll]

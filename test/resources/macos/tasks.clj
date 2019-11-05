@@ -1,5 +1,5 @@
 (defn base-dir [x]
-  (str "/tmp/oton_test/" x))
+  (str "/tmp/daddy_test/" x))
 
 (directory (base-dir "post"))
 (directory (base-dir "pre/a") {:action :delete})
@@ -7,8 +7,8 @@
 (file (base-dir "foo"))
 (file (base-dir "pre/dummy") {:action :delete})
 
-(git {:url "https://github.com/liquidz/oton"
-      :path (base-dir "oton")})
+(git {:url "https://github.com/liquidz/daddy"
+      :path (base-dir "daddy")})
 
 (execute {:command "touch hello"
           :cwd (base-dir "")})

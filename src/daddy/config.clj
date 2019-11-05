@@ -1,11 +1,11 @@
-(ns oton.config
+(ns daddy.config
   (:require [aero.core :as aero]
             [clojure.java.io :as io]
-            [oton.os :as o.os]))
+            [daddy.os :as d.os]))
 
 (defn read-config
   ([]
-   (read-config (keyword (name o.os/os-type))))
+   (read-config (keyword (name d.os/os-type))))
   ([profile]
    (read-config (io/resource "config.edn") profile))
   ([config-file profile]

@@ -1,34 +1,34 @@
-(ns oton.reader
+(ns daddy.reader
   (:require [camel-snake-kebab.core :as csk]
             [clojure.java.io :as io]
             [clojure.string :as str]
             [malli.core :as m]
             [malli.error :as me]
-            [oton.util :as o.util]
-            [oton.os :as o.os]
-            [oton.reader.impl :as o.r.impl]
+            [daddy.util :as d.util]
+            [daddy.os :as d.os]
+            [daddy.reader.impl :as d.r.impl]
             [sci.core :as sci]))
 
 (def ^:private task-configs
-  {'directory, {:destination o.r.impl/directory
+  {'directory, {:destination d.r.impl/directory
                 :resource-name-key :path}
-   'execute,   {:destination o.r.impl/execute
+   'execute,   {:destination d.r.impl/execute
                 :resource-name-key :command}
-   'file,      {:destination o.r.impl/file
+   'file,      {:destination d.r.impl/file
                 :resource-name-key :path}
-   'git,       {:destination o.r.impl/git
+   'git,       {:destination d.r.impl/git
                 :resource-name-key :path}
-   'link,      {:destination o.r.impl/link
+   'link,      {:destination d.r.impl/link
                 :resource-name-key :path}
-   'package,   {:destination o.r.impl/package
+   'package,   {:destination d.r.impl/package
                 :resource-name-key :name}
-   'template,  {:destination o.r.impl/template
+   'template,  {:destination d.r.impl/template
                 :resource-name-key :path}})
 
 (def ^:private util-bindings
   {'env,      #(get (System/getenv) (csk/->SCREAMING_SNAKE_CASE_STRING %))
    'exists?,  #(some-> % io/file (.exists))
-   'os-type,  (name o.os/os-type)
+   'os-type,  (name d.os/os-type)
    'println,  println
    'str/join, str/join})
 
@@ -56,7 +56,7 @@
        (str/join "")))
 
 (defn- ensure-task-list [x]
-  (->> (o.util/ensure-seq x)
+  (->> (d.util/ensure-seq x)
        (remove nil? )
        (map #(assoc % :id (task-id %)))))
 
@@ -78,4 +78,4 @@
         bindings (merge (build-task-bindings tasks config)
                         util-bindings)]
     (doall (sci/eval-string code-str {:bindings bindings}))
-    (o.util/distinct-by :id @tasks)))
+    (d.util/distinct-by :id @tasks)))

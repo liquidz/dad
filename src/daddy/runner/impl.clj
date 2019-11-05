@@ -1,7 +1,7 @@
-(ns oton.runner.impl
+(ns daddy.runner.impl
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
-            [oton.util :as o.util]))
+            [daddy.util :as d.util]))
 
 (defmulti pre-task :type)
 (defmethod pre-task :default [task] task)
@@ -14,7 +14,7 @@
 (defmethod pre-task :execute
   [{:keys [command cwd] :as task}]
   (let [task (->> command
-                  o.util/ensure-seq
+                  d.util/ensure-seq
                   (str/join " && ")
                   (assoc task :command))]
     (cond-> task
@@ -39,6 +39,6 @@
   [{:keys [path source variables] :or {variables {}} :as task}]
   (let [source-file (io/file source)]
     (when-not (.exists source-file)
-      (let [tmpl (-> source-file slurp (o.util/expand-map-to-str variables))]
+      (let [tmpl (-> source-file slurp (d.util/expand-map-to-str variables))]
         (spit path tmpl)
         task))))

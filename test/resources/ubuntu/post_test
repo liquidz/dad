@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BASE_DIR=/tmp/oton_test
+BASE_DIR=/tmp/daddy_test
 
 ### directory
 if [ ! -d ${BASE_DIR}/post ]; then
@@ -25,8 +25,8 @@ if [ -e ${BASE_DIR}/pre/dummy ]; then
 fi
 
 ### git
-if [ ! -e ${BASE_DIR}/oton/project.clj ]; then
-    echo "git: ${BASE_DIR}/oton/project.clj is not found."
+if [ ! -e ${BASE_DIR}/daddy/project.clj ]; then
+    echo "git: ${BASE_DIR}/daddy/project.clj is not found."
     exit 1
 fi
 

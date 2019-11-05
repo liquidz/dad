@@ -1,6 +1,6 @@
-(ns oton.util-test
+(ns daddy.util-test
   (:require [clojure.test :as t]
-            [oton.util :as sut]))
+            [daddy.util :as sut]))
 
 (t/deftest distinct-by-test
   (let [test-data [{:a 1 :b 2}

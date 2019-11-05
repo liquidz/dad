@@ -7,13 +7,13 @@ else
 	GRAAL_EXTRA_OPTION := "--static"
 endif
 
-target/oton.jar:
+target/daddy.jar:
 	lein uberjar
 
-oton: target/oton.jar
+dad: target/daddy.jar
 	$(GRAALVM_HOME)/bin/native-image \
-		-jar target/oton.jar \
-		-H:Name=oton \
+		-jar target/daddy.jar \
+		-H:Name=dad \
 		-H:+ReportExceptionStackTraces \
 		-J-Dclojure.spec.skip-macros=true \
 		-J-Dclojure.compiler.direct-linking=true \
@@ -27,7 +27,7 @@ oton: target/oton.jar
 		$(GRAAL_EXTRA_OPTION) \
 		"-J-Xmx3g"
 
-native-image: clean oton
+native-image: clean dad
 
 circleci:
 	circleci local execute --job debian
@@ -37,4 +37,4 @@ test:
 
 clean:
 	lein clean
-	\rm -f oton
+	\rm -f dad

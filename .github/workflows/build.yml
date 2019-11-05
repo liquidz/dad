@@ -24,12 +24,12 @@ jobs:
           make native-image
       - uses: actions/upload-artifact@master
         with:
-          name: oton.linux-amd64
-          path: ./oton
+          name: daddy.linux-amd64
+          path: ./dad
       - name: Run pre tests
         run: bash test/resources/ubuntu/pre_test
       - name: Run test tasks
-        run: sudo ./oton test/resources/ubuntu/tasks.clj
+        run: sudo ./dad test/resources/ubuntu/tasks.clj
       - name: Run post tests
         run: bash test/resources/ubuntu/post_test
 
@@ -54,11 +54,11 @@ jobs:
           make native-image
       - uses: actions/upload-artifact@master
         with:
-          name: oton.darwin-amd64
-          path: ./oton
+          name: daddy.darwin-amd64
+          path: ./dad
       - name: Run pre tests
         run: bash test/resources/macos/pre_test
       - name: Run test tasks
-        run: ./oton test/resources/macos/tasks.clj
+        run: ./dad test/resources/macos/tasks.clj
       - name: Run post tests
         run: bash test/resources/macos/post_test

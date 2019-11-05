@@ -1,4 +1,4 @@
-(ns oton.logger
+(ns daddy.logger
   (:require [clojure.string :as str]))
 
 (def ^:dynamic *level* :info)
