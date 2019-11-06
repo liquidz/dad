@@ -2,6 +2,7 @@
   (:require [clojure.java.io :as io]
             [clojure.java.shell :as sh]
             [daddy.config :as d.config]
+            [daddy.logger :as d.log]
             [daddy.os :as d.os]))
 
 (def test-os-type ::testing)
@@ -13,4 +14,5 @@
   `(with-redefs [d.os/os-name ~test-os-type
                  sh/sh (fn [& args#]
                          {:exit (if ~success? 0 1) :args args#})]
-     ~@body))
+     (binding [d.log/*level* :silent]
+       ~@body)))
