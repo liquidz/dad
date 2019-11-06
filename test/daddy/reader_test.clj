@@ -107,6 +107,10 @@
     (t/is (= {:type :package :name "foo" :action :install}
              (read-one-task "(package \"foo\")"))))
 
+  (t/testing "keyword"
+    (t/is (= {:type :package :name "foo" :action :install}
+             (read-one-task "(package :foo)"))))
+
   (t/testing "action"
     (t/is (= {:type :package :name "foo" :action :remove}
              (read-one-task "(package \"foo\" {:action :remove})"))))

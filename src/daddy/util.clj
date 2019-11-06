@@ -12,6 +12,11 @@
           (recur rest-elms ids result)
           (recur rest-elms (conj ids id) (conj result first-elm)))))))
 
+(defn ensure-str [x]
+  (if (keyword? x)
+    (name x)
+    (str x)))
+
 (defn ensure-seq [x]
   (cond-> x
     (not (sequential? x)) vector))

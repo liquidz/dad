@@ -34,7 +34,7 @@
         [:to string?]]
 
  package [:map
-           [:name [:or string? [:vector string?]]]
+           [:name [:or string?  keyword?  vector?]]
            [:action {:optional true} [:enum
                                       :install :remove :uninstall
                                       "install" "remove" "uninstall"]]]

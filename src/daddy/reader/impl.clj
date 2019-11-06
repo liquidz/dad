@@ -1,5 +1,6 @@
 (ns daddy.reader.impl
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            [daddy.util :as d.util]))
 
 (defn directory [m]
   (let [{:keys [path action mode owner group] :or {action :create}} m]
@@ -44,7 +45,7 @@
   (let [{:keys [name action] :or {action :install}} m]
     (for [name (if (sequential? name) name [name])]
       {:type :package
-       :name name
+       :name (d.util/ensure-str name)
        :action (keyword action)})))
 
 (defn template [m]
