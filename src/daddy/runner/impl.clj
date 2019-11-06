@@ -3,15 +3,15 @@
             [clojure.string :as str]
             [daddy.util :as d.util]))
 
-(defmulti pre-task :type)
-(defmethod pre-task :default [task] task)
+(defmulti transform-task :type)
+(defmethod transform-task :default [task] task)
 
-(defmethod pre-task :directory
+(defmethod transform-task :directory
   [{:keys [action] :as task}]
   (cond-> task
     (contains? #{:delete :remove} action) (assoc :type :directory-delete)))
 
-(defmethod pre-task :execute
+(defmethod transform-task :execute
   [{:keys [command cwd] :as task}]
   (let [task (->> command
                   d.util/ensure-seq
@@ -20,25 +20,28 @@
     (cond-> task
       cwd (assoc :type :execute-at))))
 
-(defmethod pre-task :file
+(defmethod transform-task :file
   [{:keys [action] :as task}]
   (cond-> task
     (contains? #{:delete :remove} action) (assoc :type :file-delete)))
 
-(defmethod pre-task :git
+(defmethod transform-task :git
   [{:keys [path] :as task}]
   (cond-> task
     (some-> path io/file .exists) (assoc :type :git-checkout)))
 
-(defmethod pre-task :package
+(defmethod transform-task :package
   [{:keys [action] :as task}]
   (cond-> task
     (contains? #{:uninstall :remove} action) (assoc :type :package-uninstall)))
 
-(defmethod pre-task :template
-  [{:keys [path source variables] :or {variables {}} :as task}]
+
+(defmulti do-task! :type)
+(defmethod do-task! :default [task] task)
+
+(defmethod do-task! :template
+  [{:keys [path source variables] :or {variables {}}}]
   (let [source-file (io/file source)]
     (when-not (.exists source-file)
       (let [tmpl (-> source-file slurp (d.util/expand-map-to-str variables))]
-        (spit path tmpl)
-        task))))
+        (spit path tmpl)))))

@@ -27,12 +27,9 @@
         (t/is (= ["sh" "-c" "^ neko body inu $"]
                  (-> res first :args)))))
 
-    (t/testing "必須キーが足りない"
+    (t/testing "missing required keys"
       (let [res (run-tasks [{:type :success-test :foo "neko"}])]
-        (t/is (= 0 (count res)))
-        ; (t/is (= ["sh" "-c" "^ neko body inu $"]
-        ;          (-> res first :args)))
-        ))
+        (t/is (= 0 (count res)))))
 
     (t/testing "one ref"
       (let [res (run-tasks [{:type :one-ref-test :foo "one" :bar "ref"}])]

@@ -36,7 +36,7 @@
                (or (not once?)
                    (not (contains? run-commands command))))
       (when once?
-        (swap! context update-in :run-commands conj command))
+        (swap! context update :run-commands conj command))
       (->> (d.util/ensure-seq command)
            (map #(if (keyword? %)
                    (construct-commands (assoc task :type %))
@@ -58,7 +58,8 @@
 
 (defn run-task [task]
   (some-> task
-          d.r.impl/pre-task
+          d.r.impl/transform-task
+          (doto d.r.impl/do-task!)
           run-task*))
 
 (defn run-tasks [config tasks]
