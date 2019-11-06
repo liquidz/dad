@@ -1,0 +1,35 @@
+#!/bin/bash
+
+TMPDIR=./tmp
+TARGET='dad.linux-amd64'
+IMAGE_NAME='uochan/daddy-builder'
+
+which docker > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo 'docker must be installed'
+    exit 1
+fi
+
+docker images | grep ${IMAGE_NAME} > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+	docker build -t ${IMAGE_NAME} -f docker/Dockerfile.builder .
+fi
+
+if [ -e ./${TARGET} ]; then
+    echo "already exists: ${TARGET}"
+else
+    mkdir -p ${TMPDIR}
+
+    \cp -p Makefile ${TMPDIR}
+    \cp -p project.clj ${TMPDIR}
+    \cp -pr resources ${TMPDIR}
+    \cp -pr src ${TMPDIR}
+
+    (cd ${TMPDIR} && docker run --rm -v $(pwd):/src ${IMAGE_NAME} make native-image)
+
+    \cp -p ${TMPDIR}/dad ./${TARGET}
+
+    \rm -rf ${TMPDIR}
+fi
+
+exit 0

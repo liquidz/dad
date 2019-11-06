@@ -11,4 +11,5 @@ pom.xml.asc
 .hg/
 .eastwood
 dad
+dad.linux-amd64
 .clj-kondo/.cache

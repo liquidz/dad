@@ -1,0 +1,15 @@
+#!/bin/bash
+
+TMPDIR='./tmp'
+BINFILE='dad.linux-amd64'
+IMAGE_NAME='uochan/daddy-test'
+
+docker build -t ${IMAGE_NAME} -f docker/Dockerfile.test .
+
+mkdir -p ${TMPDIR}
+
+\cp -pr test/resources/ubuntu/* ${TMPDIR}
+
+(cd ${TMPDIR} && docker run --rm -v $(pwd):/root ${IMAGE_NAME} bash /root/run.sh)
+
+\rm -rf ${TMPDIR}

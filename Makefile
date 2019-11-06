@@ -1,4 +1,4 @@
-.PHONY: native-image circleci test clean
+.PHONY: native-image jar_test bin_test circleci test clean
 
 PLATFORM = $(shell uname -s)
 ifeq ($(PLATFORM), Darwin)
@@ -9,6 +9,8 @@ endif
 
 target/daddy.jar:
 	lein uberjar
+dad.linux-amd64:
+	./script/build
 
 dad: target/daddy.jar
 	$(GRAALVM_HOME)/bin/native-image \
@@ -17,7 +19,9 @@ dad: target/daddy.jar
 		-H:+ReportExceptionStackTraces \
 		-J-Dclojure.spec.skip-macros=true \
 		-J-Dclojure.compiler.direct-linking=true \
-		"-H:IncludeResources=command/.*" \
+		"-H:IncludeResources=command.edn" \
+		"-H:IncludeResources=schema.edn" \
+		"-H:IncludeResources=config.edn" \
 		"-H:IncludeResources=version.txt" \
 		--initialize-at-build-time  \
 		-H:Log=registerResource: \
@@ -29,6 +33,12 @@ dad: target/daddy.jar
 
 native-image: clean dad
 
+jar_test: target/daddy.jar
+	./script/jar_test
+
+bin_test: dad.linux-amd64
+	./script/bin_test
+
 circleci:
 	circleci local execute --job debian
 
@@ -37,4 +47,4 @@ test:
 
 clean:
 	lein clean
-	\rm -f dad
+	\rm -f dad dad.linux-amd64
