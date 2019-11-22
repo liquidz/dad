@@ -12,7 +12,7 @@ fi
 
 docker images | grep ${IMAGE_NAME} > /dev/null 2>&1
 if [ $? -ne 0 ]; then
-	docker build -t ${IMAGE_NAME} -f docker/Dockerfile.builder .
+    docker build -t ${IMAGE_NAME} .
 fi
 
 if [ -e ./${TARGET} ]; then

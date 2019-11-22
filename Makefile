@@ -24,6 +24,7 @@ dad: target/daddy.jar
 		"-H:IncludeResources=config.edn" \
 		"-H:IncludeResources=version.txt" \
 		--initialize-at-build-time  \
+		--report-unsupported-elements-at-runtime \
 		-H:Log=registerResource: \
 		--verbose \
 		--no-fallback \
@@ -34,10 +35,10 @@ dad: target/daddy.jar
 native-image: clean dad
 
 jar_test: target/daddy.jar
-	./script/jar_test
+	env TARGET=target/daddy.jar ./script/test
 
 bin_test: dad.linux-amd64
-	./script/bin_test
+	env TARGET=dad.linux-amd64 ./script/test
 
 circleci:
 	circleci local execute --job debian

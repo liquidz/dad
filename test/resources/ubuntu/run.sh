@@ -10,10 +10,12 @@ else
     echo "pre_test: succeeded"
 fi
 
-which dad
+ls -1 dad.linux-amd64 > /dev/null 2>&1
 if [ $? -eq 0 ]; then
-    dad tasks.clj
+    echo "dad: using native image"
+    ./dad.linux-amd64 tasks.clj
 else
+    echo "dad: using JAR"
     java -jar daddy.jar tasks.clj
 fi
 if [ $? -ne 0 ]; then
