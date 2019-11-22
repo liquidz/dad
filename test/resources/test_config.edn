@@ -1,19 +1,23 @@
 {
- :command {
-           :foo-test {:command "foo %foo%" :requires #{:foo}}
-           :bar-test {:command "bar %bar%" :requires #{:bar}}
+ :command
+ #merge [#include "command.edn"
+         {:foo-test {:command "foo %foo%" :requires #{:foo}}
+          :bar-test {:command "bar %bar%" :requires #{:bar}}
 
-           :success-test {:command "^ %foo% body %bar% $"
-                          :requires #{:foo :bar}}
+          :success-test {:command "^ %foo% body %bar% $"
+                         :requires #{:foo :bar}}
 
-           :one-ref-test {:command :success-test}
+          :one-ref-test {:command :success-test}
 
-           :multi-ref-test {:command [:foo-test :bar-test]}
+          :multi-ref-test {:command [:foo-test :bar-test]}
 
-           :once-test {:command "foobar" :once? true}
-           :foo-once-test {:command [:once-test :foo-test]}
-           :bar-once-test {:command [:once-test :bar-test]}
-           }
+          :once-test {:command "only once" :once? true}
+          :foo-once-test {:command [:once-test :foo-test]}
+          :bar-once-test {:command [:once-test :bar-test]}
+
+          :pre-test {:command "pre" :pre [:foo-test]}
+          :pre-not-test {:command "pre not" :pre-not [:bar-test]}
+          }]
 
  :schema #include "schema.edn"
  }

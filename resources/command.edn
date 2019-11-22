@@ -1,13 +1,26 @@
 {
- :chmod {:command "chmod -R %mode% %path%" :requires #{:mode :path}}
- :chown {:command "chown -R %owner% %path%" :requires #{:owner :path}}
- :chgrp {:command "chgrp -R %group% %path%" :requires #{:group :path}}
- :file-create {:command ["touch %path%" :chmod :chown :chgrp]}
- :file-delete {:command "rm -f %path%"}
+ :chmod {:pre-not "test $(stat --format '%a' %path%) = %mode%"
+         :command "chmod -R %mode% %path%"
+         :requires #{:mode :path}}
+
+ :chown {;; TODO pre
+         :command "chown -R %owner% %path%"
+         :requires #{:owner :path}}
+
+ :chgrp {;; TODO pre
+         :command "chgrp -R %group% %path%"
+         :requires #{:group :path}}
+
+ :file-create {:pre-not "test -e %path%"
+               :command ["touch %path%" :chmod :chown :chgrp]}
+ :file-delete {:pre "test -e %path%"
+               :command "rm -f %path%"}
  :file {:command :file-create}
 
- :directory-delete {:command "rm -rf %path%"}
- :directory-create {:command ["mkdir -p %path%" :chmod :chown :chgrp]}
+ :directory-delete {:pre "test -d %path%"
+                    :command "rm -rf %path%"}
+ :directory-create {:pre-not "test -d %path%"
+                    :command ["mkdir -p %path%" :chmod :chown :chgrp]}
  :directory {:command :directory-create}
 
  :execute-at {:command "(cd %cwd% && %command%)" :requires #{:command :cwd}}
@@ -16,14 +29,16 @@
  :template {:command [:chmod :chown :chgrp]
             :requires #{:source}}
 
- :git-clone {:command "git clone %url% %path%"
+ :git-clone {:pre-not "test -d %path%"
+             :command "git clone %url% %path%"
              :requires #{:url :path}}
  :git-checkout {:command "(cd %path% && git checkout %revision%)"
                 :requires #{:revision}}
  :git {:command [:git-clone :git-checkout]
        :requires #{:url :path}}
 
- :link {:command "ln -sfn %to% %path%" :requires #{:path :to}}
+ :link {:command "ln -sfn %to% %path%"
+        :requires #{:path :to}}
 
  :apt-update {:command "apt update" :once? true}
 
