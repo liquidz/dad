@@ -1,14 +1,18 @@
 (ns daddy.runner-test
   (:require [clojure.test :as t]
             [daddy.runner :as sut]
+            [daddy.runner.impl :as d.r.impl]
             [daddy.test-helper :as h])
   (:import clojure.lang.ExceptionInfo))
 
+(def ^:private config
+  (h/read-test-config))
+
 (def ^:private run-tasks
-  (partial sut/run-tasks (h/read-test-config)))
+  (partial sut/run-tasks config))
 
 (t/deftest succeeded?-test
-  (t/are [expected input] (= expected (sut/succeeded? input))
+  (t/are [expected input] (= expected (#'sut/succeeded? input))
     true,  {:exit 0}
     true,  [{:exit 0}]
     true,  [{:exit 0} {:exit 0}]
@@ -18,6 +22,22 @@
     false, [{:exit 1}]
     false, [{:exit 0} {:exit 1}]
     false, [{:exit 1} {:exit 1}]))
+
+(t/deftest expand-tasks-test
+  (let [expand-tasks #(->> % d.r.impl/dispatch-task (#'sut/expand-tasks config))]
+    (t/is (= [{:type :foo-test :__def__ {:command "foo %foo%" :requires #{:foo}}}
+              {:type :bar-test :__def__ {:command "bar %bar%" :requires #{:bar}}}]
+             (expand-tasks [{:type :multi-ref-test}])))))
+
+(t/deftest has-enough-params?-test
+  (let [expanded-task {:type :dummy
+                       :__def__ {:command "%foo% %bar%"
+                                 :requires #{:foo :bar}}}]
+    (t/are [expected input] (= expected (#'sut/has-enough-params? input))
+      false expanded-task
+      false (assoc expanded-task :foo "neko")
+      true  (assoc expanded-task :foo "neko" :bar "inu")
+      true  (assoc expanded-task :foo "neko" :bar "inu" :baz "wani"))))
 
 (t/deftest run-tasks-test
   (h/with-test-sh true
@@ -54,39 +74,44 @@
         (t/is (= ["sh" "-c" "bar ref"]
                  (-> res first :args)))))))
 
-
 (t/deftest run-tasks-once-test
-  (h/with-test-sh
-    (run-tasks [{:type :foo-once-test :foo "hello"}
-                {:type :bar-once-test :bar "world"}
-                ])
-    )
-  )
-; (t/deftest run-default-test
-;   (t/testing "success"
-;
-;
-;   (t/testing "failure"
-;     (h/with-fail-sh
-;       (t/is (thrown-with-msg?
-;              ExceptionInfo #"Failed to find command"
-;              (sut/run-default {:type ::unknown})))
-;
-;       (t/is (thrown-with-msg?
-;              ExceptionInfo #"Failed to run command"
-;              (sut/run-default {:type :__test1__}))))))
-;
-; (t/deftest run-default-with-once-option-test
-;   (t/testing "no once?"
-;     (h/with-sh-hook hooked
-;       (sut/run-tasks []) ; clear sut/run-commands
-;       (dotimes [_ 10]
-;         (sut/run-default {:type :__test1__}))
-;       (t/is (= 10 (count @hooked)))))
-;
-;   (t/testing "once?"
-;     (h/with-sh-hook hooked
-;       (sut/run-tasks []) ; clear sut/run-commands
-;       (dotimes [_ 10]
-;         (sut/run-default {:type :__once-test__}))
-;       (t/is (= 1 (count @hooked))))))
+  (h/with-test-sh true
+    (let [res (run-tasks [{:type :foo-once-test :foo "hello"}
+                          {:type :bar-once-test :bar "world"}])]
+      (t/is (= 3 (count res)))
+      (t/is (= [["sh" "-c" "only once"]
+                ["sh" "-c" "foo hello"]
+                ["sh" "-c" "bar world"]]
+               (map :args res))))))
+
+(t/deftest expand-pre-tasks-test
+  (let [test-fn #(#'sut/expand-pre-tasks config %)]
+    (t/testing "raw command"
+      (t/is (= [{:type :dummy :__def__ {:command "bar"}}]
+               (test-fn {:type :dummy :__def__ {:command "org" :pre "bar"}}))))
+    (t/testing "keyword"
+      (t/is (= [{:type :foo-test :__def__ {:command "foo %foo%" :requires #{:foo}}}]
+               (test-fn {:type :dummy :__def__ {:command "org" :pre [:foo-test]}}))))
+    (t/is (nil? (test-fn {:type :dummy})))))
+
+(t/deftest run-tasks-pre-and-pre-not-test
+  (h/with-test-sh true
+    (t/testing "pre"
+      ;; NOTE: foo-test will succeed always when `:foo` parameter exists
+      (t/is (= [["sh" "-c" "pre"]] (map :args (run-tasks [{:type :pre-test :foo "hello"}]))))
+      (t/is (= [] (map :args (run-tasks [{:type :pre-test}])))))
+
+    (t/testing "pre-not"
+      ;; NOTE: bar-test will succeed always when `:bar` parameter exists
+      (t/is (= [] (map :args (run-tasks [{:type :pre-not-test :bar "world"}]))))
+      (t/is (= [["sh" "-c" "pre not"]] (map :args (run-tasks [{:type :pre-not-test}])))))))
+
+(t/deftest run-tasks-failure-test
+  (t/testing "unknown command"
+    (t/is (thrown-with-msg? ExceptionInfo #"Unknown command type"
+                            (nil? (run-tasks [{:type :unknown}])))))
+
+  (t/testing "failed to run command"
+    (h/with-test-sh false
+      (t/is (thrown-with-msg? ExceptionInfo #"Failed to run command"
+                              (nil? (run-tasks [{:type :foo-test :foo "hello"}])))))))
