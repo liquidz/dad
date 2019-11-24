@@ -27,7 +27,14 @@
   (let [expand-tasks #(->> % d.r.impl/dispatch-task (#'sut/expand-tasks config))]
     (t/is (= [{:type :foo-test :__def__ {:command "foo %foo%" :requires #{:foo}}}
               {:type :bar-test :__def__ {:command "bar %bar%" :requires #{:bar}}}]
-             (expand-tasks [{:type :multi-ref-test}])))))
+             (expand-tasks [{:type :multi-ref-test}])))
+
+    (t/is (= [{:type :template :path "foo" :source "bar"}
+              {:type :chmod :path "foo" :source "bar"}
+              {:type :chown :path "foo" :source "bar"}
+              {:type :chgrp :path "foo" :source "bar"}]
+             (map #(dissoc % :__def__)
+                  (expand-tasks [{:type :template :path "foo" :source "bar"}]))))))
 
 (t/deftest has-enough-params?-test
   (let [expanded-task {:type :dummy
