@@ -1,9 +1,9 @@
 = daddy
 
-Careless configuration management tool. FIXME ワンバイナリで動く
+Careless configuration management tool.
 This project is heavily inspired by https://github.com/itamae-kitchen/mitamae[mitamae].
 
-My father is a chef :)
+// My father is a chef :)
 
 == Getting Started
 
