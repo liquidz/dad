@@ -39,8 +39,9 @@
 (defmethod run-by-code :default [task] task)
 
 (defmethod run-by-code :template
-  [{:keys [path source variables] :or {variables {}}}]
+  [{:keys [path source variables] :or {variables {}} :as task}]
   (let [source-file (io/file source)]
-    (when-not (.exists source-file)
-      (let [tmpl (-> source-file slurp (d.util/expand-map-to-str variables))]
-        (spit path tmpl)))))
+    (when (.exists source-file)
+      (let [tmpl (-> source-file slurp (d.util/expand-map-to-str variables "{{" "}}"))]
+        (spit path tmpl)
+        task))))
