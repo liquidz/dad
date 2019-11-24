@@ -1,0 +1,219 @@
+= daddy
+
+Careless configuration management tool. FIXME ワンバイナリで動く
+This project is heavily inspired by https://github.com/itamae-kitchen/mitamae[mitamae].
+
+My father is a chef :)
+
+== Getting Started
+
+Download binary from https://github.com/liquidz/daddy/releases[releases].
+[source,terminal]
+----
+wget https://github.com/liquidz/daddy/releases/download/0.1.0/dad.linux-amd64
+chmod +x dad.linux-amd64
+----
+
+Here is a example to install Clojure https://clojure.org/guides/deps_and_cli[command line tools].
+[source,clojure]
+----
+(package ["curl" "rlwrap"])
+
+;; You can define function as you like
+(defn curl [m]
+  (let [{:keys [path url]} m]
+    ;; `file-exists?` is a built-in function in daddy.
+    (when (and (not (file-exists? path))
+               (string? url))
+      (execute (str "curl -sfLo " path " " url)))))
+
+(curl {:path "/tmp/install.sh"
+       :url "https://download.clojure.org/install/linux-install-1.10.1.489.sh"})
+
+(file {:path "/tmp/install.sh" :mode "755"})
+(execute {:cwd "/tmp" :command "./install.sh"})
+(file {:path "/tmp/install.sh" :action :delete})
+----
+
+== Reference
+
+=== Built-in vars / functions
+
+|===
+| Name         | Var/Func | Description
+| env          | Var      | Map of environmental variables. E.g. `(env :home)`
+| file-exists? | Func     | Return true if the specified path exists.
+| os-type      | Var      | OS name string such as `"linux"` or `"mac"`.
+| println      | Func     |
+| str/join     | Func     |
+|===
+
+=== Resources
+
+Resources are called like follows.
+`<main-arg>` will be associated to the main key for the resource.
+
+[source,clojure]
+----
+(resource-name {:key :value ...})
+(resource-name <main-arg> {:key :value ...})
+
+;; E.g. following codes are equivalent because `directory` resource's main key is `path`.
+(directory "foo/bar" {:owner "alice"})
+(directory {:path "foo/bar" :owner "alice"})
+----
+
+==== directory
+
+Create directories.
+
+|===
+| Key | Value | Required | Default | Description
+
+| <path>   | String            | Yes      |           | Directories are created recursively.
+| action | Keyword or String | No       | `:create` | `:delete` or `:remove` for deletion.
+| mode   | String            | No       |           |
+| owner  | String            | No       |           |
+| group  | String            | No       |           |
+|===
+
+[source,clojure]
+.Example
+----
+(directory "foo/bar")
+(directory {:path "foo/bar"})
+----
+
+==== execute
+
+Execute a shell command.
+
+|===
+| Key | Value | Required | Default | Description
+
+| cwd       | String | No |  | Working directory.
+| <command> | String | No |  |
+|===
+
+[source,clojure]
+.Example
+----
+(execute "curl -sfLo /tmp/foobar https://example.com")
+(execute {:cwd "/tmp" :command "curl -sfLo foobar https://example.com"})
+----
+
+==== file
+
+Create a file.
+
+|===
+| Key | Value | Required | Default | Description
+
+| <path>   | String            | Yes      |           |
+| action | Keyword or String | No       | `:create` | `:delete` or `:remove` for deletion.
+| mode   | String            | No       |           |
+| owner  | String            | No       |           |
+| group  | String            | No       |           |
+|===
+
+[source,clojure]
+.Example
+----
+(file "foobar" {:mode "755"})
+(file {:path "foobar" :mode "755"})
+----
+
+==== git
+
+|===
+| Key | Value | Required | Default | Description
+
+| <path>   | String | Yes |            |
+| url      | String | Yes |            |
+| revision | String | No  | `"master"` |
+|===
+
+[source,clojure]
+.Example
+----
+(git "daddy-source" {:url "https://github.com/liquidz/daddy"})
+(git {:path "daddy-source" :url "https://github.com/liquidz/daddy"})
+----
+
+==== link
+
+Create a symbolic link.
+
+|===
+| Key | Value | Required | Default | Description
+
+| <path>   | String | Yes |            | Link path.
+| to      | String | Yes |            | Destination path.
+|===
+
+[source,clojure]
+.Example
+----
+(link "~/.lein/profiles.clj" {:to "/path/to/your/dotfiles/profiles.clj"})
+(link {:path "~/.lein/profiles.clj" :to "/path/to/your/dotfiles/profiles.clj"})
+----
+
+==== package
+
+Install packages.
+
+|===
+| Key | Value | Required | Default | Description
+
+| <name> | String or String list | Yes |            |
+| action | Keyword or String     | no  | `:install` | `:uninstall` or `:remove` for uninstallation.
+|===
+
+[source,clojure]
+.Example
+----
+(package "vim")
+(package {:name "vim"})
+----
+
+==== template
+
+Create a text file from the specified template files.
+
+|===
+| Key | Value | Required | Default | Description
+
+| <path>    | String | Yes |      |
+| source    | String | Yes |      | Source template file.
+| variables | Map    | No  | `{}` | Variables to inject to template file.
+| mode      | String | No  |      |
+| owner     | String | No  |      |
+| group     | String | No  |      |
+|===
+
+.Example template
+----
+hello {{msg}}
+----
+
+[source,clojure]
+.Example
+----
+(template "result.txt" {:source "source.txt" :variables {:msg "world"}})
+(template {:path "result.txt" :source "source.txt" :variables {:msg "world"}})
+----
+
+== License
+
+Copyright © 2019 https://twitter.com/uochan[Masashi Iizuka]
+
+This program and the accompanying materials are made available under the
+terms of the Eclipse Public License 2.0 which is available at
+http://www.eclipse.org/legal/epl-2.0.
+
+This Source Code may also be made available under the following Secondary
+Licenses when the conditions for such availability set forth in the Eclipse
+Public License, v. 2.0 are satisfied: GNU General Public License as published by
+the Free Software Foundation, either version 2 of the License, or (at your
+option) any later version, with the GNU Classpath Exception which is available
+at https://www.gnu.org/software/classpath/license.html.
