@@ -41,6 +41,7 @@ Here is a example to install Clojure https://clojure.org/guides/deps_and_cli[com
 
 |===
 | Name         | Var/Func | Description
+
 | env          | Var      | Map of environmental variables. E.g. `(env :home)`
 | file-exists? | Func     | Return true if the specified path exists.
 | os-type      | Var      | OS name string such as `"linux"` or `"mac"`.
