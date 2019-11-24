@@ -91,7 +91,7 @@
     (let [res (run-task* expanded-task)]
       (d.log/debug "Finish to run task" {:task expanded-task})
       (if (failed? res)
-        (throw (ex-info "Failed to run command" {:fixme expanded-task}))
+        (throw (ex-info "Failed to run command" {:result res :task (dissoc expanded-task :__def__)}))
         (do (d.log/info (format "%s [%s]"
                                 (name (:type expanded-task))
                                 (extract-main-arg expanded-task)))

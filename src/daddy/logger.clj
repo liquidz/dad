@@ -13,14 +13,14 @@
 (defn- colorize [code s]
   (str \u001b "[" code "m" s \u001b "[m"))
 
-(defn- log [level msg & [more]]
+(defn- log [level msg & more]
   (when (<= (get levels *level*) (get levels level))
     (let [colorize* (partial colorize (get color-codes level :debug))]
       (apply println
-             (cond->> [(colorize* (str/upper-case (name level)))
+             (cond-> [(colorize* (str/upper-case (name level)))
                        ":"
                        msg]
-               more (conj more))))
+               more (concat more))))
     nil))
 
 (def debug (partial log :debug))

@@ -59,6 +59,6 @@
                    (d.reader/read-tasks config)
                    (d.runner/run-tasks config))
           (catch Exception ex
-            (println (.getMessage ex) (ex-data ex))
+            (d.log/error (.getMessage ex) (ex-data ex))
             (System/exit 1)))))
     (System/exit 0)))
