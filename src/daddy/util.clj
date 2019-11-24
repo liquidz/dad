@@ -21,8 +21,10 @@
   (cond-> x
     (not (sequential? x)) vector))
 
-(defn expand-map-to-str [s m]
-  (reduce-kv
-   (fn [res k v]
-     (str/replace res (str "%" (name k) "%") (str v)))
-   s m))
+(defn expand-map-to-str
+  ([s m] (expand-map-to-str s m "%" "%"))
+  ([s m start end]
+   (reduce-kv
+    (fn [res k v]
+      (str/replace res (str start (name k) end) (str v)))
+    s m)))
