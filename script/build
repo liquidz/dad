@@ -28,6 +28,7 @@ else
     (cd ${TMPDIR} && docker run --rm -v $(pwd):/src ${IMAGE_NAME} make native-image)
 
     \cp -p ${TMPDIR}/dad ./${TARGET}
+    # (cd ${TMPDIR} && docker run --rm -it -v $(pwd):/src ${IMAGE_NAME} bash)
 
     \rm -rf ${TMPDIR}
 fi

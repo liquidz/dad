@@ -60,3 +60,14 @@ if [ $? -eq 0 ]; then
     echo "package: git is installed yet."
     exit 1
 fi
+
+### template
+if [ ! -e ${BASE_DIR}/tmpl ]; then
+    echo "template: ${BASE_DIR}/tmpl is not found."
+    exit 1
+fi
+md5sum -c template.md5 > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo "template: MD5 hash is not matched."
+    exit 1
+fi
