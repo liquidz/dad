@@ -26,7 +26,7 @@
  :execute-at {:command "(cd %cwd% && %command%)" :requires #{:command :cwd}}
  :execute {:command "(%command%)" :requires #{:command}}
 
- :template {:command [:chmod :chown :chgrp]
+ :template {:command [":" :chmod :chown :chgrp]
             :requires #{:source}}
 
  :git-clone {:pre-not "test -d %path%"

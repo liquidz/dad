@@ -139,3 +139,16 @@
                      (read-one-task "(package \"foo\" {:action \"invalid\"})")))
       (t/is (thrown? ExceptionInfo
                      (read-one-task "(package \"foo\" {:action :invalid})"))))))
+
+(t/deftest template-test
+  (t/testing "no variables"
+    (t/is (= {:type :template :path "foo" :source "bar"}
+             (read-one-task "(template \"foo\" {:source \"bar\"})"))))
+
+  (t/testing "variables"
+    (t/is (= {:type :template :path "foo" :source "bar" :variables {:one 1 :two 2}}
+             (read-one-task "(template \"foo\" {:source \"bar\" :variables {:one 1 :two 2}})"))))
+
+  (t/testing "error"
+    (t/is (thrown? ExceptionInfo
+                   (read-one-task "(template \"foo\")")))))
