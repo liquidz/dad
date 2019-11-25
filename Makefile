@@ -37,11 +37,13 @@ native-image: clean dad
 jar_test: target/daddy.jar
 	env TARGET=target/daddy.jar ./script/test
 
+local_jar_test: target/daddy.jar
+	\cp -pf target/daddy.jar test/resources/test_task
+	(cd test/resources/test_task && sudo bash run.sh)
+	\rm -f test/resources/test_task/daddy.jar
+
 bin_test: dad.linux-amd64
 	env TARGET=dad.linux-amd64 ./script/test
-
-circleci:
-	circleci local execute --job debian
 
 test:
 	lein test

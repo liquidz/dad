@@ -15,8 +15,8 @@
 
 (link (base-dir "world") {:to (base-dir "hello")})
 
-(package "zsh")
-(package "git" {:action :uninstall})
+(package "sl")
+(package "cowsay" {:action :uninstall})
 
 (template {:path (base-dir "tmpl")
            :source "template.tmpl"

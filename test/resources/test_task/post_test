@@ -1,5 +1,7 @@
 #!/bin/bash
 
+. test_helper
+
 BASE_DIR=/tmp/daddy_test
 
 ### directory
@@ -49,14 +51,27 @@ if [ $? -ne 0 ]; then
 fi
 
 ### package
-brew list clojure
+# install
+helper_is_installed sl > /dev/null 2>&1
 if [ $? -ne 0 ]; then
-    echo "package: clojure is not installed."
+    echo "package: sl is not installed."
     exit 1
 fi
 
-brew list git
+# uninstall
+helper_is_installed cowsay > /dev/null 2>&1
 if [ $? -eq 0 ]; then
-    echo "package: git is installed yet."
+    echo "package: cowsay is installed yet."
+    exit 1
+fi
+
+### template
+if [ ! -e ${BASE_DIR}/tmpl ]; then
+    echo "template: ${BASE_DIR}/tmpl is not found."
+    exit 1
+fi
+md5sum -c template.md5 > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo "template: MD5 hash is not matched."
     exit 1
 fi

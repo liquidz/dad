@@ -1,7 +1,5 @@
 #!/bin/bash
 
-cd /root
-
 bash ./pre_test
 if [ $? -ne 0 ]; then
     echo "pre_test: failed"
@@ -32,3 +30,6 @@ if [ $? -ne 0 ]; then
 else
     echo "post_test: succeeded"
 fi
+
+echo "clean up"
+bash ./clean_up

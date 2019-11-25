@@ -1,5 +1,7 @@
 #!/bin/bash
 
+. test_helper
+
 BASE_DIR=/tmp/daddy_test
 
 mkdir -p ${BASE_DIR}/pre/a/b/c/d
@@ -14,14 +16,17 @@ if [ ! -e ${BASE_DIR}/pre/dummy ]; then
     exit 1
 fi
 
-which zsh > /dev/null 2>&1
+helper_is_installed sl > /dev/null 2>&1
 if [ $? -eq 0 ]; then
-    echo "pre: zsh in already installed."
+    echo "pre: sl is already installed."
     exit 1
 fi
 
-dpkg --status git | grep -i status | grep -i installed > /dev/null 2>&1
+helper_is_installed cowsay > /dev/null 2>&1
 if [ $? -ne 0 ]; then
-    echo "package: git is not installed."
-    exit 1
+    helper_install_package cowsay > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+        echo "package: failed to pre-install cowsay."
+        exit 1
+    fi
 fi

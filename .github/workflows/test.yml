@@ -2,7 +2,7 @@ name: test
 on: [push]
 
 jobs:
-  test:
+  unit_test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -10,3 +10,9 @@ jobs:
         run: lein deps
       - name: Run tests
         run: lein test
+
+  jar_test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - run: make local_jar_test

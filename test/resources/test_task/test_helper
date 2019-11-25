@@ -1,0 +1,39 @@
+#!/bin/bash
+
+OS_TYPE="$(uname)"
+
+helper_is_installed () {
+    if [ ${OS_TYPE} = 'Darwin' ]; then
+        brew list ${1}
+    else
+        dpkg --status ${1} | grep -i status | grep -i installed
+    fi
+    return $?
+}
+
+helper_install_package() {
+    RESULT=0
+    if [ ${OS_TYPE} = 'Darwin' ]; then
+        brew install -f ${1}
+        RESULT=$?
+    else
+        apt update
+        apt install -y ${1}
+        RESULT=$?
+        if [ ${RET} -ne 0 ]; then
+            return 1
+        fi
+        apt-get clean
+        rm -rf /var/lib/apt/lists/*
+    fi
+    return ${RESULT}
+}
+
+helper_uninstall_package() {
+    if [ ${OS_TYPE} = 'Darwin' ]; then
+      brew uninstall -f ${1}
+    else
+      apt remove -y ${1}
+    fi
+    return $?
+}
