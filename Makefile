@@ -33,9 +33,10 @@ dad: target/daddy.jar
 		"-J-Xmx3g"
 
 native-image: clean dad
+	lein clean
 
 jar_test: target/daddy.jar
-	env TARGET=target/daddy.jar ./script/test
+	env TARGET=target/daddy.jar IMAGE_NAME=clojure:openjdk-11-lein ./script/test
 
 local_jar_test: target/daddy.jar
 	\cp -pf target/daddy.jar test/resources/test_task
@@ -43,7 +44,13 @@ local_jar_test: target/daddy.jar
 	\rm -f test/resources/test_task/daddy.jar
 
 bin_test: dad.linux-amd64
-	env TARGET=dad.linux-amd64 ./script/test
+	env TARGET=dad.linux-amd64 IMAGE_NAME=ubuntu:latest ./script/test
+
+example_jar_test: target/daddy.jar
+	env TARGET=target/daddy.jar IMAGE_NAME=clojure:openjdk-11-lein ./script/example
+
+example_bin_test: dad.linux-amd64
+	env TARGET=dad.linux-amd64 IMAGE_NAME=ubuntu:latest ./script/example
 
 test:
 	lein test

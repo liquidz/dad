@@ -1,0 +1,8 @@
+#!/bin/sh
+
+git checkout .
+git pull origin master
+./configure {{configure}}
+make
+sudo make install
+echo finished

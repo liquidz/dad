@@ -1,0 +1,11 @@
+#!/bin/bash
+
+TMPDIR='./tmp'
+mkdir -p ${TMPDIR}
+
+\cp -pr example/* ${TMPDIR}
+\cp -pr ${TARGET} ${TMPDIR}
+
+(cd ${TMPDIR} && docker run --rm -it -v $(pwd):/root -w /root ${IMAGE_NAME} bash)
+
+\rm -rf ${TMPDIR}
