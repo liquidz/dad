@@ -9,6 +9,8 @@
             [daddy.reader.impl :as d.r.impl]
             [sci.core :as sci]))
 
+(declare read-tasks)
+
 (def ^:private task-configs
   {'directory, {:destination d.r.impl/directory
                 :resource-name-key :path}
@@ -60,6 +62,11 @@
        (remove nil? )
        (map #(assoc % :id (task-id %)))))
 
+(defn- load-file* [ctx path]
+  (-> path
+      slurp
+      (sci/eval-string ctx)))
+
 (defn- build-task-bindings [tasks-atom config]
   (letfn [(add-tasks [tasks]
             (doseq [task (ensure-task-list tasks)]
@@ -75,7 +82,10 @@
 
 (defn read-tasks [config code-str]
   (let [tasks (atom [])
-        bindings (merge (build-task-bindings tasks config)
-                        util-bindings)]
-    (doall (sci/eval-string code-str {:bindings bindings}))
+        env (atom {})
+        ctx {:bindings (merge (build-task-bindings tasks config)
+                              util-bindings)
+             :env env}
+        ctx (update ctx :bindings assoc 'load-file (partial load-file* ctx))]
+    (doall (sci/eval-string code-str ctx))
     (d.util/distinct-by :id @tasks)))

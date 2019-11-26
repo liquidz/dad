@@ -152,3 +152,13 @@
   (t/testing "error"
     (t/is (thrown? ExceptionInfo
                    (read-one-task "(template \"foo\")")))))
+
+(t/deftest load-file-test
+  (let [dummy-loaded-content (str/join  '((file (hello "neko"))
+                                          (directory (hello "inu"))))
+        dummy-input-code (str/join '((defn hello [s] (str "hello " s))
+                                     (load-file "dummy.clj")))]
+    (with-redefs [slurp (constantly dummy-loaded-content)]
+      (t/is (= [{:type :file :path "hello neko" :action :create}
+                {:type :directory :action :create :path "hello inu"}]
+               (map #(dissoc % :id) (read-tasks dummy-input-code)))))))
