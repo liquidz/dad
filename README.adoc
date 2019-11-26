@@ -1,5 +1,8 @@
 = daddy
 
+image:https://github.com/liquidz/daddy/workflows/test/badge.svg[]
+
+
 Careless configuration management tool.
 This project is heavily inspired by https://github.com/itamae-kitchen/mitamae[mitamae].
 
@@ -35,6 +38,11 @@ Here is a example to install Clojure https://clojure.org/guides/deps_and_cli[com
 (file {:path "/tmp/install.sh" :action :delete})
 ----
 
+== ToDo
+
+- [ ] Dry run
+- [ ] More user-friendly logging
+
 == Reference
 
 === Built-in vars / functions
@@ -44,6 +52,7 @@ Here is a example to install Clojure https://clojure.org/guides/deps_and_cli[com
 
 | env          | Var      | Map of environmental variables. E.g. `(env :home)`
 | file-exists? | Func     | Return true if the specified path exists.
+| load-file    | Func     | Load another *.clj file. E.g. `(load-file "foo.clj")`
 | os-type      | Var      | OS name string such as `"linux"` or `"mac"`.
 | println      | Func     |
 | str/join     | Func     |
@@ -71,11 +80,11 @@ Create directories.
 |===
 | Key | Value | Required | Default | Description
 
-| <path>   | String            | Yes      |           | Directories are created recursively.
-| action | Keyword or String | No       | `:create` | `:delete` or `:remove` for deletion.
-| mode   | String            | No       |           |
-| owner  | String            | No       |           |
-| group  | String            | No       |           |
+| <path> | String            | Yes |           | Directories are created recursively.
+| action | Keyword or String | No  | `:create` | `:delete` or `:remove` for deletion.
+| mode   | String            | No  |           |
+| owner  | String            | No  |           |
+| group  | String            | No  |           |
 |===
 
 [source,clojure]
@@ -92,8 +101,10 @@ Execute a shell command.
 |===
 | Key | Value | Required | Default | Description
 
-| cwd       | String | No |  | Working directory.
-| <command> | String | No |  |
+| <command> | String | Yes |  |
+| cwd       | String | No  |  | Working directory.
+| pre       | String | No  |  | Pre-condition to execute `cmd`.
+| pre-not   | String | No  |  | Pre-condition not to execute `cmd`.
 |===
 
 [source,clojure]
@@ -101,6 +112,7 @@ Execute a shell command.
 ----
 (execute "curl -sfLo /tmp/foobar https://example.com")
 (execute {:cwd "/tmp" :command "curl -sfLo foobar https://example.com"})
+(execute {:command "touch foo" :pre-not "test -e bar"})
 ----
 
 ==== file
@@ -110,11 +122,11 @@ Create a file.
 |===
 | Key | Value | Required | Default | Description
 
-| <path>   | String            | Yes      |           |
-| action | Keyword or String | No       | `:create` | `:delete` or `:remove` for deletion.
-| mode   | String            | No       |           |
-| owner  | String            | No       |           |
-| group  | String            | No       |           |
+| <path> | String            | Yes |           |
+| action | Keyword or String | No  | `:create` | `:delete` or `:remove` for deletion.
+| mode   | String            | No  |           |
+| owner  | String            | No  |           |
+| group  | String            | No  |           |
 |===
 
 [source,clojure]
@@ -148,8 +160,8 @@ Create a symbolic link.
 |===
 | Key | Value | Required | Default | Description
 
-| <path>   | String | Yes |            | Link path.
-| to      | String | Yes |            | Destination path.
+| <path> | String | Yes |  | Link path.
+| to     | String | Yes |  | Destination path.
 |===
 
 [source,clojure]
