@@ -35,21 +35,14 @@
         log-level (cond
                     silent :silent
                     debug :debug
-                    :else :info)]
+                    :else :info)
+        runner-fn (if debug
+                    show-read-tasks
+                    (partial d.runner/run-tasks config))]
     (cond
       errors (doseq [e errors] (println e))
       help (usage summary)
       version (print-version)
-      debug (try
-              (some->> arguments
-                       (map slurp)
-                       (str/join "\n")
-                       (d.reader/read-tasks config)
-                       show-read-tasks)
-              (catch Exception ex
-                (println (.getMessage ex) (ex-data ex))
-                (System/exit 1)))
-
       :else
       (binding [d.log/*level* log-level]
         (try
@@ -57,7 +50,7 @@
                    (map slurp)
                    (str/join "\n")
                    (d.reader/read-tasks config)
-                   (d.runner/run-tasks config))
+                   runner-fn)
           (catch Exception ex
             (d.log/error (.getMessage ex) (ex-data ex))
             (System/exit 1)))))
