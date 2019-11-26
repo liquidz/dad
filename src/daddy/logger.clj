@@ -3,25 +3,45 @@
 
 (def ^:dynamic *level* :info)
 (def ^:private levels (zipmap [:debug :info :warn :error :silent] (range)) )
-(def ^:private color-codes
-  {:debug 97
-   :info 32
-   :warn 35
-   :error 31
-   :silent 30})
 
-(defn- colorize [code s]
-  (str \u001b "[" code "m" s \u001b "[m"))
+(def ^:private color-codes
+  {:white 97
+   :green 32
+   :purple 35
+   :red 31
+   :black 30})
+
+(def ^:private log-colors
+  {:debug :white
+   :info :green
+   :warn :purple
+   :error :red
+   :silent :black})
+
+(defn colorize [color-key s]
+  (str \u001b "[" (get color-codes color-key) "m" s \u001b "[m"))
+
+(defn- log* [level msg]
+  (when (<= (get levels *level*) (get levels level))
+    (print msg)
+    (flush)
+    nil))
+
+(defn message [level msg & more]
+  (let [colorize* (partial colorize (get log-colors level :white))
+        messages (cond-> [(colorize* (str/upper-case (name level)))
+                          ":"
+                          msg]
+                   more (concat more))]
+     (str/join " " messages)))
 
 (defn- log [level msg & more]
-  (when (<= (get levels *level*) (get levels level))
-    (let [colorize* (partial colorize (get color-codes level :debug))]
-      (apply println
-             (cond-> [(colorize* (str/upper-case (name level)))
-                       ":"
-                       msg]
-               more (concat more))))
-    nil))
+  (log* level (str (apply message level msg more) "\n")))
+
+(def debug* (partial log* :debug))
+(def info* (partial log* :info))
+(def warn* (partial log* :warn))
+(def error* (partial log* :error))
 
 (def debug (partial log :debug))
 (def info (partial log :info))
