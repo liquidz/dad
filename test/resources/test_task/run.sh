@@ -1,5 +1,6 @@
 #!/bin/bash
 
+echo "pre_test: started"
 bash ./pre_test
 if [ $? -ne 0 ]; then
     echo "pre_test: failed"
@@ -8,6 +9,7 @@ else
     echo "pre_test: succeeded"
 fi
 
+echo "dad: started"
 ls -1 dad.linux-amd64 > /dev/null 2>&1
 if [ $? -eq 0 ]; then
     echo "dad: using native image"
@@ -23,6 +25,7 @@ else
     echo "dad: succeeded"
 fi
 
+echo "post_test: started"
 bash ./post_test
 if [ $? -ne 0 ]; then
     echo "post_test: failed"

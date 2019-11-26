@@ -1,7 +1,8 @@
 {
  :command
  #merge [#include "command.edn"
-         {:foo-test {:command "foo %foo%" :requires #{:foo}}
+         {:dummy {:command "dummy command"}
+          :foo-test {:command "foo %foo%" :requires #{:foo}}
           :bar-test {:command "bar %bar%" :requires #{:bar}}
 
           :success-test {:command "^ %foo% body %bar% $"
@@ -14,6 +15,9 @@
           :once-test {:command "only once" :once? true}
           :foo-once-test {:command [:once-test :foo-test]}
           :bar-once-test {:command [:once-test :bar-test]}
+
+          :expand-pre-raw-test {:command [:once-test "pre-raw"] :pre ["raw"]}
+          :expand-pre-kw-test {:command [:once-test "pre-kw"] :pre [:dummy]}
 
           :pre-test {:command "pre" :pre [:foo-test]}
           :pre-not-test {:command "pre not" :pre-not [:bar-test]}

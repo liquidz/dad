@@ -1,9 +1,6 @@
 #!/bin/bash
 
 TMPDIR='./tmp'
-#IMAGE_NAME='openjdk:11.0-jre-stretch'
-IMAGE_NAME='clojure:openjdk-11-lein'
-
 mkdir -p ${TMPDIR}
 
 \cp -pr test/resources/test_task/* ${TMPDIR}

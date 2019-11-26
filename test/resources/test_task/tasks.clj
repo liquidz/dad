@@ -13,11 +13,10 @@
 (execute {:command "touch hello"
           :cwd (base-dir "")})
 
+(execute {:command "touch error"
+          :cwd (base-dir "")
+          :pre-not "test -e hello"})
+
 (link (base-dir "world") {:to (base-dir "hello")})
 
-(package "sl")
-(package "cowsay" {:action :uninstall})
-
-(template {:path (base-dir "tmpl")
-           :source "template.tmpl"
-           :variables {:foo "bar" :bar "baz"}})
+(load-file "loaded_tasks.clj")

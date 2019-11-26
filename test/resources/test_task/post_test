@@ -38,6 +38,11 @@ if [ ! -e ${BASE_DIR}/hello ]; then
     exit 1
 fi
 
+if [ -e ${BASE_DIR}/error ]; then
+    echo "execute: ${BASE_DIR}/error exists."
+    exit 1
+fi
+
 ### link
 if [ ! -L ${BASE_DIR}/world ]; then
     echo "link: ${BASE_DIR}/world is not a symbolic link."

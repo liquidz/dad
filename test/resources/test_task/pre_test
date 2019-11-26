@@ -16,6 +16,16 @@ if [ ! -e ${BASE_DIR}/pre/dummy ]; then
     exit 1
 fi
 
+helper_is_installed git > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo "pre: git it not found. try to install."
+    helper_install_package git > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+        echo "pre: failed to pre-install git."
+        exit 1
+    fi
+fi
+
 helper_is_installed sl > /dev/null 2>&1
 if [ $? -eq 0 ]; then
     echo "pre: sl is already installed."
@@ -24,9 +34,12 @@ fi
 
 helper_is_installed cowsay > /dev/null 2>&1
 if [ $? -ne 0 ]; then
+    echo "pre: cowsay it not found. try to install."
     helper_install_package cowsay > /dev/null 2>&1
     if [ $? -ne 0 ]; then
-        echo "package: failed to pre-install cowsay."
+        echo "pre: failed to pre-install cowsay."
         exit 1
     fi
 fi
+
+helper_cleanup_package > /dev/null 2>&1

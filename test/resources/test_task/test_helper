@@ -15,18 +15,21 @@ helper_install_package() {
     RESULT=0
     if [ ${OS_TYPE} = 'Darwin' ]; then
         brew install -f ${1}
-        RESULT=$?
     else
         apt update
         apt install -y ${1}
-        RESULT=$?
-        if [ ${RET} -ne 0 ]; then
-            return 1
-        fi
+    fi
+    return $?
+}
+
+helper_cleanup_package() {
+    if [ ${OS_TYPE} = 'Darwin' ]; then
+        :
+    else
         apt-get clean
         rm -rf /var/lib/apt/lists/*
     fi
-    return ${RESULT}
+    return $?
 }
 
 helper_uninstall_package() {
