@@ -23,6 +23,18 @@
     false, [{:exit 0} {:exit 1}]
     false, [{:exit 1} {:exit 1}]))
 
+(t/deftest expand-pre-tasks-test
+  (let [test-fn #(#'sut/expand-pre-tasks config %)]
+    (t/testing "raw command"
+      (t/is (= [{:type :expand-pre-raw-test :__def__ {:command "raw"}}]
+               (test-fn {:type :expand-pre-raw-test}))))
+
+    (t/testing "keyword"
+      (t/is (= [{:type :dummy :__def__ {:command "dummy command"}}]
+               (test-fn {:type :expand-pre-kw-test}))))
+
+    (t/is (nil? (test-fn {:type :dummy})))))
+
 (t/deftest expand-tasks-test
   (let [expand-tasks #(->> % d.r.impl/dispatch-task (#'sut/expand-tasks config))]
     (t/is (= [{:type :foo-test :__def__ {:command "foo %foo%" :requires #{:foo}}}
@@ -34,7 +46,17 @@
               {:type :chown :path "foo" :source "bar"}
               {:type :chgrp :path "foo" :source "bar"}]
              (map #(dissoc % :__def__)
-                  (expand-tasks [{:type :template :path "foo" :source "bar"}]))))))
+                  (expand-tasks [{:type :template :path "foo" :source "bar"}]))))
+
+    (t/testing "expand with successful pre"
+      (h/with-test-sh true
+        (t/is (= [{:type :once-test :__def__ {:command "only once" :once? true}}
+                  {:type :expand-pre-raw-test :__def__ {:command "pre-raw" :pre ["raw"]}}]
+                 (expand-tasks [{:type :expand-pre-raw-test}])))))
+
+    (t/testing "expand with failing pre"
+      (h/with-test-sh false
+        (t/is (empty?  (expand-tasks [{:type :expand-pre-raw-test}])))))))
 
 (t/deftest has-enough-params?-test
   (let [expanded-task {:type :dummy
@@ -90,16 +112,6 @@
                 ["sh" "-c" "foo hello"]
                 ["sh" "-c" "bar world"]]
                (map :args res))))))
-
-(t/deftest expand-pre-tasks-test
-  (let [test-fn #(#'sut/expand-pre-tasks config %)]
-    (t/testing "raw command"
-      (t/is (= [{:type :dummy :__def__ {:command "bar"}}]
-               (test-fn {:type :dummy :__def__ {:command "org" :pre "bar"}}))))
-    (t/testing "keyword"
-      (t/is (= [{:type :foo-test :__def__ {:command "foo %foo%" :requires #{:foo}}}]
-               (test-fn {:type :dummy :__def__ {:command "org" :pre [:foo-test]}}))))
-    (t/is (nil? (test-fn {:type :dummy})))))
 
 (t/deftest run-tasks-pre-and-pre-not-test
   (h/with-test-sh true
