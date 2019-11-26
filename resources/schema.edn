@@ -15,7 +15,9 @@
 
  execute [:map
            [:command [:or string? [:vector string?]]]
-           [:cwd {:optional true} string?]]
+           [:cwd {:optional true} string?]
+           [:pre {:optional true} string?]
+           [:pre-not {:optional true} string?]]
 
  file [:map
         [:path string?]

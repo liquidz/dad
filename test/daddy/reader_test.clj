@@ -6,14 +6,15 @@
   (:import clojure.lang.ExceptionInfo))
 
 (def ^:private test-config (h/read-test-config))
-(def ^:private read-tasks (partial sut/read-tasks test-config))
+(def ^:private read-tasks #(sut/read-tasks test-config (str %)))
 (defn- read-one-task [code]
   (let [[task :as res] (read-tasks code)]
     (t/is (= 1 (count res)))
     (dissoc task :id)))
 
+
 (t/deftest task-id-test
-  (let [[{:keys [id]}] (read-tasks "(package \"foo\")")]
+  (let [[{:keys [id]}] (read-tasks '(package "foo"))]
     (t/is (and (string? id) (not (str/blank? id))))))
 
 (t/deftest distinct-by-task-id-test
@@ -41,48 +42,60 @@
 (t/deftest directory-test
   (t/testing "only resource name"
     (t/is (= {:type :directory :path "/tmp/foo/bar" :action :create}
-             (read-one-task "(directory \"/tmp/foo/bar\")"))))
+             (read-one-task '(directory "/tmp/foo/bar")))))
 
   (t/testing "no resource name"
     (t/is (= {:type :directory :path "/tmp/foo/bar" :action :create}
-             (read-one-task "(directory {:path \"/tmp/foo/bar\"})"))))
+             (read-one-task '(directory {:path "/tmp/foo/bar"})))))
 
   (t/testing "string action"
     (t/is (= {:type :directory :path "/tmp/foo/bar" :action :remove}
-             (read-one-task "(directory {:path \"/tmp/foo/bar\" :action \"remove\"})"))))
+             (read-one-task '(directory {:path "/tmp/foo/bar" :action :remove})))))
 
   (t/testing "invalid option"
     (t/is (thrown? ExceptionInfo
-                   (read-one-task "(directory \"/tmp/foo/bar\" 123)"))))
+                   (read-one-task '(directory "/tmp/foo/bar" 123)))))
 
   (t/testing "invalid action"
     (t/is (thrown? ExceptionInfo
-                   (read-one-task "(directory \"/tmp/foo/bar\" {:action :invalid})"))))
+                   (read-one-task '(directory "/tmp/foo/bar" {:action :invalid})))))
 
   (t/testing "mode, owner, group"
     (t/is (= {:type :directory :path "/tmp/foo" :mode "0755" :owner "bar" :group "baz" :action :create}
-             (read-one-task "(directory \"/tmp/foo\" {:mode \"0755\" :owner \"bar\" :group \"baz\"})")))))
+             (read-one-task '(directory "/tmp/foo" {:mode "0755" :owner "bar" :group "baz"}))))))
 
 (t/deftest execute-test
   (t/testing "only resource name"
     (t/is (= {:type :execute :command "foo" :cwd nil}
-             (read-one-task "(execute \"foo\")"))))
+             (read-one-task '(execute "foo")))))
 
   (t/testing "no resource name"
     (t/is (= {:type :execute :command "foo" :cwd nil}
-             (read-one-task "(execute {:command \"foo\"})"))))
+             (read-one-task '(execute {:command "foo"})))))
 
   (t/testing "cwd"
     (t/is (= {:type :execute :command "foo" :cwd "bar"}
-             (read-one-task "(execute {:command \"foo\" :cwd \"bar\"})"))))
+             (read-one-task '(execute {:command "foo" :cwd "bar"})))))
+
+  (t/testing "pre"
+    (t/is (= {:type :execute :command "foo" :pre "bar" :cwd nil}
+             (read-one-task '(execute {:command "foo" :pre "bar"}))))
+    (t/is (thrown? ExceptionInfo
+                   (read-one-task '(execute {:command "foo" :pre 123})))))
+
+  (t/testing "pre-not"
+    (t/is (= {:type :execute :command "foo" :pre-not "bar" :cwd nil}
+             (read-one-task '(execute {:command "foo" :pre-not "bar"}))))
+    (t/is (thrown? ExceptionInfo
+                   (read-one-task '(execute {:command "foo" :pre-not 123})))))
 
   (t/testing "invalid option"
     (t/is (thrown? ExceptionInfo
-                   (read-one-task "(execute 123)"))))
+                   (read-one-task '(execute 123)))))
 
   (t/testing "no command"
     (t/is (thrown? ExceptionInfo
-                   (read-one-task "(execute {:cwd \"bar\"})")))))
+                   (read-one-task '(execute {:cwd "bar"}))))))
 
 (t/deftest git-test
   (t/testing "no revision"

@@ -12,12 +12,14 @@
       group (assoc :group group))))
 
 (defn execute [m]
-  (let [{:keys [cwd command]} m
+  (let [{:keys [cwd command pre pre-not]} m
         command (cond->> command
                   (sequential? command) (str/join "\n"))]
-    {:type :execute
-     :command command
-     :cwd cwd}))
+    (cond-> {:type :execute
+             :command command
+             :cwd cwd}
+      pre (assoc :pre pre)
+      pre-not (assoc :pre-not pre-not))))
 
 (defn file [m]
   (let [{:keys [path action mode owner group] :or {action :create}} m]
