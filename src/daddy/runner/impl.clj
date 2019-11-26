@@ -12,13 +12,15 @@
     (contains? #{:delete :remove} action) (assoc :type :directory-delete)))
 
 (defmethod dispatch-task :execute
-  [{:keys [command cwd] :as task}]
-  (let [task (->> command
-                  d.util/ensure-seq
-                  (str/join " && ")
-                  (assoc task :command))]
-    (cond-> task
-      cwd (assoc :type :execute-at))))
+  [{:keys [command pre pre-not cwd] :as task}]
+  (let [transform #(when-let [s (some->> % d.util/ensure-seq (str/join " && "))]
+                     (if cwd
+                       (format "(cd %s && %s)" cwd s)
+                       s))
+        [command pre pre-not] (map transform [command pre pre-not])]
+    (cond-> (assoc task :command command)
+      pre (assoc :pre pre)
+      pre-not (assoc :pre-not pre-not))))
 
 (defmethod dispatch-task :file
   [{:keys [action] :as task}]
