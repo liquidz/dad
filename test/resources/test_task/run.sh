@@ -15,9 +15,16 @@ if [ $? -eq 0 ]; then
     echo "dad: using native image"
     ./dad.linux-amd64 tasks.clj
 else
-    echo "dad: using JAR"
-    java -jar daddy.jar tasks.clj
+    ls -1 dad > /dev/null 2>&1
+    if [ $? -eq 0 ]; then
+        echo "dad: using native image"
+        ./dad tasks.clj
+    else
+        echo "dad: using JAR"
+        java -jar daddy.jar tasks.clj
+    fi
 fi
+
 if [ $? -ne 0 ]; then
     echo "dad: failed"
     exit 1

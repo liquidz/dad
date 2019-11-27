@@ -1,4 +1,5 @@
-.PHONY: native-image jar_test bin_test circleci test clean
+.PHONY: native-image test release clean
+.PHONY: jar_test local_jar_test bin_test example_jar_test example_bin_test
 
 PLATFORM = $(shell uname -s)
 ifeq ($(PLATFORM), Darwin)
@@ -10,7 +11,7 @@ endif
 target/daddy.jar:
 	lein uberjar
 dad.linux-amd64:
-	./script/build
+	./script/linux-build
 
 dad: target/daddy.jar
 	$(GRAALVM_HOME)/bin/native-image \
@@ -54,6 +55,9 @@ example_bin_test: dad.linux-amd64
 
 test:
 	lein test
+
+release:
+	./script/release
 
 clean:
 	lein clean

@@ -1,0 +1,110 @@
+name: release
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  linux-amd64:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install GraalVM
+        run: |
+          cd /tmp
+          if ! [ -d /tmp/graalvm-ce-java11-19.3.0 ]; then
+            curl -O -sL https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-19.3.0/graalvm-ce-java11-linux-amd64-19.3.0.tar.gz
+            tar xzf graalvm-ce-java11-linux-amd64-19.3.0.tar.gz
+          fi
+      - name: Build native image
+        env:
+          GRAALVM_HOME: /tmp/graalvm-ce-java11-19.3.0
+        run: |
+          ${GRAALVM_HOME}/bin/gu install native-image
+          make native-image
+      - name: Run tests
+        run: |
+          cp -f dad test/resources/test_task/
+          cd test/resources/test_task
+          bash run.sh
+      - name: Rename
+        run: mv dad dad.linux-amd64
+      - uses: actions/upload-artifact@master
+        with:
+          name: daddy.linux-amd64
+          path: ./dad.linux-amd64
+
+  darwin-amd64:
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install leiningen
+        run: brew install leiningen
+      - name: Install GraalVM
+        run: |
+          cd /tmp
+          if ! [ -d /tmp/graalvm-ce-java11-19.3.0 ]; then
+            curl -O -sL https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-19.3.0/graalvm-ce-java11-darwin-amd64-19.3.0.tar.gz
+            tar xzf graalvm-ce-java11-darwin-amd64-19.3.0.tar.gz
+          fi
+      - name: Build native image
+        env:
+          GRAALVM_HOME: /tmp/graalvm-ce-java11-19.3.0/Contents/Home
+        run: |
+          ${GRAALVM_HOME}/bin/gu install native-image
+          make native-image
+      - name: Run tests
+        run: |
+          cp -f dad test/resources/test_task/
+          cd test/resources/test_task/
+          bash run.sh
+      - name: Rename
+        run: mv dad dad.darwin-amd64
+      - uses: actions/upload-artifact@master
+        with:
+          name: daddy.darwin-amd64
+          path: ./dad.darwin-amd64
+
+  release:
+    needs: [linux-amd64, darwin-amd64]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/create-release@v1
+        id: create_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          with:
+            tag_name: ${{ github.ref }}
+            release_name: ${{ github.ref }}
+            body: released
+            draft: false
+            prerelease: false
+
+      - uses: actions/download-artifact@master
+        with:
+          name: daddy.linux-amd64
+          path: tmp
+      - uses: actions/upload-release-asset@v1.0.1
+        id: upload-release-asset
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          with:
+            upload_url: ${{ steps.create_release.outputs.upload_url }}
+            asset_path: ./tmp/dad.linux-amd64
+            asset_name: dad.linux-amd64
+            asset_content_type: application/octet-stream
+
+      - uses: actions/download-artifact@master
+        with:
+          name: daddy.darwin-amd64
+          path: tmp
+      - uses: actions/upload-release-asset@v1.0.1
+        id: upload-release-asset
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          with:
+            upload_url: ${{ steps.create_release.outputs.upload_url }}
+            asset_path: ./tmp/dad.darwin-amd64
+            asset_name: dad.darwin-amd64
+            asset_content_type: application/octet-stream

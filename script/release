@@ -1,0 +1,11 @@
+#!/bin/bash
+
+VERSION=$(cat resources/version.txt)
+
+if [[ "${VERSION}" =~ 'SNAPSHOT' ]]; then
+    echo 'Could not release snapshot.'
+    exit 1
+else
+    git tag ${VERSION}
+    git push origin ${VERSION}
+fi
