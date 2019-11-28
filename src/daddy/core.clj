@@ -12,6 +12,7 @@
 (def ^:private cli-options
   [["-s" "--silent"]
    [nil "--debug"]
+   ["-n" "--dry-run"]
    ["-h" "--help"]
    ["-v" "--version"]])
 
@@ -30,13 +31,13 @@
 
 (defn -main [& args]
   (let [{:keys [arguments options summary errors]} (cli/parse-opts args cli-options)
-        {:keys [debug help silent version]} options
+        {:keys [debug dry-run help silent version]} options
         config (d.config/read-config)
         log-level (cond
                     silent :silent
                     debug :debug
                     :else :info)
-        runner-fn (if debug
+        runner-fn (if dry-run
                     show-read-tasks
                     (partial d.runner/run-tasks config))]
     (cond
