@@ -26,7 +26,7 @@ jobs:
         run: |
           cp -f dad test/resources/test_task/
           cd test/resources/test_task
-          bash run.sh
+          sudo bash run.sh
       - name: Rename
         run: mv dad dad.linux-amd64
       - uses: actions/upload-artifact@master

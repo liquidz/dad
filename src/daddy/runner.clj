@@ -127,7 +127,7 @@
     (d.log/debug "Not runnable task" {:task expanded-task})))
 
 (defn run-tasks [config tasks]
-  (d.log/info "Daddy started cooking...")
+  (d.log/info "Daddy started cooking.")
   (->> tasks
        (map d.r.impl/dispatch-task)
        (expand-tasks config)

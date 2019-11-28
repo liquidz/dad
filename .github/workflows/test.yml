@@ -12,4 +12,4 @@ jobs:
           key: v1-deps-${{ hashFiles('project.clj') }}
       - run: lein deps
       - run: make test
-      - run: make local_jar_test
+      - run: sudo make local_jar_test

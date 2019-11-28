@@ -34,9 +34,20 @@ helper_cleanup_package() {
 
 helper_uninstall_package() {
     if [ ${OS_TYPE} = 'Darwin' ]; then
-      brew uninstall -f ${1}
+        brew uninstall -f ${1}
     else
-      apt remove -y ${1}
+        apt remove -y ${1}
     fi
+    return $?
+}
+
+helper_check_md5() {
+    if [ ${OS_TYPE} = 'Darwin' ]; then
+        helper_is_installed md5sha1sum
+        if [ $? -ne 0 ]; then
+            helper_install_package md5sha1sum
+        fi
+    fi
+    md5sum -c ${1}
     return $?
 }

@@ -41,7 +41,7 @@ jar_test: target/daddy.jar
 
 local_jar_test: target/daddy.jar
 	\cp -pf target/daddy.jar test/resources/test_task
-	(cd test/resources/test_task && sudo bash run.sh)
+	(cd test/resources/test_task && bash run.sh)
 	\rm -f test/resources/test_task/daddy.jar
 
 bin_test: dad.linux-amd64
