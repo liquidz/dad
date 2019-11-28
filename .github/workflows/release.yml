@@ -77,7 +77,8 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: ${{ github.ref }}
-          body: released
+          body: |
+            released
           draft: false
           prerelease: false
 
@@ -86,7 +87,7 @@ jobs:
           name: daddy.linux-amd64
           path: tmp
       - uses: actions/upload-release-asset@v1.0.1
-        id: upload-release-asset
+        id: upload-linux-release-asset
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -100,7 +101,7 @@ jobs:
           name: daddy.darwin-amd64
           path: tmp
       - uses: actions/upload-release-asset@v1.0.1
-        id: upload-release-asset
+        id: upload-darwin-release-asset
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
