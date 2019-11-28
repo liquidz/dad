@@ -15,7 +15,7 @@
   [{:keys [command pre pre-not cwd] :as task}]
   (let [transform #(when-let [s (some->> % d.util/ensure-seq (str/join " && "))]
                      (if cwd
-                       (format "(cd %s && %s)" cwd s)
+                       (format "cd %s && %s" cwd s)
                        s))
         [command pre pre-not] (map transform [command pre pre-not])]
     (cond-> (assoc task :command command)
