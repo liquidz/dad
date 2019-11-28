@@ -1,20 +1,21 @@
-= daddy
+= Daddy
 
-image:https://github.com/liquidz/daddy/workflows/test/badge.svg[]
+image:https://github.com/liquidz/daddy/workflows/test/badge.svg[link="https://github.com/liquidz/daddy/actions"]
+image:https://img.shields.io/github/release/liquidz/daddy.svg?logo=Github[link="https://github.com/liquidz/daddy/releases"]
 
+> My father is a greate chef :)
 
-Careless configuration management tool.
+Daddy is a minimum configuration management tool for Clojure.
 This project is heavily inspired by https://github.com/itamae-kitchen/mitamae[mitamae].
-
-// My father is a chef :)
 
 == Getting Started
 
 Download binary from https://github.com/liquidz/daddy/releases[releases].
 [source,terminal]
 ----
-wget https://github.com/liquidz/daddy/releases/download/0.1.0/dad.linux-amd64
-chmod +x dad.linux-amd64
+curl -sfLo dad https://github.com/liquidz/daddy/releases/download/0.1.0/dad.linux-amd64
+chmod +x dad
+./dad --version
 ----
 
 Here is a example to install Clojure https://clojure.org/guides/deps_and_cli[command line tools].
@@ -38,10 +39,10 @@ Here is a example to install Clojure https://clojure.org/guides/deps_and_cli[com
 (file {:path "/tmp/install.sh" :action :delete})
 ----
 
-== ToDo
+== Example
 
-- [ ] Dry run
-- [ ] More user-friendly logging
+- link:./example/vim[Building vim by source]
+- link:./test/resources/test_task/tasks.clj[Test task]
 
 == Reference
 
