@@ -9,7 +9,7 @@ else
 endif
 
 target/daddy.jar:
-	lein uberjar
+	env LEIN_SNAPSHOTS_IN_RELEASE=1 lein uberjar
 dad.linux-amd64:
 	./script/linux-build
 
