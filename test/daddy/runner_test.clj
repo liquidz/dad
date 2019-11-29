@@ -56,7 +56,8 @@
 
     (t/testing "expand with failing pre"
       (h/with-test-sh false
-        (t/is (empty?  (expand-tasks [{:type :expand-pre-raw-test}])))))))
+        (t/is (= [{:not-runnable? true :type :expand-pre-raw-test}]
+                 (expand-tasks [{:type :expand-pre-raw-test}])))))))
 
 (t/deftest has-enough-params?-test
   (let [expanded-task {:type :dummy
@@ -126,9 +127,10 @@
       (t/is (= [["sh" "-c" "pre not"]] (map :args (run-tasks [{:type :pre-not-test}])))))))
 
 (t/deftest run-tasks-failure-test
-  (t/testing "unknown command"
-    (t/is (thrown-with-msg? ExceptionInfo #"Unknown command type"
-                            (nil? (run-tasks [{:type :unknown}])))))
+  (h/with-test-sh true
+    (t/testing "unknown command"
+      (t/is (thrown-with-msg? ExceptionInfo #"Unknown command type"
+                              (nil? (run-tasks [{:type :unknown}]))))))
 
   (t/testing "failed to run command"
     (h/with-test-sh false

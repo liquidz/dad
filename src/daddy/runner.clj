@@ -67,11 +67,12 @@
 
 (defn- expand-task [config task]
   (if-let [task-def (get-in config [:command (:type task)])]
-    (when (runnable? config task)
+    (if (runnable? config task)
       (for [cmd (d.util/ensure-seq (:command task-def))]
         (if (keyword? cmd)
           (expand-task config (assoc task :type cmd))
-          (assoc task :__def__ (assoc task-def :command cmd)))))
+          (assoc task :__def__ (assoc task-def :command cmd))))
+      (assoc task :not-runnable? true))
     (throw (ex-info "Unknown command type" {:task task}))))
 
 (defn- expand-tasks [config tasks]
@@ -104,11 +105,16 @@
           task->command
           sh))
 
-(defn- start-info-log [expanded-task]
+(defn- generate-info-log [expanded-task]
   (let [type-name (name (:type expanded-task))
-        main-arg (extract-main-arg expanded-task)
-        msg (d.log/message :info (format "  %s [%s] ... " type-name main-arg))]
-    (d.log/info* msg)))
+        main-arg (extract-main-arg expanded-task)]
+    (format "  %s [%s] ... " type-name main-arg)))
+
+(defn- start-info-log [expanded-task]
+  (->> expanded-task
+       generate-info-log
+       (d.log/message :info)
+       d.log/info*))
 
 (defn- finish-info-log [result]
   (let [msg (if (failed? result)
@@ -132,7 +138,21 @@
        (map d.r.impl/dispatch-task)
        (expand-tasks config)
        (filter has-enough-params?)
+       (remove :not-runnable?)
        distinct-once
        (map (partial run-task config))
        (remove nil?)
        doall))
+
+(defn dry-run-tasks [config tasks]
+  (d.log/info "Daddy started tasting.")
+  (doseq [task (->> tasks
+                    (map d.r.impl/dispatch-task)
+                    (expand-tasks config)
+                    (filter has-enough-params?)
+                    distinct-once)]
+    (d.log/info* (generate-info-log task))
+    (d.log/info* (str (if (:not-runnable? task)
+                        (d.log/colorize :red "won't change")
+                        (d.log/colorize :green "will change"))
+                      "\n"))))

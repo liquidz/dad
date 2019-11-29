@@ -26,10 +26,6 @@
   (print-version)
   (println (str "* Usage:\n" summary)))
 
-(defn- show-read-tasks [tasks]
-  (doseq [task tasks]
-    (println (dissoc task :id))))
-
 (defn -main [& args]
   (let [{:keys [arguments options summary errors]} (cli/parse-opts args cli-options)
         {:keys [debug dry-run no-color help silent version]} options
@@ -39,8 +35,8 @@
                     debug :debug
                     :else :info)
         runner-fn (if dry-run
-                    show-read-tasks
-                    (partial d.runner/run-tasks config))]
+                    d.runner/dry-run-tasks
+                    d.runner/run-tasks)]
     (cond
       errors (doseq [e errors] (println e))
       help (usage summary)
@@ -53,7 +49,7 @@
                    (map slurp)
                    (str/join "\n")
                    (d.reader/read-tasks config)
-                   runner-fn)
+                   (runner-fn config))
           (catch Exception ex
             (d.log/error (.getMessage ex) (ex-data ex))
             (System/exit 1)))))
