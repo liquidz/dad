@@ -13,6 +13,7 @@
   [["-s" "--silent"]
    [nil "--debug"]
    ["-n" "--dry-run"]
+   [nil "--no-color"]
    ["-h" "--help"]
    ["-v" "--version"]])
 
@@ -31,7 +32,7 @@
 
 (defn -main [& args]
   (let [{:keys [arguments options summary errors]} (cli/parse-opts args cli-options)
-        {:keys [debug dry-run help silent version]} options
+        {:keys [debug dry-run no-color help silent version]} options
         config (d.config/read-config)
         log-level (cond
                     silent :silent
@@ -45,7 +46,8 @@
       help (usage summary)
       version (print-version)
       :else
-      (binding [d.log/*level* log-level]
+      (binding [d.log/*level* log-level
+                d.log/*color* (not no-color)]
         (try
           (some->> arguments
                    (map slurp)

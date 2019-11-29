@@ -2,6 +2,7 @@
   (:require [clojure.string :as str]))
 
 (def ^:dynamic *level* :info)
+(def ^:dynamic *color* true)
 (def ^:private levels (zipmap [:debug :info :warn :error :silent] (range)) )
 
 (def ^:private color-codes
@@ -19,7 +20,9 @@
    :silent :black})
 
 (defn colorize [color-key s]
-  (str \u001b "[" (get color-codes color-key) "m" s \u001b "[m"))
+  (if *color*
+    (str \u001b "[" (get color-codes color-key) "m" s \u001b "[m")
+    s))
 
 (defn- log* [level msg]
   (when (<= (get levels *level*) (get levels level))
