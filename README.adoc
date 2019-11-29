@@ -5,7 +5,7 @@ image:https://img.shields.io/github/release/liquidz/daddy.svg?logo=Github[link="
 
 > My father is a greate chef :)
 
-Daddy is a minimum configuration management tool for Clojure.
+Daddy is a small configuration management tool for Clojure.
 This project is heavily inspired by https://github.com/itamae-kitchen/mitamae[mitamae].
 
 == Getting Started
@@ -21,6 +21,8 @@ chmod +x dad
 Here is a example to install Clojure https://clojure.org/guides/deps_and_cli[command line tools].
 [source,clojure]
 ----
+#!/usr/bin/env dad --no-color --dry-run
+
 (package ["curl" "rlwrap"])
 
 ;; You can define function as you like
