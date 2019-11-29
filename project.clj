@@ -9,7 +9,7 @@
                  [org.clojure/tools.cli "0.4.2"]
 
                  [aero "1.1.3"]
-                 [borkdude/sci "0.0.11-alpha.12"]
+                 [borkdude/sci "0.0.11-alpha.14"]
                  [camel-snake-kebab "0.4.0"]
                  [metosin/malli "0.0.1-SNAPSHOT"]]
 
