@@ -20,7 +20,7 @@
 (defn- print-version []
   (let [ver (-> "version.txt" io/resource slurp str/trim)]
     (println (str "daddy ver " ver))
-    (println (str "* Detected OS: " (name d.os/os-type)))))
+    (println (str "* Detected OS: " (name (d.os/os-type))))))
 
 (defn- usage [summary]
   (print-version)

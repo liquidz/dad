@@ -5,7 +5,7 @@
 
 (defn read-config
   ([]
-   (read-config (keyword (name d.os/os-type))))
+   (read-config (keyword (name (d.os/os-type)))))
   ([profile]
    (read-config (io/resource "config.edn") profile))
   ([config-file profile]
