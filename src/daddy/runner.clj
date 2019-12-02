@@ -153,6 +153,6 @@
                     distinct-once)]
     (d.log/info* (generate-info-log task))
     (d.log/info* (str (if (:not-runnable? task)
-                        (d.log/colorize :red "won't change")
+                        (d.log/colorize :red "WILL NOT change")
                         (d.log/colorize :green "will change"))
                       "\n"))))
