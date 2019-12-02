@@ -12,6 +12,7 @@
 (def ^:private cli-options
   [["-s" "--silent"]
    [nil "--debug"]
+   ["-e" "--eval CODE"]
    ["-n" "--dry-run"]
    [nil "--no-color"]
    ["-h" "--help"]
@@ -45,11 +46,15 @@
       (binding [d.log/*level* log-level
                 d.log/*color* (not no-color)]
         (try
-          (some->> arguments
-                   (map slurp)
-                   (str/join "\n")
-                   (d.reader/read-tasks config)
-                   (runner-fn config))
+          (let [codes (some->> arguments
+                               (map slurp)
+                               (str/join "\n"))
+                codes (if-let [eval-code (:eval options)]
+                        (str eval-code " " codes)
+                        codes)]
+            (some->> codes
+                     (d.reader/read-tasks config)
+                     (runner-fn config)))
           (catch Exception ex
             (d.log/error (.getMessage ex) (ex-data ex))
             (System/exit 1)))))
