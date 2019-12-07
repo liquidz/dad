@@ -1,3 +1,5 @@
+#!/usr/bin/env dad --no-color --dry-run
+
 (defn base-dir [x]
   (str "/tmp/daddy_test/" x))
 

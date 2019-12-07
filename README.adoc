@@ -5,7 +5,7 @@ image:https://img.shields.io/github/release/liquidz/daddy.svg?logo=Github[link="
 
 > My father is a greate chef :)
 
-Daddy is a minimum configuration management tool for Clojure.
+Daddy is a small configuration management tool for Clojure.
 This project is heavily inspired by https://github.com/itamae-kitchen/mitamae[mitamae].
 
 == Getting Started
@@ -15,12 +15,14 @@ Download binary from https://github.com/liquidz/daddy/releases[releases].
 ----
 curl -sfLo dad https://github.com/liquidz/daddy/releases/download/0.1.0/dad.linux-amd64
 chmod +x dad
-./dad --version
+./dad your_task.clj
 ----
 
 Here is a example to install Clojure https://clojure.org/guides/deps_and_cli[command line tools].
 [source,clojure]
 ----
+#!/usr/bin/env dad --no-color --dry-run
+
 (package ["curl" "rlwrap"])
 
 ;; You can define function as you like
@@ -39,6 +41,11 @@ Here is a example to install Clojure https://clojure.org/guides/deps_and_cli[com
 (file {:path "/tmp/install.sh" :action :delete})
 ----
 
+== Supports
+
+- [x] Ubuntu (`apt`)
+- [x] macOS (link:https://brew.sh[Homebrew])
+
 == Example
 
 - link:./example/vim[Building vim by source]
@@ -54,7 +61,7 @@ Here is a example to install Clojure https://clojure.org/guides/deps_and_cli[com
 | env          | Var      | Map of environmental variables. E.g. `(env :home)`
 | file-exists? | Func     | Return true if the specified path exists.
 | load-file    | Func     | Load another *.clj file. E.g. `(load-file "foo.clj")`
-| os-type      | Var      | OS name string such as `"linux"` or `"mac"`.
+| os-type      | Func     | OS name string such as `"linux"` or `"mac"`.
 | println      | Func     |
 | str/join     | Func     |
 |===

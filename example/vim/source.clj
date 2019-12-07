@@ -1,3 +1,5 @@
+#!/usr/bin/env dad --no-color --dry-run
+
 (def vars
   {:src-dir "/usr/local/src/vim"
    :configure (->> ["--prefix=/usr/local"

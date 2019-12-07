@@ -12,46 +12,49 @@
 (def ^:private cli-options
   [["-s" "--silent"]
    [nil "--debug"]
+   ["-e" "--eval CODE"]
    ["-n" "--dry-run"]
+   [nil "--no-color"]
    ["-h" "--help"]
    ["-v" "--version"]])
 
 (defn- print-version []
   (let [ver (-> "version.txt" io/resource slurp str/trim)]
     (println (str "daddy ver " ver))
-    (println (str "* Detected OS: " (name d.os/os-type)))))
+    (println (str "* Detected OS: " (name (d.os/os-type))))))
 
 (defn- usage [summary]
   (print-version)
   (println (str "* Usage:\n" summary)))
 
-(defn- show-read-tasks [tasks]
-  (doseq [task tasks]
-    (println (dissoc task :id))))
-
 (defn -main [& args]
   (let [{:keys [arguments options summary errors]} (cli/parse-opts args cli-options)
-        {:keys [debug dry-run help silent version]} options
+        {:keys [debug dry-run no-color help silent version]} options
         config (d.config/read-config)
         log-level (cond
                     silent :silent
                     debug :debug
                     :else :info)
         runner-fn (if dry-run
-                    show-read-tasks
-                    (partial d.runner/run-tasks config))]
+                    d.runner/dry-run-tasks
+                    d.runner/run-tasks)]
     (cond
       errors (doseq [e errors] (println e))
       help (usage summary)
       version (print-version)
       :else
-      (binding [d.log/*level* log-level]
+      (binding [d.log/*level* log-level
+                d.log/*color* (not no-color)]
         (try
-          (some->> arguments
-                   (map slurp)
-                   (str/join "\n")
-                   (d.reader/read-tasks config)
-                   runner-fn)
+          (let [codes (some->> arguments
+                               (map slurp)
+                               (str/join "\n"))
+                codes (if-let [eval-code (:eval options)]
+                        (str eval-code " " codes)
+                        codes)]
+            (some->> codes
+                     (d.reader/read-tasks config)
+                     (runner-fn config)))
           (catch Exception ex
             (d.log/error (.getMessage ex) (ex-data ex))
             (System/exit 1)))))
