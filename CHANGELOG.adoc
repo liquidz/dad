@@ -6,8 +6,11 @@ All notable changes to this project will be documented in this file. This change
 // {{{
 === Added
 - Add `--no-color` option.
+- Add `--eval` option.
 
 === Changed
+- Bump sci to 0.0.11.
+- Bump camel-snake-kebab to 0.4.1.
 - Update `--dry-run` option to show "will change" or "won't change".
 // }}}
 
