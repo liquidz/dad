@@ -37,6 +37,15 @@
      :path path
      :revision revision}))
 
+(defn download [m]
+  (let [{:keys [path url mode owner group]} m]
+    (cond-> {:type :download
+             :url url
+             :path path}
+      mode (assoc :mode mode)
+      owner (assoc :owner owner)
+      group (assoc :group group))))
+
 (defn link [m]
   (let [{:keys [path to]} m]
     {:type :link

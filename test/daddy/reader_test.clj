@@ -115,6 +115,23 @@
       (t/is (thrown? ExceptionInfo
                      (read-tasks "(git {:url \"foo\" :_path_ \"bar\"})"))))))
 
+(t/deftest download-test
+  (t/testing "FIXME"
+    (t/is (= {:type :download :url "foo" :path "bar"}
+             (read-one-task '(download {:url "foo" :path "bar"})))))
+
+  (t/testing "modes"
+    (t/is (= {:type :download :url "foo" :path "bar" :mode "0755" :owner "alice" :group "baz"}
+             (read-one-task '(download {:url "foo" :path "bar" :mode "0755" :owner "alice" :group "baz"})))))
+
+  (t/testing "no url"
+    (t/is (thrown? ExceptionInfo
+                   (read-one-task '(download {:path "foo"})))))
+
+  (t/testing "no path"
+    (t/is (thrown? ExceptionInfo
+                   (read-one-task '(download {:url "foo"}))))))
+
 (t/deftest package-test
   (t/testing "no action"
     (t/is (= {:type :package :name "foo" :action :install}

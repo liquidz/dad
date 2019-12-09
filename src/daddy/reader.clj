@@ -20,6 +20,8 @@
                 :resource-name-key :path}
    'git,       {:destination d.r.impl/git
                 :resource-name-key :path}
+   'download,  {:destination d.r.impl/download
+                :resource-name-key :path}
    'link,      {:destination d.r.impl/link
                 :resource-name-key :path}
    'package,   {:destination d.r.impl/package
