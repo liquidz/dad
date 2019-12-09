@@ -21,7 +21,7 @@ else
         ./dad tasks.clj
     else
         echo "dad: using JAR"
-        java -jar daddy.jar tasks.clj
+        java -jar dad.jar tasks.clj
     fi
 fi
 

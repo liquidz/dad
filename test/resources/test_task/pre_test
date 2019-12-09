@@ -2,7 +2,7 @@
 
 . test_helper
 
-BASE_DIR=/tmp/daddy_test
+BASE_DIR=/tmp/dad_test
 
 mkdir -p ${BASE_DIR}/pre/a/b/c/d
 echo dummy > ${BASE_DIR}/pre/dummy

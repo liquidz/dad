@@ -1,13 +1,13 @@
-(ns daddy.core
+(ns dad.core
   (:gen-class)
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
             [clojure.tools.cli :as cli]
-            [daddy.config :as d.config]
-            [daddy.logger :as d.log]
-            [daddy.os :as d.os]
-            [daddy.reader :as d.reader]
-            [daddy.runner :as d.runner]))
+            [dad.config :as d.config]
+            [dad.logger :as d.log]
+            [dad.os :as d.os]
+            [dad.reader :as d.reader]
+            [dad.runner :as d.runner]))
 
 (def ^:private cli-options
   [["-s" "--silent"]
@@ -20,7 +20,7 @@
 
 (defn- print-version []
   (let [ver (-> "version.txt" io/resource slurp str/trim)]
-    (println (str "daddy ver " ver))
+    (println (str "dad ver " ver))
     (println (str "* Detected OS: " (name (d.os/os-type))))))
 
 (defn- usage [summary]

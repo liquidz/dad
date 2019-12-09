@@ -2,7 +2,7 @@
 
 . test_helper
 
-BASE_DIR=/tmp/daddy_test
+BASE_DIR=/tmp/dad_test
 
 ### directory
 if [ ! -d ${BASE_DIR}/post ]; then
@@ -27,8 +27,8 @@ if [ -e ${BASE_DIR}/pre/dummy ]; then
 fi
 
 ### git
-if [ ! -e ${BASE_DIR}/daddy/project.clj ]; then
-    echo "git: ${BASE_DIR}/daddy/project.clj is not found."
+if [ ! -e ${BASE_DIR}/dad/project.clj ]; then
+    echo "git: ${BASE_DIR}/dad/project.clj is not found."
     exit 1
 fi
 

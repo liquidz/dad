@@ -1,4 +1,4 @@
-(ns daddy.os
+(ns dad.os
   (:require [clojure.java.io :as io]
             [clojure.string :as str]))
 

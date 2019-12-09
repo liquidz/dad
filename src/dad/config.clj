@@ -1,7 +1,7 @@
-(ns daddy.config
+(ns dad.config
   (:require [aero.core :as aero]
             [clojure.java.io :as io]
-            [daddy.os :as d.os]))
+            [dad.os :as d.os]))
 
 (defn read-config
   ([]

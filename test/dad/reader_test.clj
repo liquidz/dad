@@ -1,8 +1,8 @@
-(ns daddy.reader-test
+(ns dad.reader-test
   (:require [clojure.string :as str]
             [clojure.test :as t]
-            [daddy.reader :as sut]
-            [daddy.test-helper :as h])
+            [dad.reader :as sut]
+            [dad.test-helper :as h])
   (:import clojure.lang.ExceptionInfo))
 
 (def ^:private test-config (h/read-test-config))

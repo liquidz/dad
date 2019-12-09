@@ -1,7 +1,7 @@
-(ns daddy.runner.impl
+(ns dad.runner.impl
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
-            [daddy.util :as d.util]))
+            [dad.util :as d.util]))
 
 (defmulti dispatch-task :type)
 (defmethod dispatch-task :default [task] task)

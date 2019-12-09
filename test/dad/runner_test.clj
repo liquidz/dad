@@ -1,8 +1,8 @@
-(ns daddy.runner-test
+(ns dad.runner-test
   (:require [clojure.test :as t]
-            [daddy.runner :as sut]
-            [daddy.runner.impl :as d.r.impl]
-            [daddy.test-helper :as h])
+            [dad.runner :as sut]
+            [dad.runner.impl :as d.r.impl]
+            [dad.test-helper :as h])
   (:import clojure.lang.ExceptionInfo))
 
 (def ^:private config

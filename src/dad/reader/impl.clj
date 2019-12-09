@@ -1,6 +1,6 @@
-(ns daddy.reader.impl
+(ns dad.reader.impl
   (:require [clojure.string :as str]
-            [daddy.util :as d.util]))
+            [dad.util :as d.util]))
 
 (defn directory [m]
   (let [{:keys [path action mode owner group] :or {action :create}} m]

@@ -1,8 +1,8 @@
-(ns daddy.runner
+(ns dad.runner
   (:require [clojure.java.shell :as sh]
-            [daddy.logger :as d.log]
-            [daddy.runner.impl :as d.r.impl]
-            [daddy.util :as d.util]))
+            [dad.logger :as d.log]
+            [dad.runner.impl :as d.r.impl]
+            [dad.util :as d.util]))
 
 (declare expand-tasks
          run-task*)
@@ -133,7 +133,7 @@
     (d.log/debug "Not runnable task" {:task expanded-task})))
 
 (defn run-tasks [config tasks]
-  (d.log/info "Daddy started cooking.")
+  (d.log/info "Dad started cooking.")
   (->> tasks
        (map d.r.impl/dispatch-task)
        (expand-tasks config)
@@ -145,7 +145,7 @@
        doall))
 
 (defn dry-run-tasks [config tasks]
-  (d.log/info "Daddy started tasting.")
+  (d.log/info "Dad started tasting.")
   (doseq [task (->> tasks
                     (map d.r.impl/dispatch-task)
                     (expand-tasks config)

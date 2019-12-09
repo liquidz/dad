@@ -1,9 +1,9 @@
-(ns daddy.test-helper
+(ns dad.test-helper
   (:require [clojure.java.io :as io]
             [clojure.java.shell :as sh]
-            [daddy.config :as d.config]
-            [daddy.logger :as d.log]
-            [daddy.os :as d.os]))
+            [dad.config :as d.config]
+            [dad.logger :as d.log]
+            [dad.os :as d.os]))
 
 (def test-os-type ::testing)
 
