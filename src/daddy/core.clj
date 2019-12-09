@@ -27,6 +27,20 @@
   (print-version)
   (println (str "* Usage:\n" summary)))
 
+(defn- fetch-codes [arguments options]
+  (let [codes (some->> (seq arguments)
+                       (map slurp)
+                       (str/join "\n"))
+        codes (if-let [eval-code (:eval options)]
+                (str eval-code " " codes)
+                codes)]
+    (if codes
+      codes
+      (->> *in*
+           io/reader
+           line-seq
+           (str/join "\n")))))
+
 (defn -main [& args]
   (let [{:keys [arguments options summary errors]} (cli/parse-opts args cli-options)
         {:keys [debug dry-run no-color help silent version]} options
@@ -39,22 +53,18 @@
                     d.runner/dry-run-tasks
                     d.runner/run-tasks)]
     (cond
-      errors (doseq [e errors] (println e))
+      errors (do (doseq [e errors] (println e))
+                 (usage summary)
+                 (System/exit 1))
       help (usage summary)
       version (print-version)
       :else
       (binding [d.log/*level* log-level
                 d.log/*color* (not no-color)]
         (try
-          (let [codes (some->> arguments
-                               (map slurp)
-                               (str/join "\n"))
-                codes (if-let [eval-code (:eval options)]
-                        (str eval-code " " codes)
-                        codes)]
-            (some->> codes
-                     (d.reader/read-tasks config)
-                     (runner-fn config)))
+          (some->> (fetch-codes arguments options)
+                   (d.reader/read-tasks config)
+                   (runner-fn config))
           (catch Exception ex
             (d.log/error (.getMessage ex) (ex-data ex))
             (System/exit 1)))))
