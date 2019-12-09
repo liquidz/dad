@@ -36,6 +36,11 @@
  :git {:command [:git-clone :git-checkout]
        :requires #{:url :path}}
 
+ :curl {:pre-not "test -e %path%"
+        :command "curl -sfLo %path% %url%"}
+
+ :download {:command [:curl :chmod :chown :chgrp]}
+
  :link {:command "ln -sfn %to% %path%"
         :requires #{:path :to}}
 

@@ -31,7 +31,7 @@ jobs:
         run: mv dad dad.linux-amd64
       - uses: actions/upload-artifact@master
         with:
-          name: daddy.linux-amd64
+          name: dad.linux-amd64
           path: ./dad.linux-amd64
 
   darwin-amd64:
@@ -62,7 +62,7 @@ jobs:
         run: mv dad dad.darwin-amd64
       - uses: actions/upload-artifact@master
         with:
-          name: daddy.darwin-amd64
+          name: dad.darwin-amd64
           path: ./dad.darwin-amd64
 
   create-release:
@@ -84,7 +84,7 @@ jobs:
 
       - uses: actions/download-artifact@master
         with:
-          name: daddy.linux-amd64
+          name: dad.linux-amd64
           path: tmp
       - uses: actions/upload-release-asset@v1.0.1
         id: upload-linux-release-asset
@@ -98,7 +98,7 @@ jobs:
 
       - uses: actions/download-artifact@master
         with:
-          name: daddy.darwin-amd64
+          name: dad.darwin-amd64
           path: tmp
       - uses: actions/upload-release-asset@v1.0.1
         id: upload-darwin-release-asset

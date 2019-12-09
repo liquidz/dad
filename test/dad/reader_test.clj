@@ -1,8 +1,8 @@
-(ns daddy.reader-test
+(ns dad.reader-test
   (:require [clojure.string :as str]
             [clojure.test :as t]
-            [daddy.reader :as sut]
-            [daddy.test-helper :as h])
+            [dad.reader :as sut]
+            [dad.test-helper :as h])
   (:import clojure.lang.ExceptionInfo))
 
 (def ^:private test-config (h/read-test-config))
@@ -114,6 +114,23 @@
     (t/testing "no path"
       (t/is (thrown? ExceptionInfo
                      (read-tasks "(git {:url \"foo\" :_path_ \"bar\"})"))))))
+
+(t/deftest download-test
+  (t/testing "FIXME"
+    (t/is (= {:type :download :url "foo" :path "bar"}
+             (read-one-task '(download {:url "foo" :path "bar"})))))
+
+  (t/testing "modes"
+    (t/is (= {:type :download :url "foo" :path "bar" :mode "0755" :owner "alice" :group "baz"}
+             (read-one-task '(download {:url "foo" :path "bar" :mode "0755" :owner "alice" :group "baz"})))))
+
+  (t/testing "no url"
+    (t/is (thrown? ExceptionInfo
+                   (read-one-task '(download {:path "foo"})))))
+
+  (t/testing "no path"
+    (t/is (thrown? ExceptionInfo
+                   (read-one-task '(download {:url "foo"}))))))
 
 (t/deftest package-test
   (t/testing "no action"

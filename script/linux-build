@@ -2,7 +2,7 @@
 
 TMPDIR=./tmp
 TARGET='dad.linux-amd64'
-IMAGE_NAME='uochan/daddy-builder'
+IMAGE_NAME='uochan/dad-builder'
 
 which docker > /dev/null 2>&1
 if [ $? -ne 0 ]; then

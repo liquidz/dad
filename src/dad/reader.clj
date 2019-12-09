@@ -1,12 +1,12 @@
-(ns daddy.reader
+(ns dad.reader
   (:require [camel-snake-kebab.core :as csk]
             [clojure.java.io :as io]
             [clojure.string :as str]
             [malli.core :as m]
             [malli.error :as me]
-            [daddy.util :as d.util]
-            [daddy.os :as d.os]
-            [daddy.reader.impl :as d.r.impl]
+            [dad.util :as d.util]
+            [dad.os :as d.os]
+            [dad.reader.impl :as d.r.impl]
             [sci.core :as sci]))
 
 (declare read-tasks)
@@ -19,6 +19,8 @@
    'file,      {:destination d.r.impl/file
                 :resource-name-key :path}
    'git,       {:destination d.r.impl/git
+                :resource-name-key :path}
+   'download,  {:destination d.r.impl/download
                 :resource-name-key :path}
    'link,      {:destination d.r.impl/link
                 :resource-name-key :path}

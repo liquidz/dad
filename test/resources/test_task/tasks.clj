@@ -1,7 +1,7 @@
 #!/usr/bin/env dad --no-color --dry-run
 
 (defn base-dir [x]
-  (str "/tmp/daddy_test/" x))
+  (str "/tmp/dad_test/" x))
 
 (directory (base-dir "post"))
 (directory (base-dir "pre/a") {:action :delete})
@@ -9,8 +9,8 @@
 (file (base-dir "foo"))
 (file (base-dir "pre/dummy") {:action :delete})
 
-(git {:url "https://github.com/liquidz/daddy"
-      :path (base-dir "daddy")})
+(git {:url "https://github.com/liquidz/dad"
+      :path (base-dir "dad")})
 
 (execute {:command "touch hello"
           :cwd (base-dir "")})

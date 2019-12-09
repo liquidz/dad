@@ -1,19 +1,19 @@
-= Daddy
+= Dad
 
-image:https://github.com/liquidz/daddy/workflows/test/badge.svg[link="https://github.com/liquidz/daddy/actions"]
-image:https://img.shields.io/github/release/liquidz/daddy.svg?logo=Github[link="https://github.com/liquidz/daddy/releases"]
+image:https://github.com/liquidz/dad/workflows/test/badge.svg[link="https://github.com/liquidz/dad/actions"]
+image:https://img.shields.io/github/release/liquidz/dad.svg?logo=Github[link="https://github.com/liquidz/dad/releases"]
 
 > My father is a greate chef :)
 
-Daddy is a small configuration management tool for Clojure.
+Dad is a small configuration management tool for Clojure.
 This project is heavily inspired by https://github.com/itamae-kitchen/mitamae[mitamae].
 
 == Getting Started
 
-Download binary from https://github.com/liquidz/daddy/releases[releases].
+Download binary from https://github.com/liquidz/dad/releases[releases].
 [source,terminal]
 ----
-curl -sfLo dad https://github.com/liquidz/daddy/releases/download/0.1.1/dad.linux-amd64
+curl -sfLo dad https://github.com/liquidz/dad/releases/download/0.1.1/dad.linux-amd64
 chmod +x dad
 ./dad your_task.clj
 ----
@@ -28,7 +28,7 @@ Here is a example to install Clojure https://clojure.org/guides/deps_and_cli[com
 ;; You can define function as you like
 (defn curl [m]
   (let [{:keys [path url]} m]
-    ;; `file-exists?` is a built-in function in daddy.
+    ;; `file-exists?` is a built-in function in dad.
     (when (and (not (file-exists? path))
                (string? url))
       (execute (str "curl -sfLo " path " " url)))))
@@ -157,8 +157,8 @@ Create a file.
 [source,clojure]
 .Example
 ----
-(git "daddy-source" {:url "https://github.com/liquidz/daddy"})
-(git {:path "daddy-source" :url "https://github.com/liquidz/daddy"})
+(git "dad-source" {:url "https://github.com/liquidz/dad"})
+(git {:path "dad-source" :url "https://github.com/liquidz/dad"})
 ----
 
 ==== link

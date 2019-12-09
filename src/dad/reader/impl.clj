@@ -1,6 +1,6 @@
-(ns daddy.reader.impl
+(ns dad.reader.impl
   (:require [clojure.string :as str]
-            [daddy.util :as d.util]))
+            [dad.util :as d.util]))
 
 (defn directory [m]
   (let [{:keys [path action mode owner group] :or {action :create}} m]
@@ -36,6 +36,15 @@
      :url url
      :path path
      :revision revision}))
+
+(defn download [m]
+  (let [{:keys [path url mode owner group]} m]
+    (cond-> {:type :download
+             :url url
+             :path path}
+      mode (assoc :mode mode)
+      owner (assoc :owner owner)
+      group (assoc :group group))))
 
 (defn link [m]
   (let [{:keys [path to]} m]

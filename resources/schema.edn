@@ -31,6 +31,13 @@
        [:url string?]
        [:revision {:optional true} string?]]
 
+ download [:map
+           [:path string?]
+           [:url string?]
+           #ref [:path-mode]
+           #ref [:path-owner]
+           #ref [:path-group]]
+
  link [:map
         [:path string?]
         [:to string?]]

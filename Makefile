@@ -8,14 +8,14 @@ else
 	GRAAL_EXTRA_OPTION := "--static"
 endif
 
-target/daddy.jar:
+target/dad.jar:
 	env LEIN_SNAPSHOTS_IN_RELEASE=1 lein uberjar
 dad.linux-amd64:
 	./script/linux-build
 
-dad: target/daddy.jar
+dad: target/dad.jar
 	$(GRAALVM_HOME)/bin/native-image \
-		-jar target/daddy.jar \
+		-jar target/dad.jar \
 		-H:Name=dad \
 		-H:+ReportExceptionStackTraces \
 		-J-Dclojure.spec.skip-macros=true \
@@ -36,19 +36,19 @@ dad: target/daddy.jar
 native-image: clean dad
 	lein clean
 
-jar_test: target/daddy.jar
-	env TARGET=target/daddy.jar IMAGE_NAME=clojure:openjdk-11-lein ./script/test
+jar_test: target/dad.jar
+	env TARGET=target/dad.jar IMAGE_NAME=clojure:openjdk-11-lein ./script/test
 
-local_jar_test: target/daddy.jar
-	\cp -pf target/daddy.jar test/resources/test_task
+local_jar_test: target/dad.jar
+	\cp -pf target/dad.jar test/resources/test_task
 	(cd test/resources/test_task && bash run.sh)
-	\rm -f test/resources/test_task/daddy.jar
+	\rm -f test/resources/test_task/dad.jar
 
 bin_test: dad.linux-amd64
 	env TARGET=dad.linux-amd64 IMAGE_NAME=ubuntu:latest ./script/test
 
-example_jar_test: target/daddy.jar
-	env TARGET=target/daddy.jar IMAGE_NAME=clojure:openjdk-11-lein ./script/example
+example_jar_test: target/dad.jar
+	env TARGET=target/dad.jar IMAGE_NAME=clojure:openjdk-11-lein ./script/example
 
 example_bin_test: dad.linux-amd64
 	env TARGET=dad.linux-amd64 IMAGE_NAME=ubuntu:latest ./script/example
