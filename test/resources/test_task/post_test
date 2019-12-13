@@ -2,8 +2,6 @@
 
 . test_helper
 
-BASE_DIR=/tmp/dad_test
-
 ### directory
 if [ ! -d ${BASE_DIR}/post ]; then
     echo "directory: ${BASE_DIR}/post is not found."
@@ -57,14 +55,14 @@ fi
 
 ### package
 # install
-helper_is_installed sl > /dev/null 2>&1
+${DAD_CMD} --eval '(package "sl")' --dry-run | grep 'WILL NOT' > /dev/null 2>&1
 if [ $? -ne 0 ]; then
     echo "package: sl is not installed."
     exit 1
 fi
 
 # uninstall
-helper_is_installed cowsay > /dev/null 2>&1
+${DAD_CMD} --eval '(package "")' --dry-run | grep 'WILL NOT' > /dev/null 2>&1
 if [ $? -eq 0 ]; then
     echo "package: cowsay is installed yet."
     exit 1

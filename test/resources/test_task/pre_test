@@ -2,8 +2,6 @@
 
 . test_helper
 
-BASE_DIR=/tmp/dad_test
-
 mkdir -p ${BASE_DIR}/pre/a/b/c/d
 echo dummy > ${BASE_DIR}/pre/dummy
 
@@ -16,30 +14,16 @@ if [ ! -e ${BASE_DIR}/pre/dummy ]; then
     exit 1
 fi
 
-helper_is_installed git > /dev/null 2>&1
+${DAD_CMD} --eval '(package ["git" "cowsay"])' --silent
 if [ $? -ne 0 ]; then
-    echo "pre: git it not found. try to install."
-    helper_install_package git > /dev/null 2>&1
-    if [ $? -ne 0 ]; then
-        echo "pre: failed to pre-install git."
-        exit 1
-    fi
-fi
-
-helper_is_installed sl > /dev/null 2>&1
-if [ $? -eq 0 ]; then
-    echo "pre: sl is already installed."
+    echo "pre: failed to pre-install git or cowsay."
     exit 1
 fi
 
-helper_is_installed cowsay > /dev/null 2>&1
+${DAD_CMD} --eval '(package "sl" {:action :uninstall})' --silent
 if [ $? -ne 0 ]; then
-    echo "pre: cowsay it not found. try to install."
-    helper_install_package cowsay > /dev/null 2>&1
-    if [ $? -ne 0 ]; then
-        echo "pre: failed to pre-install cowsay."
-        exit 1
-    fi
+    echo "pre: failed to pre-uninstall sl."
+    exit 1
 fi
 
 helper_cleanup_package > /dev/null 2>&1
