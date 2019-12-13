@@ -29,7 +29,10 @@
  git [:map
        [:path string?]
        [:url string?]
-       [:revision {:optional true} string?]]
+       [:revision {:optional true} string?]
+       #ref [:path-mode]
+       #ref [:path-owner]
+       #ref [:path-group]]
 
  download [:map
            [:path string?]

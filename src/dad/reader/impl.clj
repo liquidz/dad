@@ -31,11 +31,14 @@
       group (assoc :group group))))
 
 (defn git [m]
-  (let [{:keys [path url revision] :or {revision "master"}} m]
-    {:type :git
-     :url url
-     :path path
-     :revision revision}))
+  (let [{:keys [path url revision mode owner group] :or {revision "master"}} m]
+    (cond-> {:type :git
+             :url url
+             :path path
+             :revision revision}
+      mode (assoc :mode mode)
+      owner (assoc :owner owner)
+      group (assoc :group group))))
 
 (defn download [m]
   (let [{:keys [path url mode owner group]} m]
