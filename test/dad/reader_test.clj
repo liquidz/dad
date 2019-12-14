@@ -52,6 +52,10 @@
     (t/is (= {:type :directory :path "/tmp/foo/bar" :action :remove}
              (read-one-task '(directory {:path "/tmp/foo/bar" :action :remove})))))
 
+  (t/testing "empty path"
+    (t/is (thrown? ExceptionInfo
+                   (read-one-task '(directory "")))))
+
   (t/testing "invalid option"
     (t/is (thrown? ExceptionInfo
                    (read-one-task '(directory "/tmp/foo/bar" 123)))))
@@ -89,6 +93,10 @@
     (t/is (thrown? ExceptionInfo
                    (read-one-task '(execute {:command "foo" :pre-not 123})))))
 
+  (t/testing "empty command"
+    (t/is (thrown? ExceptionInfo
+                   (read-one-task '(execute "")))))
+
   (t/testing "invalid option"
     (t/is (thrown? ExceptionInfo
                    (read-one-task '(execute 123)))))
@@ -111,6 +119,14 @@
              (read-one-task '(git {:url "foo" :path "bar" :mode "0644" :owner "alice" :group "baz"})))))
 
   (t/testing "error"
+    (t/testing "empty path and url"
+      (t/is (thrown? ExceptionInfo
+                     (read-tasks '(git {:url "foo" :path ""}))))
+      (t/is (thrown? ExceptionInfo
+                     (read-tasks '(git {:url "" :path "bar"}))))
+      (t/is (thrown? ExceptionInfo
+                     (read-tasks '(git {:url "" :path ""})))))
+
     (t/testing "no url"
       (t/is (thrown? ExceptionInfo
                      (read-tasks "(git {:_url_ \"foo\" :path \"bar\"})"))))
@@ -127,6 +143,14 @@
   (t/testing "modes"
     (t/is (= {:type :download :url "foo" :path "bar" :mode "0755" :owner "alice" :group "baz"}
              (read-one-task '(download {:url "foo" :path "bar" :mode "0755" :owner "alice" :group "baz"})))))
+
+  (t/testing "empty path and url"
+    (t/is (thrown? ExceptionInfo
+                   (read-one-task '(download {:path "foo" :url ""}))))
+    (t/is (thrown? ExceptionInfo
+                   (read-one-task '(download {:path "" :url "bar"}))))
+    (t/is (thrown? ExceptionInfo
+                   (read-one-task '(download {:path "" :url ""})))))
 
   (t/testing "no url"
     (t/is (thrown? ExceptionInfo
@@ -168,6 +192,10 @@
                     (map #(dissoc % :id)))))))
 
   (t/testing "error"
+    (t/testing "empty name"
+      (t/is (thrown? ExceptionInfo
+                     (read-one-task '(package "")))))
+
     (t/testing "invalid action"
       (t/is (thrown? ExceptionInfo
                      (read-one-task "(package \"foo\" {:action \"invalid\"})")))
@@ -184,8 +212,17 @@
              (read-one-task "(template \"foo\" {:source \"bar\" :variables {:one 1 :two 2}})"))))
 
   (t/testing "error"
-    (t/is (thrown? ExceptionInfo
-                   (read-one-task "(template \"foo\")")))))
+    (t/testing "empty path and source"
+      (t/is (thrown? ExceptionInfo
+                     (read-one-task '(template {:path "foo" :source ""}))))
+      (t/is (thrown? ExceptionInfo
+                     (read-one-task '(template {:path "" :source "bar"}))))
+      (t/is (thrown? ExceptionInfo
+                     (read-one-task '(template {:path "" :source ""})))))
+
+    (t/testing "no source"
+      (t/is (thrown? ExceptionInfo
+                     (read-one-task "(template \"foo\")"))))))
 
 (t/deftest load-file-test
   (let [dummy-loaded-content (str/join  '((file (hello "neko"))
