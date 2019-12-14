@@ -82,7 +82,7 @@ Resources are called like follows.
 ----
 
 ==== directory
-
+// {{{
 Create directories.
 
 |===
@@ -122,9 +122,33 @@ Execute a shell command.
 (execute {:cwd "/tmp" :command "curl -sfLo foobar https://example.com"})
 (execute {:command "touch foo" :pre-not "test -e bar"})
 ----
+// }}}
+
+==== download
+// {{{
+Download a file from remote host.
+This resource requires `curl` command.
+
+|===
+| Key | Value | Required | Default | Description
+
+| <path> | String | Yes |  |
+| url    | String | Yes |  |
+| mode   | String | No  |  |
+| owner  | String | No  |  |
+| group  | String | No  |  |
+|===
+
+[source,clojure]
+.Example
+----
+(download "foobar" {:url "https://example.com"})
+(download "foobar" {:path "foobar" :url "https://example.com"})
+----
+// }}}
 
 ==== file
-
+// {{{
 Create a file.
 
 |===
@@ -143,8 +167,11 @@ Create a file.
 (file "foobar" {:mode "755"})
 (file {:path "foobar" :mode "755"})
 ----
+// }}}
 
 ==== git
+// {{{
+Execute `git` command.
 
 |===
 | Key | Value | Required | Default | Description
@@ -152,6 +179,9 @@ Create a file.
 | <path>   | String | Yes |            |
 | url      | String | Yes |            |
 | revision | String | No  | `"master"` |
+| mode     | String | No  |            |
+| owner    | String | No  |            |
+| group    | String | No  |            |
 |===
 
 [source,clojure]
@@ -160,9 +190,10 @@ Create a file.
 (git "dad-source" {:url "https://github.com/liquidz/dad"})
 (git {:path "dad-source" :url "https://github.com/liquidz/dad"})
 ----
+// }}}
 
 ==== link
-
+// {{{
 Create a symbolic link.
 
 |===
@@ -178,9 +209,10 @@ Create a symbolic link.
 (link "~/.lein/profiles.clj" {:to "/path/to/your/dotfiles/profiles.clj"})
 (link {:path "~/.lein/profiles.clj" :to "/path/to/your/dotfiles/profiles.clj"})
 ----
+// }}}
 
 ==== package
-
+// {{{
 Install packages.
 
 |===
@@ -196,9 +228,10 @@ Install packages.
 (package "vim")
 (package {:name "vim"})
 ----
+// }}}
 
 ==== template
-
+// {{{
 Create a text file from the specified template files.
 
 |===
@@ -223,6 +256,7 @@ hello {{msg}}
 (template "result.txt" {:source "source.txt" :variables {:msg "world"}})
 (template {:path "result.txt" :source "source.txt" :variables {:msg "world"}})
 ----
+// }}}
 
 == License
 
@@ -238,3 +272,4 @@ Public License, v. 2.0 are satisfied: GNU General Public License as published by
 the Free Software Foundation, either version 2 of the License, or (at your
 option) any later version, with the GNU Classpath Exception which is available
 at https://www.gnu.org/software/classpath/license.html.
+// vim:fdm=marker:fdl=0
