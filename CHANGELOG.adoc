@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file. This change log follows the conventions of http://keepachangelog.com/[keepachangelog.com].
 
-== Unreleased (dev)
+== 0.1.2 (2019-12-15)
 // {{{
 === Added
 - Added support for codes from standard input.
@@ -12,7 +12,8 @@ All notable changes to this project will be documented in this file. This change
 - Renamed project to "Dad".
 
 === Fixed
-- Fixd `git` resource to be able to change `mode`, `owner`, and `group`.
+- https://github.com/liquidz/dad/issues/4[#4]: Fixed `git` resource to be able to change `mode`, `owner`, and `group`.
+- https://github.com/liquidz/dad/issues/7[#7]: Fixed not to allow empty string for required parameters.
 // }}}
 
 == 0.1.1 (2019-12-08)
