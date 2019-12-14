@@ -106,6 +106,10 @@
     (t/is (= {:type :git :url "foo" :path "bar" :revision "baz"}
              (read-one-task "(git {:url \"foo\" :path \"bar\" :revision \"baz\"})"))))
 
+  (t/testing "mode, owner, group"
+    (t/is (= {:type :git :url "foo" :path "bar" :revision "master" :mode "0644" :owner "alice" :group "baz"}
+             (read-one-task '(git {:url "foo" :path "bar" :mode "0644" :owner "alice" :group "baz"})))))
+
   (t/testing "error"
     (t/testing "no url"
       (t/is (thrown? ExceptionInfo
@@ -116,7 +120,7 @@
                      (read-tasks "(git {:url \"foo\" :_path_ \"bar\"})"))))))
 
 (t/deftest download-test
-  (t/testing "FIXME"
+  (t/testing "no optionals"
     (t/is (= {:type :download :url "foo" :path "bar"}
              (read-one-task '(download {:url "foo" :path "bar"})))))
 

@@ -27,11 +27,6 @@
   (cond-> task
     (contains? #{:delete :remove} action) (assoc :type :file-delete)))
 
-(defmethod dispatch-task :git
-  [{:keys [path] :as task}]
-  (cond-> task
-    (some-> path io/file .exists) (assoc :type :git-checkout)))
-
 (defmethod dispatch-task :package
   [{:keys [action] :as task}]
   (cond-> task

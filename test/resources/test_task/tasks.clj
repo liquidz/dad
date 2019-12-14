@@ -6,6 +6,9 @@
 (directory (base-dir "post"))
 (directory (base-dir "pre/a") {:action :delete})
 
+(download {:path(base-dir "project.clj")
+           :url "https://raw.githubusercontent.com/liquidz/dad/master/project.clj"})
+
 (file (base-dir "foo"))
 (file (base-dir "pre/dummy") {:action :delete})
 

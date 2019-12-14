@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file. This change
 == Unreleased (dev)
 // {{{
 === Added
+- Added support for codes from standard input.
+- Added `download` resource.
+
+=== Changed
+- Renamed project to "Dad".
+
+=== Fixed
+- Fixd `git` resource to be able to change `mode`, `owner`, and `group`.
+// }}}
+
+== 0.1.1 (2019-12-08)
+// {{{
+=== Added
 - Add `--no-color` option.
 - Add `--eval` option.
 

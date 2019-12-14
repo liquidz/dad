@@ -2,8 +2,6 @@
 
 . test_helper
 
-BASE_DIR=/tmp/dad_test
-
 ### directory
 if [ ! -d ${BASE_DIR}/post ]; then
     echo "directory: ${BASE_DIR}/post is not found."
@@ -12,6 +10,18 @@ fi
 
 if [ -d ${BASE_DIR}/pre/a ]; then
     echo "directory: ${BASE_DIR}/pre/a exists yet."
+    exit 1
+fi
+
+### download
+if [ ! -e ${BASE_DIR}/project.clj ]; then
+    echo "download: ${BASE_DIR}/project.clj is not found."
+    exit 1
+fi
+
+head -n 1 ${BASE_DIR}/project.clj | grep 'defproject dad' > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo "download: ${BASE_DIR}/project.clj has a invalid content."
     exit 1
 fi
 
@@ -57,14 +67,14 @@ fi
 
 ### package
 # install
-helper_is_installed sl > /dev/null 2>&1
+${DAD_CMD} --eval '(package "sl")' --dry-run | grep 'WILL NOT'
 if [ $? -ne 0 ]; then
     echo "package: sl is not installed."
     exit 1
 fi
 
 # uninstall
-helper_is_installed cowsay > /dev/null 2>&1
+${DAD_CMD} --eval '(package "")' --dry-run | grep 'WILL NOT'
 if [ $? -eq 0 ]; then
     echo "package: cowsay is installed yet."
     exit 1

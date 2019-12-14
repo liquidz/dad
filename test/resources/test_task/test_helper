@@ -1,6 +1,20 @@
 #!/bin/bash
 
 OS_TYPE="$(uname)"
+BASE_DIR=/tmp/dad_test
+DAD_CMD='dad'
+
+ls -1 dad.linux-amd64 > /dev/null 2>&1
+if [ $? -eq 0 ]; then
+    DAD_CMD='./dad.linux-amd64'
+else
+    ls -1 dad > /dev/null 2>&1
+    if [ $? -eq 0 ]; then
+        DAD_CMD='./dad'
+    else
+        DAD_CMD='java -jar dad.jar'
+    fi
+fi
 
 helper_is_installed () {
     if [ ${OS_TYPE} = 'Darwin' ]; then

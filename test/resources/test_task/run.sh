@@ -1,5 +1,7 @@
 #!/bin/bash
 
+. test_helper
+
 echo "pre_test: started"
 bash ./pre_test
 if [ $? -ne 0 ]; then
@@ -10,20 +12,7 @@ else
 fi
 
 echo "dad: started"
-ls -1 dad.linux-amd64 > /dev/null 2>&1
-if [ $? -eq 0 ]; then
-    echo "dad: using native image"
-    ./dad.linux-amd64 tasks.clj
-else
-    ls -1 dad > /dev/null 2>&1
-    if [ $? -eq 0 ]; then
-        echo "dad: using native image"
-        ./dad tasks.clj
-    else
-        echo "dad: using JAR"
-        java -jar dad.jar tasks.clj
-    fi
-fi
+${DAD_CMD} tasks.clj
 
 if [ $? -ne 0 ]; then
     echo "dad: failed"

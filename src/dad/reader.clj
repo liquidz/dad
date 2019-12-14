@@ -2,6 +2,7 @@
   (:require [camel-snake-kebab.core :as csk]
             [clojure.java.io :as io]
             [clojure.string :as str]
+            [dad.logger :as d.log]
             [malli.core :as m]
             [malli.error :as me]
             [dad.util :as d.util]
@@ -72,6 +73,7 @@
 (defn- build-task-bindings [tasks-atom config]
   (letfn [(add-tasks [tasks]
             (doseq [task (ensure-task-list tasks)]
+              (d.log/debug "Read task" task)
               (swap! tasks-atom conj task)))]
     (reduce-kv
      (fn [res k v]
