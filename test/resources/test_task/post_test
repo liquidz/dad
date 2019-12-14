@@ -13,6 +13,18 @@ if [ -d ${BASE_DIR}/pre/a ]; then
     exit 1
 fi
 
+### download
+if [ ! -e ${BASE_DIR}/project.clj ]; then
+    echo "download: ${BASE_DIR}/project.clj is not found."
+    exit 1
+fi
+
+head -n 1 ${BASE_DIR}/project.clj | grep 'defproject dad' > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    echo "download: ${BASE_DIR}/project.clj has a invalid content."
+    exit 1
+fi
+
 ### file
 if [ ! -e ${BASE_DIR}/foo ]; then
     echo "file: ${BASE_DIR}/foo is not found."
