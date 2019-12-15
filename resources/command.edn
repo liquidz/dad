@@ -25,8 +25,12 @@
 
  :execute {:command "(%command%)" :requires #{:command}}
 
- :template {:command [":" :chmod :chown :chgrp]
-            :requires #{:source}}
+ :_pre-compare-template-content {:command ":"
+                             :requires #{:path :source}}
+
+ :template {:pre [:_pre-compare-template-content]
+            :command [":" :chmod :chown :chgrp]
+            :requires #{:path :source}}
 
  :git-clone {:pre-not "test -d %path%"
              :command "git clone %url% %path%"

@@ -100,10 +100,11 @@
     (d.util/expand-map-to-str command (dissoc expanded-task :type :__def__))))
 
 (defn- run-task* [expanded-task]
-  (some-> expanded-task
-          d.r.impl/run-by-code
-          task->command
-          sh))
+  (let [res (some-> expanded-task
+                    d.r.impl/run-by-code)]
+    (if res
+      (some-> res task->command sh)
+      {:exit -1})))
 
 (defn- generate-info-log [expanded-task]
   (let [type-name (name (:type expanded-task))
