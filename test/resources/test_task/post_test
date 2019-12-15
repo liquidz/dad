@@ -67,14 +67,14 @@ fi
 
 ### package
 # install
-${DAD_CMD} --eval '(package "sl")' --dry-run | grep 'WILL NOT'
+${DAD_CMD} --eval '(package "sl")' --dry-run --no-color | grep 'WILL NOT'
 if [ $? -ne 0 ]; then
     echo "package: sl is not installed."
     exit 1
 fi
 
 # uninstall
-${DAD_CMD} --eval '(package "cowsay" {:action :uninstall})' --dry-run | grep 'WILL NOT'
+${DAD_CMD} --eval '(package "cowsay" {:action :uninstall})' --dry-run --no-color | grep 'WILL NOT'
 if [ $? -ne 0 ]; then
     echo "package: cowsay is installed yet."
     exit 1
@@ -85,8 +85,9 @@ if [ ! -e ${BASE_DIR}/tmpl ]; then
     echo "template: ${BASE_DIR}/tmpl is not found."
     exit 1
 fi
-helper_check_md5 template.md5 > /dev/null 2>&1
+
+${DAD_CMD} --eval "(template {:path \"${BASE_DIR}/tmpl\" :source \"template.tmpl\" :variables {:foo \"bar\" :bar \"baz\"}})" --dry-run --no-color | grep 'WILL NOT'
 if [ $? -ne 0 ]; then
-    echo "template: MD5 hash is not matched."
+    echo "template: tmpl does not have a valid content."
     exit 1
 fi

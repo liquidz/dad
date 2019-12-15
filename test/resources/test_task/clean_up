@@ -3,4 +3,3 @@
 . test_helper
 
 \rm -rf /tmp/dad_test
-helper_uninstall_package sl > /dev/null 2>&1
