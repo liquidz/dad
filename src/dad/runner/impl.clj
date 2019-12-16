@@ -2,8 +2,7 @@
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
             [dad.logger :as d.log]
-            [dad.util :as d.util])
-  (:import java.security.MessageDigest))
+            [dad.util :as d.util]))
 
 (defmulti dispatch-task :type)
 (defmethod dispatch-task :default [task] task)
@@ -37,21 +36,15 @@
 (defmulti run-by-code :type)
 (defmethod run-by-code :default [task] task)
 
-(defn- sha256 [s]
-  (->> (.getBytes s "UTF-8")
-       (.digest (MessageDigest/getInstance "SHA-256"))
-       (map (partial format "%02x"))
-       (apply str)))
-
 (defn- render-template [file variables]
   (-> file slurp str/trim (d.util/expand-map-to-str variables "{{" "}}")))
 
 (defmethod run-by-code :_pre-compare-template-content
   [{:keys [path source variables] :as task}]
   (let [path-hash (and (.exists (io/file path))
-                       (-> path slurp str/trim sha256))
+                       (-> path slurp str/trim d.util/sha256))
         source-hash (and (.exists (io/file path))
-                         (-> source (render-template variables) sha256))]
+                         (-> source (render-template variables) d.util/sha256))]
     (d.log/debug "Comparing template content"
                  {:path path-hash :source source-hash})
     (if (and path-hash source-hash)
