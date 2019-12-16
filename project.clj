@@ -15,7 +15,8 @@
 
   :main ^{:skip-aot true} dad.core
   :profiles
-  {:dev {:resource-paths ["test/resources"]}
+  {:dev {:resource-paths ["test/resources"]
+         :global-vars {*warn-on-reflection* true}}
    :uberjar {:aot [dad.core]
              :prep-tasks ["compile"]
              :uberjar-name "dad.jar"}}
