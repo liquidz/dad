@@ -31,4 +31,4 @@ else
 fi
 
 echo "clean up"
-bash ./clean_up
+\rm -rf /tmp/dad_test

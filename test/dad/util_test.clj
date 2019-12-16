@@ -22,11 +22,19 @@
 
 (t/deftest expand-map-to-str-test
   (let [m {:foo "bar" :bar "baz"}]
-    (t/are [expected input] (= expected (sut/expand-map-to-str input m))
-      "hello bar",       "hello %foo%"
-      "hello bar baz",   "hello %foo% %bar%"
-      "hello bar bar",   "hello %foo% %foo%"
-      "hello %unknown%", "hello %unknown%")))
+    (t/testing "default pre/postfix"
+      (t/are [expected input] (= expected (sut/expand-map-to-str input m))
+        "hello bar",       "hello %foo%"
+        "hello bar baz",   "hello %foo% %bar%"
+        "hello bar bar",   "hello %foo% %foo%"
+        "hello %unknown%", "hello %unknown%"))
+
+    (t/testing "custom pre/postfix"
+      (t/are [expected input] (= expected (sut/expand-map-to-str input m "{{" "}}"))
+        "hello bar",         "hello {{foo}}"
+        "hello bar baz",     "hello {{foo}} {{bar}}"
+        "hello bar bar",     "hello {{foo}} {{foo}}"
+        "hello {{unknown}}", "hello {{unknown}}"))))
 
 (t/deftest sha256-test
   ;; echo -n hello | sha256sum

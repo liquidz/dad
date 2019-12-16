@@ -1,5 +1,0 @@
-#!/bin/bash
-
-. test_helper
-
-\rm -rf /tmp/dad_test
