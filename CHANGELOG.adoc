@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. This change log follows the conventions of http://keepachangelog.com/[keepachangelog.com].
 
+== Unreleased (dev)
+
+=== Added
+- https://github.com/liquidz/dad/issues/5[#5]: Added `dad/expand` built-in function to expand map values to string.
+
+=== Changed
+- https://github.com/liquidz/dad/issues/8[#8]: Update `template` resource to verify the content is same or not.
+- (BREAKING) Rename `dad` specific built-in functions to use `dad` namespace.
+** `env` -> `dad/env`
+** `file-exists?` -> `dad/file-exists?`
+** `os-type` -> `dad/os-type`
+
 == 0.1.2 (2019-12-15)
 // {{{
 === Added
