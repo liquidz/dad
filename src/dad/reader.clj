@@ -36,6 +36,7 @@
    'os-type,      (fn [] (name (d.os/os-type)))
    'println,      println
    'str/join,     str/join})
+   'dad/expand,       d.r.impl/expand
 
 (defn- validate [value schema]
   (if-let [err (some-> schema

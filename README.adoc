@@ -58,12 +58,16 @@ Here is a example to install Clojure https://clojure.org/guides/deps_and_cli[com
 |===
 | Name         | Var/Func | Description
 
-| env          | Var      | Map of environmental variables. E.g. `(env :home)`
-| file-exists? | Func     | Return true if the specified path exists.
-| load-file    | Func     | Load another *.clj file. E.g. `(load-file "foo.clj")`
-| os-type      | Func     | OS name string such as `"linux"` or `"mac"`.
-| println      | Func     |
-| str/join     | Func     |
+| dad/env          | Var  | Map of environmental variables. +
+E.g. `(env :home)`
+| dad/file-exists? | Func | Return true if the specified path exists.
+| dad/os-type      | Func | OS name string such as `"linux"` or `"mac"`.
+| dad/expand       | Func | Expand map values to string. +
+E.g. `(dad/expand "hello {{msg}}" {:msg "world"})`
+| load-file        | Func | Load another *.clj file. +
+E.g. `(load-file "foo.clj")`
+| println          | Func |
+| str/join         | Func |
 |===
 
 === Resources
