@@ -31,12 +31,12 @@
                 :resource-name-key :path}})
 
 (def ^:private util-bindings
-  {'env,          #(get (System/getenv) (csk/->SCREAMING_SNAKE_CASE_STRING %))
-   'file-exists?, #(some-> % io/file (.exists))
-   'os-type,      (fn [] (name (d.os/os-type)))
-   'println,      println
-   'str/join,     str/join})
+  {'dad/env,          #(get (System/getenv) (csk/->SCREAMING_SNAKE_CASE_STRING %))
+   'dad/file-exists?, #(some-> % io/file (.exists))
+   'dad/os-type,      (fn [] (name (d.os/os-type)))
    'dad/expand,       d.r.impl/expand
+   'println,          println
+   'str/join,         str/join})
 
 (defn- validate [value schema]
   (if-let [err (some-> schema
