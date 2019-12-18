@@ -8,6 +8,10 @@ image:https://img.shields.io/github/release/liquidz/dad.svg?logo=Github[link="ht
 Dad is a small configuration management tool for Clojure.
 This project is heavily inspired by https://github.com/itamae-kitchen/mitamae[mitamae].
 
+== Concept
+- Easy to start -- Download single binary and run it.
+- Minimum to remember -- May not write code for Dad often
+
 == Getting Started
 
 Download binary from https://github.com/liquidz/dad/releases[releases].
@@ -58,17 +62,17 @@ Here is a example to install Clojure https://clojure.org/guides/deps_and_cli[com
 |===
 | Name         | Var/Func | Description
 
-| dad/env          | Var  | Map of environmental variables. +
-E.g. `(env :home)`
+| link:doc/dad_doc.adoc[dad/doc]          | Func | Print dad documents.
+| link:doc/dad_env[dad/env]          | Var  | Map of environmental variables.
 | dad/file-exists? | Func | Return true if the specified path exists.
 | dad/os-type      | Func | OS name string such as `"linux"` or `"mac"`.
 | dad/expand       | Func | Expand map values to string. +
 E.g. `(dad/expand "hello {{msg}}" {:msg "world"})`
-| load-file        | Func | Load another *.clj file. +
-E.g. `(load-file "foo.clj")`
-| println          | Func |
-| str/join         | Func |
+| help | Func | Alias for `dad/doc`.
+| link:doc/dad_load_file.adoc[load-file]        | Func | Load another recipe file.
 |===
+
+`println` and `str/join` are also available like core functions.
 
 === Resources
 
@@ -85,182 +89,19 @@ Resources are called like follows.
 (directory {:path "foo/bar" :owner "alice"})
 ----
 
-==== directory
-// {{{
-Create directories.
+|===
+| Resource name | Description
+
+| link:doc/directory.adoc[directory] | Create directories.
+| link:doc/download.adoc[download] | Download a file from remote host.
+| link:doc/execute.adoc[execute] | Execute a shell command.
+| link:doc/file.adoc[file] | Create a file.
+| link:doc/git.adoc[git] | Execute `git` command.
+| link:doc/link.adoc[link] | Create a symbolic link.
+| link:doc/package.adoc[package] | Install packages.
+| link:doc/template.adoc[template] | Create a text file from the specified template files.
 
 |===
-| Key | Value | Required | Default | Description
-
-| <path> | String            | Yes |           | Directories are created recursively.
-| action | Keyword or String | No  | `:create` | `:delete` or `:remove` for deletion.
-| mode   | String            | No  |           |
-| owner  | String            | No  |           |
-| group  | String            | No  |           |
-|===
-
-[source,clojure]
-.Example
-----
-(directory "foo/bar")
-(directory {:path "foo/bar"})
-----
-
-==== execute
-
-Execute a shell command.
-
-|===
-| Key | Value | Required | Default | Description
-
-| <command> | String | Yes |  |
-| cwd       | String | No  |  | Working directory.
-| pre       | String | No  |  | Pre-condition to execute `cmd`.
-| pre-not   | String | No  |  | Pre-condition not to execute `cmd`.
-|===
-
-[source,clojure]
-.Example
-----
-(execute "curl -sfLo /tmp/foobar https://example.com")
-(execute {:cwd "/tmp" :command "curl -sfLo foobar https://example.com"})
-(execute {:command "touch foo" :pre-not "test -e bar"})
-----
-// }}}
-
-==== download
-// {{{
-Download a file from remote host.
-This resource requires `curl` command.
-
-|===
-| Key | Value | Required | Default | Description
-
-| <path> | String | Yes |  |
-| url    | String | Yes |  |
-| mode   | String | No  |  |
-| owner  | String | No  |  |
-| group  | String | No  |  |
-|===
-
-[source,clojure]
-.Example
-----
-(download "foobar" {:url "https://example.com"})
-(download "foobar" {:path "foobar" :url "https://example.com"})
-----
-// }}}
-
-==== file
-// {{{
-Create a file.
-
-|===
-| Key | Value | Required | Default | Description
-
-| <path> | String            | Yes |           |
-| action | Keyword or String | No  | `:create` | `:delete` or `:remove` for deletion.
-| mode   | String            | No  |           |
-| owner  | String            | No  |           |
-| group  | String            | No  |           |
-|===
-
-[source,clojure]
-.Example
-----
-(file "foobar" {:mode "755"})
-(file {:path "foobar" :mode "755"})
-----
-// }}}
-
-==== git
-// {{{
-Execute `git` command.
-
-|===
-| Key | Value | Required | Default | Description
-
-| <path>   | String | Yes |            |
-| url      | String | Yes |            |
-| revision | String | No  | `"master"` |
-| mode     | String | No  |            |
-| owner    | String | No  |            |
-| group    | String | No  |            |
-|===
-
-[source,clojure]
-.Example
-----
-(git "dad-source" {:url "https://github.com/liquidz/dad"})
-(git {:path "dad-source" :url "https://github.com/liquidz/dad"})
-----
-// }}}
-
-==== link
-// {{{
-Create a symbolic link.
-
-|===
-| Key | Value | Required | Default | Description
-
-| <path> | String | Yes |  | Link path.
-| to     | String | Yes |  | Destination path.
-|===
-
-[source,clojure]
-.Example
-----
-(link "~/.lein/profiles.clj" {:to "/path/to/your/dotfiles/profiles.clj"})
-(link {:path "~/.lein/profiles.clj" :to "/path/to/your/dotfiles/profiles.clj"})
-----
-// }}}
-
-==== package
-// {{{
-Install packages.
-
-|===
-| Key | Value | Required | Default | Description
-
-| <name> | String or String list | Yes |            |
-| action | Keyword or String     | no  | `:install` | `:uninstall` or `:remove` for uninstallation.
-|===
-
-[source,clojure]
-.Example
-----
-(package "vim")
-(package {:name "vim"})
-----
-// }}}
-
-==== template
-// {{{
-Create a text file from the specified template files.
-
-|===
-| Key | Value | Required | Default | Description
-
-| <path>    | String | Yes |      |
-| source    | String | Yes |      | Source template file.
-| variables | Map    | No  | `{}` | Variables to inject to template file.
-| mode      | String | No  |      |
-| owner     | String | No  |      |
-| group     | String | No  |      |
-|===
-
-.Example template
-----
-hello {{msg}}
-----
-
-[source,clojure]
-.Example
-----
-(template "result.txt" {:source "source.txt" :variables {:msg "world"}})
-(template {:path "result.txt" :source "source.txt" :variables {:msg "world"}})
-----
-// }}}
 
 == License
 

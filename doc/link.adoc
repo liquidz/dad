@@ -1,0 +1,20 @@
+= link
+// {{{
+
+Create a symbolic link.
+
+|===
+| Key | Value | Required | Default | Description
+
+| <path> | String | Yes |  | Link path.
+| to     | String | Yes |  | Destination path.
+|===
+
+[source,clojure]
+.Example
+----
+(link "~/.lein/profiles.clj" {:to "/path/to/your/dotfiles/profiles.clj"})
+
+(link {:path "~/.lein/profiles.clj" :to "/path/to/your/dotfiles/profiles.clj"})
+----
+// }}}

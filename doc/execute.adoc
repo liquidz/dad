@@ -1,0 +1,24 @@
+= execute
+// {{{
+
+Execute a shell command.
+
+|===
+| Key | Value | Required | Default | Description
+
+| <command> | String | Yes |  |
+| cwd       | String | No  |  | Working directory.
+| pre       | String | No  |  | Pre-condition to execute `cmd`.
+| pre-not   | String | No  |  | Pre-condition not to execute `cmd`.
+|===
+
+[source,clojure]
+.Example
+----
+(execute "curl -sfLo /tmp/foobar https://example.com")
+
+(execute {:cwd "/tmp" :command "curl -sfLo foobar https://example.com"})
+
+(execute {:command "touch foo" :pre-not "test -e bar"})
+----
+// }}}

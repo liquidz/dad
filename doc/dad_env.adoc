@@ -1,0 +1,15 @@
+= dad/env
+// {{{
+
+Map of environmental variables.
+
+[source,clojure]
+.Example
+----
+;; Refer "HOME"
+(env :home)
+
+;; Refer "FOO_BAR"
+(env :foo-bar)
+----
+// }}}

@@ -1,0 +1,11 @@
+= load-file
+// {{{
+
+Load another recipe file.
+
+[source,clojure]
+.Example
+----
+(load-file "foo.clj")
+----
+// }}}

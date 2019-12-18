@@ -1,0 +1,24 @@
+= download
+// {{{
+
+Download a file from remote host.
+This resource requires `curl` command.
+
+|===
+| Key | Value | Required | Default | Description
+
+| <path> | String | Yes |  |
+| url    | String | Yes |  |
+| mode   | String | No  |  |
+| owner  | String | No  |  |
+| group  | String | No  |  |
+|===
+
+[source,clojure]
+.Example
+----
+(download "foobar" {:url "https://example.com"})
+
+(download "foobar" {:path "foobar" :url "https://example.com"})
+----
+// }}}

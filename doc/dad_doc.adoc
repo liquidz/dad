@@ -1,0 +1,13 @@
+= dad/doc
+// {{{
+
+Print dad documents.
+
+[source,clojure]
+.Example
+----
+(dad/doc) ;; => Print lists of built-in vars/functions and resources
+
+(dad/doc 'dad/doc) ;; => Print documents for specified name
+----
+// }}}
