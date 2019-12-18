@@ -31,12 +31,41 @@
                 :resource-name-key :path}})
 
 (def ^:private util-bindings
-  {'dad/env,          #(get (System/getenv) (csk/->SCREAMING_SNAKE_CASE_STRING %))
+  {'dad/doc           "DUMMY: associated at `read-tasks` formally"
+   'dad/env,          #(get (System/getenv) (csk/->SCREAMING_SNAKE_CASE_STRING %))
+   'dad/expand,       d.r.impl/expand
    'dad/file-exists?, #(some-> % io/file (.exists))
    'dad/os-type,      (fn [] (name (d.os/os-type)))
-   'dad/expand,       d.r.impl/expand
+   'help              "DUMMY: associated at `read-tasks` formally"
+   'load-file         "DUMMY: associated at `read-tasks` formally"
    'println,          println
    'str/join,         str/join})
+
+(defn- extract-doc [resource-name]
+  (some->> (io/resource "docs.adoc")
+           (io/reader)
+           (line-seq)
+           (drop-while #(not= (str "= " resource-name) %))
+           seq
+           (drop 2)
+           (take-while #(not= "// }}}" %))
+           (str/join "\n")
+           (str/trim)))
+
+(defn- doc
+  ([]
+   (println "### Built-in vars/functions")
+   (doseq [x (keys util-bindings)]
+     (println (str "* " x)))
+   (println "")
+   (println "### Resources")
+   (doseq [x (keys task-configs)]
+     (println (str "* " x)))
+   (println "\nTo see detailed document: (doc 'resource-name)"))
+  ([resource-name]
+   (if-let [s (extract-doc (str resource-name))]
+     (println s)
+     (println (str "Unknown resouce: " resource-name)))))
 
 (defn- validate [value schema]
   (if-let [err (some-> schema
@@ -91,6 +120,9 @@
         ctx {:bindings (merge (build-task-bindings tasks config)
                               util-bindings)
              :env env}
-        ctx (update ctx :bindings assoc 'load-file (partial load-file* ctx))]
+        ctx (update ctx :bindings assoc
+                    'dad/doc doc
+                    'help doc ;; Alias for easy to remember
+                    'load-file (partial load-file* ctx))]
     (doall (sci/eval-string code-str ctx))
     (d.util/distinct-by :id @tasks)))
