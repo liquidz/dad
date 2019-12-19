@@ -8,6 +8,11 @@ if [ ! -d ${BASE_DIR}/post ]; then
     exit 1
 fi
 
+if [ ! $(stat --format '%a' ${BASE_DIR}/post) = '744' ]; then
+    echo "directory: ${BASE_DIR}/post has a unexpcedted permission."
+    exit 1
+fi
+
 if [ -d ${BASE_DIR}/pre/a ]; then
     echo "directory: ${BASE_DIR}/pre/a exists yet."
     exit 1
@@ -16,6 +21,11 @@ fi
 ### download
 if [ ! -e ${BASE_DIR}/project.clj ]; then
     echo "download: ${BASE_DIR}/project.clj is not found."
+    exit 1
+fi
+
+if [ ! $(stat --format '%a' ${BASE_DIR}/project.clj) = '755' ]; then
+    echo "directory: ${BASE_DIR}/project.clj has a unexpcedted permission."
     exit 1
 fi
 
@@ -83,6 +93,11 @@ fi
 ### template
 if [ ! -e ${BASE_DIR}/tmpl ]; then
     echo "template: ${BASE_DIR}/tmpl is not found."
+    exit 1
+fi
+
+if [ ! $(stat --format '%a' ${BASE_DIR}/tmpl) = '755' ]; then
+    echo "directory: ${BASE_DIR}/tmpl has a unexpcedted permission."
     exit 1
 fi
 
