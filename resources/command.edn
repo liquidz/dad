@@ -1,13 +1,16 @@
 {
- :chmod {:pre-not "test $(stat --format '%a' %path%) = %mode%"
+ :chmod {:pre-not #profile {:default "test $(stat --format '%a' %path%) = %mode%"
+                            :mac  "test $(stat -f '%p' %path% | cut -c 4-6) = %mode%"}
          :command "chmod -R %mode% %path%"
          :requires #{:mode :path}}
 
- :chown {:pre-not "test $(stat --format '%U' %path%) = %owner%"
+ :chown {:pre-not #profile {:default "test $(stat --format '%U' %path%) = %owner%"
+                            :mac "test $(stat -f '%Su' %path%) = %owner%"}
          :command "chown -R %owner% %path%"
          :requires #{:owner :path}}
 
- :chgrp {:pre-not "test $(stat --format '%G' %path%) = %group%"
+ :chgrp {:pre-not #profile {:default "test $(stat --format '%G' %path%) = %group%"
+                            :mac "test $(stat -f '%Sg' %path%) = %group%"}
          :command "chgrp -R %group% %path%"
          :requires #{:group :path}}
 
