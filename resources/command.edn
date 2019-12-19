@@ -18,11 +18,12 @@
                :command "rm -f %path%"}
  :file {:command [:file-create :chmod :chown :chgrp]}
 
+ ;; ===== directory =====
  :directory-delete {:pre "test -d %path%"
                     :command "rm -rf %path%"}
  :directory-create {:pre-not "test -d %path%"
-                    :command ["mkdir -p %path%" :chmod :chown :chgrp]}
- :directory {:command :directory-create}
+                    :command ["mkdir -p %path%"]}
+ :directory {:command [:directory-create :chmod :chown :chgrp]}
 
  :execute {:command "(%command%)" :requires #{:command}}
 
