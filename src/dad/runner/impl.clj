@@ -52,7 +52,7 @@
         task)
       task)))
 
-(defmethod run-by-code :template
+(defmethod run-by-code :template-create
   [{:keys [path source variables] :or {variables {}} :as task}]
   (let [source-file (io/file source)]
     (when (.exists source-file)

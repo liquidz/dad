@@ -30,9 +30,12 @@
  :_pre-compare-template-content {:command ":"
                              :requires #{:path :source}}
 
- :template {:pre [:_pre-compare-template-content]
-            :command [":" :chmod :chown :chgrp]
-            :requires #{:path :source}}
+ ;; ===== template =====
+ :template-create {:pre [:_pre-compare-template-content]
+                   :command ":"
+                   :requires #{:path :source}}
+
+ :template {:command [:template-create :chmod :chown :chgrp]}
 
  :git-clone {:pre-not "test -d %path%"
              :command "git clone %url% %path%"
