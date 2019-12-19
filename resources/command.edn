@@ -3,7 +3,7 @@
          :command "chmod -R %mode% %path%"
          :requires #{:mode :path}}
 
- :chown {;; TODO pre
+ :chown {:pre-not "test $(stat --format '%U' %path%) = %owner%"
          :command "chown -R %owner% %path%"
          :requires #{:owner :path}}
 
