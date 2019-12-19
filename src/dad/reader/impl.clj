@@ -2,14 +2,6 @@
   (:require [clojure.string :as str]
             [dad.util :as d.util]))
 
-(defn expand
-  ([m]
-   (reduce-kv (fn [res k v]
-                (assoc res k (d.util/expand-map-to-str v m "{{" "}}")))
-              {} m))
-  ([s m]
-   (d.util/expand-map-to-str s m "{{" "}}")))
-
 (defn directory [m]
   (let [{:keys [path action mode owner group] :or {action :create}} m]
     (cond-> {:type :directory

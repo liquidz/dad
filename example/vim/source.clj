@@ -16,7 +16,7 @@
               "libboost-all-dev"
               "sudo"]})
 
-(def expand #(dad/expand % vars))
+(def render #(dad/render % vars))
 
 (let [{:keys [src-dir packages configure]} vars]
   (package "vim" {:action :uninstall})
@@ -25,14 +25,14 @@
   (git {:path src-dir :url "https://github.com/vim/vim"})
 
   (execute {:cwd src-dir
-            :command (expand "./configure {{configure}}")
+            :command (render "./configure {{configure}}")
             :pre-not "test -e src/auto/config.log"})
 
   (execute {:cwd src-dir
             :command "make && make install"
             :pre-not "test -e /usr/local/bin/vim"})
 
-  (template {:path (expand "{{src-dir}}/rebuild.sh")
+  (template {:path (render "{{src-dir}}/rebuild.sh")
              :source "rebuild.sh.tmpl"
              :variables vars
              :mode "755"}))

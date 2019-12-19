@@ -33,9 +33,9 @@
 (def ^:private util-bindings
   {'dad/doc           "DUMMY: associated at `read-tasks` formally"
    'dad/env,          #(get (System/getenv) (csk/->SCREAMING_SNAKE_CASE_STRING %))
-   'dad/expand,       d.r.impl/expand
    'dad/file-exists?, #(some-> % io/file (.exists))
    'dad/os-type,      (fn [] (name (d.os/os-type)))
+   'dad/render,       #(d.util/expand-map-to-str %1 %2 "{{" "}}")
    'help              "DUMMY: associated at `read-tasks` formally"
    'load-file         "DUMMY: associated at `read-tasks` formally"
    'println,          println

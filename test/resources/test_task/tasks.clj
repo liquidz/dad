@@ -1,7 +1,7 @@
 #!/usr/bin/env dad --no-color --dry-run
 
 (defn base-dir [x]
-  (dad/expand "/tmp/dad_test/{{x}}" {:x  x}))
+  (dad/render "/tmp/dad_test/{{x}}" {:x  x}))
 
 (directory (base-dir "post"))
 (directory (base-dir "pre/a") {:action :delete})
