@@ -37,9 +37,7 @@
    'dad/os-type,      (fn [] (name (d.os/os-type)))
    'dad/render,       #(d.util/expand-map-to-str %1 %2 "{{" "}}")
    'help              "DUMMY: associated at `read-tasks` formally"
-   'load-file         "DUMMY: associated at `read-tasks` formally"
-   'println,          println
-   'str/join,         str/join})
+   'load-file         "DUMMY: associated at `read-tasks` formally"})
 
 (defn- extract-doc [resource-name]
   (some->> (io/resource "docs.adoc")
@@ -124,5 +122,6 @@
                     'dad/doc doc
                     'help doc ;; Alias for easy to remember
                     'load-file (partial load-file* ctx))]
-    (doall (sci/eval-string code-str ctx))
+    (doall (sci/binding [sci/out *out*]
+             (sci/eval-string code-str ctx)))
     (d.util/distinct-by :id @tasks)))

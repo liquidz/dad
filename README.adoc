@@ -72,7 +72,7 @@ E.g. `(dad/expand "hello {{msg}}" {:msg "world"})`
 | link:doc/dad_load_file.adoc[load-file]        | Func | Load another recipe file.
 |===
 
-`println` and `str/join` are also available like core functions.
+See https://github.com/borkdude/sci/blob/master/src/sci/impl/namespaces.cljc[sci/impl/namespaces.cljc] for other core functions.
 
 === Resources
 
