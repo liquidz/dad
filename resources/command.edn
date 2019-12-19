@@ -25,10 +25,11 @@
                     :command ["mkdir -p %path%"]}
  :directory {:command [:directory-create :chmod :chown :chgrp]}
 
+ ;; ===== execute =====
  :execute {:command "(%command%)" :requires #{:command}}
 
  :_pre-compare-template-content {:command ":"
-                             :requires #{:path :source}}
+                                 :requires #{:path :source}}
 
  ;; ===== template =====
  :template-create {:pre [:_pre-compare-template-content]
@@ -37,22 +38,29 @@
 
  :template {:command [:template-create :chmod :chown :chgrp]}
 
+ ;; ===== git =====
  :git-clone {:pre-not "test -d %path%"
              :command "git clone %url% %path%"
              :requires #{:url :path}}
- :git-checkout {:command "(cd %path% && git checkout %revision%)"
+ :git-checkout {;; TODO pre
+                :command "(cd %path% && git checkout %revision%)"
                 :requires #{:revision}}
  :git {:command [:git-clone :git-checkout]
        :requires #{:url :path}}
 
- :curl {:pre-not "test -e %path%"
+ ;; ===== download =====
+ :curl {;; TODO checksum
+        :pre-not "test -e %path%"
         :command "curl -sfLo %path% %url%"}
 
  :download {:command [:curl :chmod :chown :chgrp]}
 
- :link {:command "ln -sfn %to% %path%"
+ ;; ===== link =====
+ :link {;; TODO pre
+        :command "ln -sfn %to% %path%"
         :requires #{:path :to}}
 
+ ;; ===== package =====
  :apt-update {:command "apt update" :once? true}
 
  :package-exist? {:command #profile {:default "dpkg --status %name% | grep -i status | grep -i installed"

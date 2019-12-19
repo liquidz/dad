@@ -65,8 +65,8 @@
                    (read-one-task '(directory "/tmp/foo/bar" {:action :invalid})))))
 
   (t/testing "mode, owner, group"
-    (t/is (= {:type :directory :path "/tmp/foo" :mode "0755" :owner "bar" :group "baz" :action :create}
-             (read-one-task '(directory "/tmp/foo" {:mode "0755" :owner "bar" :group "baz"}))))))
+    (t/is (= {:type :directory :path "/tmp/foo" :mode "755" :owner "bar" :group "baz" :action :create}
+             (read-one-task '(directory "/tmp/foo" {:mode "755" :owner "bar" :group "baz"}))))))
 
 (t/deftest execute-test
   (t/testing "only resource name"
@@ -115,8 +115,8 @@
              (read-one-task "(git {:url \"foo\" :path \"bar\" :revision \"baz\"})"))))
 
   (t/testing "mode, owner, group"
-    (t/is (= {:type :git :url "foo" :path "bar" :revision "master" :mode "0644" :owner "alice" :group "baz"}
-             (read-one-task '(git {:url "foo" :path "bar" :mode "0644" :owner "alice" :group "baz"})))))
+    (t/is (= {:type :git :url "foo" :path "bar" :revision "master" :mode "644" :owner "alice" :group "baz"}
+             (read-one-task '(git {:url "foo" :path "bar" :mode "644" :owner "alice" :group "baz"})))))
 
   (t/testing "error"
     (t/testing "empty path and url"
@@ -141,8 +141,8 @@
              (read-one-task '(download {:url "foo" :path "bar"})))))
 
   (t/testing "modes"
-    (t/is (= {:type :download :url "foo" :path "bar" :mode "0755" :owner "alice" :group "baz"}
-             (read-one-task '(download {:url "foo" :path "bar" :mode "0755" :owner "alice" :group "baz"})))))
+    (t/is (= {:type :download :url "foo" :path "bar" :mode "755" :owner "alice" :group "baz"}
+             (read-one-task '(download {:url "foo" :path "bar" :mode "755" :owner "alice" :group "baz"})))))
 
   (t/testing "empty path and url"
     (t/is (thrown? ExceptionInfo
