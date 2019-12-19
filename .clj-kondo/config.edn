@@ -1,4 +1,10 @@
 {
+ :linters
+ {
+  ;; FIXME
+  :unresolved-namespace {:level :info}
+  }
+
  :output
  {:exclude-files ["test/resources"]}
  }
