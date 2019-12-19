@@ -11,11 +11,12 @@
          :command "chgrp -R %group% %path%"
          :requires #{:group :path}}
 
+ ;; ===== file =====
  :file-create {:pre-not "test -e %path%"
-               :command ["touch %path%" :chmod :chown :chgrp]}
+               :command ["touch %path%"]}
  :file-delete {:pre "test -e %path%"
                :command "rm -f %path%"}
- :file {:command :file-create}
+ :file {:command [:file-create :chmod :chown :chgrp]}
 
  :directory-delete {:pre "test -d %path%"
                     :command "rm -rf %path%"}
