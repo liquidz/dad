@@ -12,7 +12,6 @@
     (t/is (= 1 (count res)))
     (dissoc task :id)))
 
-
 (t/deftest task-id-test
   (let [[{:keys [id]}] (read-tasks '(package "foo"))]
     (t/is (and (string? id) (not (str/blank? id))))))
@@ -38,6 +37,11 @@
                (->> tasks
                     (sort-by #(str (:name %) (:action %)))
                     (map #(dissoc % :id))))))))
+
+(t/deftest doc-test
+  (doseq [k (keys (deref #'sut/task-configs))]
+    (t/testing (str "extracting " k)
+      (t/is (not (str/blank? (#'sut/extract-doc (str k))))))))
 
 (t/deftest directory-test
   (t/testing "only resource name"
