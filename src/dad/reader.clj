@@ -59,11 +59,11 @@
    (println "### Resources")
    (doseq [x (keys task-configs)]
      (println (str "* " x)))
-   (println "\nTo see detailed document: (doc 'resource-name)"))
+   (println "\nTo see detailed document: (doc \"name\")"))
   ([resource-name]
    (if-let [s (extract-doc (str resource-name))]
      (println s)
-     (println (str "Unknown resouce: " resource-name)))))
+     (println (str "Unknown name: " resource-name)))))
 
 (defn- validate [value schema]
   (if-let [err (some-> schema

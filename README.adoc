@@ -62,14 +62,13 @@ Here is a example to install Clojure https://clojure.org/guides/deps_and_cli[com
 |===
 | Name         | Var/Func | Description
 
-| link:doc/dad_doc.adoc[dad/doc]          | Func | Print dad documents.
-| link:doc/dad_env[dad/env]          | Var  | Map of environmental variables.
-| dad/file-exists? | Func | Return true if the specified path exists.
-| dad/os-type      | Func | OS name string such as `"linux"` or `"mac"`.
-| dad/expand       | Func | Expand map values to string. +
-E.g. `(dad/expand "hello {{msg}}" {:msg "world"})`
-| help | Func | Alias for `dad/doc`.
-| link:doc/dad_load_file.adoc[load-file]        | Func | Load another recipe file.
+| link:doc/dad_doc.adoc[dad/doc]         | Func | Print dad documents.
+| link:doc/dad_env[dad/env]              | Var  | Map of environmental variables.
+| dad/file-exists?                       | Func | Return true if the specified path exists.
+| dad/os-type                            | Func | OS name string such as `"linux"` or `"mac"`.
+| link:doc/dad_render.adoc[dad/render]   | Func | Render a template string with a data.
+| link:doc/dad_doc.adoc[help] | Func | Alias for `dad/doc`.
+| link:doc/dad_load_file.adoc[load-file] | Func | Load another recipe file.
 |===
 
 See https://github.com/borkdude/sci/blob/master/src/sci/impl/namespaces.cljc[sci/impl/namespaces.cljc] for other core functions.

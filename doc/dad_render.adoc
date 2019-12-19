@@ -1,0 +1,15 @@
+= dad/render
+// {{{
+
+Render a template string with a data
+
+[source,clojure]
+.Example
+----
+(dad/render "hello" {}) ;; => "hello"
+
+(dad/render "hello {{msg}}" {:msg "world"}) ;; => "hello world"
+
+(dad/render "hello {{not-found}}" {:msg "world"}) ;; => "hello {{not-found}}"
+----
+// }}}
