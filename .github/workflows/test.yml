@@ -2,7 +2,7 @@ name: test
 on: [push]
 
 jobs:
-  test:
+  linux:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -13,3 +13,13 @@ jobs:
       - run: lein deps
       - run: make test
       - run: sudo make local_jar_test
+
+  darwin:
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install leiningen
+        run: brew install leiningen
+      - run: lein deps
+      - run: make test
+      - run: make local_jar_test
