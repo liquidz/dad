@@ -7,7 +7,7 @@
          :command "chown -R %owner% %path%"
          :requires #{:owner :path}}
 
- :chgrp {;; TODO pre
+ :chgrp {:pre-not "test $(stat --format '%G' %path%) = %group%"
          :command "chgrp -R %group% %path%"
          :requires #{:group :path}}
 
