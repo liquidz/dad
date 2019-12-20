@@ -1,6 +1,6 @@
 {
  :chmod {:pre-not #profile {:default "test $(stat --format '%a' %path%) = %mode%"
-                            :mac  "test $(stat -f '%p' %path% | cut -c 4-6) = %mode%"}
+                            :mac  "test $(stat -f '%p' %path% | rev | cut -c 1-3 | rev) = %mode%"}
          :command "chmod -R %mode% %path%"
          :requires #{:mode :path}}
 
