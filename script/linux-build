@@ -23,6 +23,7 @@ else
     \cp -p Makefile ${TMPDIR}
     \cp -p project.clj ${TMPDIR}
     \cp -pr resources ${TMPDIR}
+    \cp -pr doc ${TMPDIR}
     \cp -pr src ${TMPDIR}
 
     (cd ${TMPDIR} && docker run --rm -v $(pwd):/src ${IMAGE_NAME} make native-image)

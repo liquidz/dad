@@ -67,7 +67,7 @@
  :apt-update {:command "apt update" :once? true}
 
  :package-exist? {:command #profile {:default "dpkg --status %name% | grep -i status | grep -i installed"
-                                     :mac "brew list %name%"}}
+                                     :mac "brew list -1 %name%"}}
 
  :package-install {:pre-not [:package-exist?]
                    :command #profile {:default [:apt-update
