@@ -6,12 +6,11 @@
   (:import clojure.lang.ExceptionInfo))
 
 (def ^:private test-config (h/read-test-config))
-(def ^:private read-tasks #(sut/read-tasks test-config (str %)))
+(def ^:private read-tasks #(->> % str (sut/read-tasks test-config) :tasks))
 (defn- read-one-task [code]
   (let [[task :as res] (read-tasks code)]
     (t/is (= 1 (count res)))
     (dissoc task :id)))
-
 
 (t/deftest task-id-test
   (let [[{:keys [id]}] (read-tasks '(package "foo"))]
@@ -39,6 +38,11 @@
                     (sort-by #(str (:name %) (:action %)))
                     (map #(dissoc % :id))))))))
 
+(t/deftest doc-test
+  (doseq [k (keys sut/task-configs)]
+    (t/testing (str "extracting " k)
+      (t/is (not (str/blank? (#'sut/extract-doc (str k))))))))
+
 (t/deftest directory-test
   (t/testing "only resource name"
     (t/is (= {:type :directory :path "/tmp/foo/bar" :action :create}
@@ -65,8 +69,8 @@
                    (read-one-task '(directory "/tmp/foo/bar" {:action :invalid})))))
 
   (t/testing "mode, owner, group"
-    (t/is (= {:type :directory :path "/tmp/foo" :mode "0755" :owner "bar" :group "baz" :action :create}
-             (read-one-task '(directory "/tmp/foo" {:mode "0755" :owner "bar" :group "baz"}))))))
+    (t/is (= {:type :directory :path "/tmp/foo" :mode "755" :owner "bar" :group "baz" :action :create}
+             (read-one-task '(directory "/tmp/foo" {:mode "755" :owner "bar" :group "baz"}))))))
 
 (t/deftest execute-test
   (t/testing "only resource name"
@@ -115,8 +119,8 @@
              (read-one-task "(git {:url \"foo\" :path \"bar\" :revision \"baz\"})"))))
 
   (t/testing "mode, owner, group"
-    (t/is (= {:type :git :url "foo" :path "bar" :revision "master" :mode "0644" :owner "alice" :group "baz"}
-             (read-one-task '(git {:url "foo" :path "bar" :mode "0644" :owner "alice" :group "baz"})))))
+    (t/is (= {:type :git :url "foo" :path "bar" :revision "master" :mode "644" :owner "alice" :group "baz"}
+             (read-one-task '(git {:url "foo" :path "bar" :mode "644" :owner "alice" :group "baz"})))))
 
   (t/testing "error"
     (t/testing "empty path and url"
@@ -141,8 +145,8 @@
              (read-one-task '(download {:url "foo" :path "bar"})))))
 
   (t/testing "modes"
-    (t/is (= {:type :download :url "foo" :path "bar" :mode "0755" :owner "alice" :group "baz"}
-             (read-one-task '(download {:url "foo" :path "bar" :mode "0755" :owner "alice" :group "baz"})))))
+    (t/is (= {:type :download :url "foo" :path "bar" :mode "755" :owner "alice" :group "baz"}
+             (read-one-task '(download {:url "foo" :path "bar" :mode "755" :owner "alice" :group "baz"})))))
 
   (t/testing "empty path and url"
     (t/is (thrown? ExceptionInfo

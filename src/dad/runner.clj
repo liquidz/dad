@@ -1,5 +1,6 @@
 (ns dad.runner
   (:require [clojure.java.shell :as sh]
+            [clojure.string :as str]
             [dad.logger :as d.log]
             [dad.runner.impl :as d.r.impl]
             [dad.util :as d.util]))
@@ -100,10 +101,11 @@
     (d.util/expand-map-to-str command (dissoc expanded-task :type :__def__))))
 
 (defn- run-task* [expanded-task]
-  (some-> expanded-task
-          d.r.impl/run-by-code
-          task->command
-          sh))
+  (let [res (some-> expanded-task
+                    d.r.impl/run-by-code)]
+    (if res
+      (some-> res task->command sh)
+      {:exit -1})))
 
 (defn- generate-info-log [expanded-task]
   (let [type-name (name (:type expanded-task))
@@ -145,14 +147,18 @@
        doall))
 
 (defn dry-run-tasks [config tasks]
-  (d.log/info "Dad started tasting.")
-  (doseq [task (->> tasks
-                    (map d.r.impl/dispatch-task)
-                    (expand-tasks config)
-                    (filter has-enough-params?)
-                    distinct-once)]
-    (d.log/info* (generate-info-log task))
-    (d.log/info* (str (if (:not-runnable? task)
-                        (d.log/colorize :red "WILL NOT change")
-                        (d.log/colorize :green "will change"))
-                      "\n"))))
+  (let [compact? (get-in config [:log :compact?] false)]
+    (when-not compact?
+      (d.log/info "Dad started tasting."))
+    (doseq [task (->> tasks
+                      (map d.r.impl/dispatch-task)
+                      (expand-tasks config)
+                      (filter has-enough-params?)
+                      distinct-once)]
+      (cond-> (generate-info-log task)
+        compact? str/triml
+        :always d.log/info*)
+      (d.log/info* (str (if (:not-runnable? task)
+                          (d.log/colorize :red "WILL NOT change")
+                          (d.log/colorize :green "will change"))
+                        "\n")))))

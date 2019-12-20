@@ -2,6 +2,9 @@
 (package "sl")
 (package "cowsay" {:action :uninstall})
 
-(template {:path (base-dir "tmpl")
+(let [opt {:path (base-dir "tmpl")
            :source "template.tmpl"
-           :variables {:foo "bar" :bar "baz"}})
+           :variables {:foo "bar" :bar "baz"}
+           :mode "644"}]
+  (template opt)
+  (template (assoc opt :mode "755")))

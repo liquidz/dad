@@ -1,13 +1,15 @@
 #!/usr/bin/env dad --no-color --dry-run
 
 (defn base-dir [x]
-  (str "/tmp/dad_test/" x))
+  (dad/render "/tmp/dad_test/{{x}}" {:x  x}))
 
-(directory (base-dir "post"))
+(directory (base-dir "post") {:mode "755"})
 (directory (base-dir "pre/a") {:action :delete})
+(directory (base-dir "post") {:mode "744"})
 
-(download {:path(base-dir "project.clj")
-           :url "https://raw.githubusercontent.com/liquidz/dad/master/project.clj"})
+(download {:path (base-dir "project.clj")
+           :url "https://raw.githubusercontent.com/liquidz/dad/master/project.clj"
+           :mode "755"})
 
 (file (base-dir "foo"))
 (file (base-dir "pre/dummy") {:action :delete})

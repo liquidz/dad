@@ -1,0 +1,23 @@
+= directory
+// {{{
+
+Create directories.
+
+|===
+| Key | Value | Required | Default | Description
+
+| <path> | String            | Yes |           | Directories are created recursively.
+| action | Keyword or String | No  | `:create` | `:delete` or `:remove` for deletion.
+| mode   | String            | No  |           |
+| owner  | String            | No  |           |
+| group  | String            | No  |           |
+|===
+
+[source,clojure]
+.Example
+----
+(directory "foo/bar")
+
+(directory {:path "foo/bar"})
+----
+// }}}

@@ -9,13 +9,14 @@
                  [org.clojure/tools.cli "0.4.2"]
 
                  [aero "1.1.3"]
-                 [borkdude/sci "0.0.11"]
+                 [borkdude/sci "0.0.12-alpha.6"]
                  [camel-snake-kebab "0.4.1"]
                  [metosin/malli "0.0.1-SNAPSHOT"]]
 
   :main ^{:skip-aot true} dad.core
   :profiles
-  {:dev {:resource-paths ["test/resources"]}
+  {:dev {:resource-paths ["test/resources"]
+         :global-vars {*warn-on-reflection* true}}
    :uberjar {:aot [dad.core]
              :prep-tasks ["compile"]
              :uberjar-name "dad.jar"}}

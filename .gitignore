@@ -10,6 +10,7 @@ pom.xml.asc
 .hgignore
 .hg/
 .eastwood
-dad
-dad.linux-amd64
+/dad
+/dad.linux-amd64
 .clj-kondo/.cache
+/resources/docs.adoc

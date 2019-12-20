@@ -1,0 +1,29 @@
+= template
+// {{{
+
+Create a text file from the specified template files.
+
+|===
+| Key | Value | Required | Default | Description
+
+| <path>    | String | Yes |      |
+| source    | String | Yes |      | Source template file.
+| variables | Map    | No  | `{}` | Variables to inject to template file.
+| mode      | String | No  |      |
+| owner     | String | No  |      |
+| group     | String | No  |      |
+|===
+
+.Example template
+----
+hello {{msg}}
+----
+
+[source,clojure]
+.Example
+----
+(template "result.txt" {:source "source.txt" :variables {:msg "world"}})
+
+(template {:path "result.txt" :source "source.txt" :variables {:msg "world"}})
+----
+// }}}

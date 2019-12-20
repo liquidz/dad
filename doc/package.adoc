@@ -1,0 +1,20 @@
+= package
+// {{{
+
+Install packages.
+
+|===
+| Key | Value | Required | Default | Description
+
+| <name> | String or String list | Yes |            |
+| action | Keyword or String     | no  | `:install` | `:uninstall` or `:remove` for uninstallation.
+|===
+
+[source,clojure]
+.Example
+----
+(package "vim")
+
+(package {:name "vim"})
+----
+// }}}

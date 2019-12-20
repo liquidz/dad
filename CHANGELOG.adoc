@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. This change log follows the conventions of http://keepachangelog.com/[keepachangelog.com].
 
+== Unreleased (dev)
+
+== 0.2.0 (2019-12-21)
+// {{{
+=== Added
+- https://github.com/liquidz/dad/issues/5[#5]: Added `dad/expand` built-in function to expand map values to string.
+- Added REPL mode.
+
+=== Changed
+- https://github.com/liquidz/dad/issues/8[#8]: Update `template` resource to verify the content is same or not.
+- (BREAKING) Rename `dad` specific built-in functions to use `dad` namespace.
+** `env` -> `dad/env`
+** `file-exists?` -> `dad/file-exists?`
+** `os-type` -> `dad/os-type`
+
+=== Fixed
+- Fixed `file` resource to do `chmod`, `chown` and `chgrp` even if the file exists.
+- Fixed `directory` resource to do `chmod`, `chown` and `chgrp` even if the directory exists.
+- Fixed `template` resource to do `chmod`, `chown` and `chgrp` even if the file exists.
+// }}}
+
 == 0.1.2 (2019-12-15)
 // {{{
 === Added

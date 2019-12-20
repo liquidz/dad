@@ -8,7 +8,10 @@ else
 	GRAAL_EXTRA_OPTION := "--static"
 endif
 
-target/dad.jar:
+prepare:
+	\cat doc/*.adoc > resources/docs.adoc
+
+target/dad.jar: prepare
 	env LEIN_SNAPSHOTS_IN_RELEASE=1 lein uberjar
 dad.linux-amd64:
 	./script/linux-build
@@ -24,6 +27,7 @@ dad: target/dad.jar
 		"-H:IncludeResources=schema.edn" \
 		"-H:IncludeResources=config.edn" \
 		"-H:IncludeResources=version.txt" \
+		"-H:IncludeResources=docs.adoc" \
 		--initialize-at-build-time  \
 		--report-unsupported-elements-at-runtime \
 		-H:Log=registerResource: \
@@ -53,7 +57,7 @@ example_jar_test: target/dad.jar
 example_bin_test: dad.linux-amd64
 	env TARGET=dad.linux-amd64 IMAGE_NAME=ubuntu:latest ./script/example
 
-test:
+test: prepare
 	lein test
 
 release:
@@ -62,3 +66,4 @@ release:
 clean:
 	lein clean
 	\rm -f dad dad.linux-amd64
+	\rm -f resources/docs.adoc

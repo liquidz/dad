@@ -1,53 +1,73 @@
 {
- :chmod {:pre-not "test $(stat --format '%a' %path%) = %mode%"
+ :chmod {:pre-not #profile {:default "test $(stat --format '%a' %path%) = %mode%"
+                            :mac  "test $(stat -f '%p' %path% | rev | cut -c 1-3 | rev) = %mode%"}
          :command "chmod -R %mode% %path%"
          :requires #{:mode :path}}
 
- :chown {;; TODO pre
+ :chown {:pre-not #profile {:default "test $(stat --format '%U' %path%) = %owner%"
+                            :mac "test $(stat -f '%Su' %path%) = %owner%"}
          :command "chown -R %owner% %path%"
          :requires #{:owner :path}}
 
- :chgrp {;; TODO pre
+ :chgrp {:pre-not #profile {:default "test $(stat --format '%G' %path%) = %group%"
+                            :mac "test $(stat -f '%Sg' %path%) = %group%"}
          :command "chgrp -R %group% %path%"
          :requires #{:group :path}}
 
+ ;; ===== file =====
  :file-create {:pre-not "test -e %path%"
-               :command ["touch %path%" :chmod :chown :chgrp]}
+               :command ["touch %path%"]}
  :file-delete {:pre "test -e %path%"
                :command "rm -f %path%"}
- :file {:command :file-create}
+ :file {:command [:file-create :chmod :chown :chgrp]}
 
+ ;; ===== directory =====
  :directory-delete {:pre "test -d %path%"
                     :command "rm -rf %path%"}
  :directory-create {:pre-not "test -d %path%"
-                    :command ["mkdir -p %path%" :chmod :chown :chgrp]}
- :directory {:command :directory-create}
+                    :command ["mkdir -p %path%"]}
+ :directory {:command [:directory-create :chmod :chown :chgrp]}
 
+ ;; ===== execute =====
  :execute {:command "(%command%)" :requires #{:command}}
 
- :template {:command [":" :chmod :chown :chgrp]
-            :requires #{:source}}
+ :_pre-compare-template-content {:command ":"
+                                 :requires #{:path :source}}
 
+ ;; ===== template =====
+ :template-create {:pre [:_pre-compare-template-content]
+                   :command ":"
+                   :requires #{:path :source}}
+
+ :template {:command [:template-create :chmod :chown :chgrp]}
+
+ ;; ===== git =====
  :git-clone {:pre-not "test -d %path%"
              :command "git clone %url% %path%"
              :requires #{:url :path}}
- :git-checkout {:command "(cd %path% && git checkout %revision%)"
+ :git-checkout {;; TODO pre
+                :command "(cd %path% && git checkout %revision%)"
                 :requires #{:revision}}
  :git {:command [:git-clone :git-checkout]
        :requires #{:url :path}}
 
- :curl {:pre-not "test -e %path%"
+ ;; ===== download =====
+ :curl {;; TODO checksum
+        :pre-not "test -e %path%"
         :command "curl -sfLo %path% %url%"}
 
  :download {:command [:curl :chmod :chown :chgrp]}
 
- :link {:command "ln -sfn %to% %path%"
+ ;; ===== link =====
+ :link {;; TODO pre
+        :command "ln -sfn %to% %path%"
         :requires #{:path :to}}
 
+ ;; ===== package =====
  :apt-update {:command "apt update" :once? true}
 
  :package-exist? {:command #profile {:default "dpkg --status %name% | grep -i status | grep -i installed"
-                                     :mac "brew list %name%"}}
+                                     :mac "brew list -1 %name%"}}
 
  :package-install {:pre-not [:package-exist?]
                    :command #profile {:default [:apt-update

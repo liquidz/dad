@@ -1,4 +1,7 @@
 {
+ :name "Dad"
  :command #include "command.edn"
  :schema #include "schema.edn"
+ :repl {:prompt "user=> "
+        :exit-codes [":repl/quit" ":repl/exit"]}
  }

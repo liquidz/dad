@@ -8,6 +8,12 @@ if [ ! -d ${BASE_DIR}/post ]; then
     exit 1
 fi
 
+${DAD_CMD} --eval "(directory {:path \"${BASE_DIR}/post\" :mode \"744\"})" --dry-run --no-color | grep chmod | grep 'WILL NOT'
+if [ $? -ne 0 ]; then
+    echo "directory: ${BASE_DIR}/post has a unexpcedted permission."
+    exit 1
+fi
+
 if [ -d ${BASE_DIR}/pre/a ]; then
     echo "directory: ${BASE_DIR}/pre/a exists yet."
     exit 1
@@ -16,6 +22,12 @@ fi
 ### download
 if [ ! -e ${BASE_DIR}/project.clj ]; then
     echo "download: ${BASE_DIR}/project.clj is not found."
+    exit 1
+fi
+
+${DAD_CMD} --eval "(file {:path \"${BASE_DIR}/project.clj\" :mode \"755\"})" --dry-run --no-color | grep chmod | grep 'WILL NOT'
+if [ $? -ne 0 ]; then
+    echo "download: ${BASE_DIR}/project.clj has a unexpcedted permission."
     exit 1
 fi
 
@@ -67,14 +79,14 @@ fi
 
 ### package
 # install
-${DAD_CMD} --eval '(package "sl")' --dry-run | grep 'WILL NOT'
+${DAD_CMD} --eval '(package "sl")' --dry-run --no-color | grep 'package-install' | grep 'WILL NOT'
 if [ $? -ne 0 ]; then
     echo "package: sl is not installed."
     exit 1
 fi
 
 # uninstall
-${DAD_CMD} --eval '(package "cowsay" {:action :uninstall})' --dry-run | grep 'WILL NOT'
+${DAD_CMD} --eval '(package "cowsay" {:action :uninstall})' --dry-run --no-color | grep 'package-uninstall' | grep 'WILL NOT'
 if [ $? -ne 0 ]; then
     echo "package: cowsay is installed yet."
     exit 1
@@ -85,8 +97,15 @@ if [ ! -e ${BASE_DIR}/tmpl ]; then
     echo "template: ${BASE_DIR}/tmpl is not found."
     exit 1
 fi
-helper_check_md5 template.md5 > /dev/null 2>&1
+
+${DAD_CMD} --eval "(file {:path \"${BASE_DIR}/tmpl\" :mode \"755\"})" --dry-run --no-color | grep chmod | grep 'WILL NOT'
 if [ $? -ne 0 ]; then
-    echo "template: MD5 hash is not matched."
+    echo "template: ${BASE_DIR}/tmpl has a unexpcedted permission."
+    exit 1
+fi
+
+${DAD_CMD} --eval "(template {:path \"${BASE_DIR}/tmpl\" :source \"template.tmpl\" :variables {:foo \"bar\" :bar \"baz\"}})" --dry-run --no-color | grep 'template-create' | grep 'WILL NOT'
+if [ $? -ne 0 ]; then
+    echo "template: tmpl does not have a valid content."
     exit 1
 fi

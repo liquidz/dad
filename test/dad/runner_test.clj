@@ -41,7 +41,7 @@
               {:type :bar-test :__def__ {:command "bar %bar%" :requires #{:bar}}}]
              (expand-tasks [{:type :multi-ref-test}])))
 
-    (t/is (= [{:type :template :path "foo" :source "bar"}
+    (t/is (= [{:type :template-create :path "foo" :source "bar"}
               {:type :chmod :path "foo" :source "bar"}
               {:type :chown :path "foo" :source "bar"}
               {:type :chgrp :path "foo" :source "bar"}]

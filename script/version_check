@@ -1,0 +1,20 @@
+#!/bin/bash
+
+SCRIPT_DIR=$(cd $(dirname $0); pwd)
+VERSION=$(cat ${SCRIPT_DIR}/../resources/version.txt)
+
+echo "version_check: Expected verion = ${VERSION}"
+
+grep "download/${VERSION}/" ${SCRIPT_DIR}/../README.adoc
+if [ $? -ne 0 ]; then
+    echo 'version_check: Download link in README is outdated'
+    exit 1
+fi
+
+grep "== ${VERSION}" ${SCRIPT_DIR}/../CHANGELOG.adoc
+if [ $? -ne 0 ]; then
+    echo 'version_check: There is no corresponding section in CHANGELOG'
+    exit 1
+fi
+
+exit 0

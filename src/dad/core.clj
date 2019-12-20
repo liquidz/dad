@@ -7,25 +7,30 @@
             [dad.logger :as d.log]
             [dad.os :as d.os]
             [dad.reader :as d.reader]
+            [dad.repl :as d.repl]
             [dad.runner :as d.runner]))
 
 (def ^:private cli-options
-  [["-s" "--silent"]
-   [nil "--debug"]
-   ["-e" "--eval CODE"]
-   ["-n" "--dry-run"]
-   [nil "--no-color"]
-   ["-h" "--help"]
-   ["-v" "--version"]])
+  [[nil,  "--debug",     "Debug mode"]
+   [nil,  "--dry-run",   "Check whether recipes will change your environment"]
+   ["-e", "--eval CODE", "Evaluate a code"]
+   ["-h", "--help",      "Print this help text"]
+   [nil,  "--no-color",  "Disable colorize"]
+   [nil,  "--repl",      "Start REPL(dry-run mode)"]
+   ["-s", "--silent",    "Silent mode"]
+   ["-v", "--version",   "Print version"]])
 
-(defn- print-version []
-  (let [ver (-> "version.txt" io/resource slurp str/trim)]
-    (println (str "dad ver " ver))
-    (println (str "* Detected OS: " (name (d.os/os-type))))))
+(defn- print-version [config]
+  (println (str (:name config) " v" (d.config/version)))
+  (println (str "* Detected OS: " (name (d.os/os-type)))))
 
-(defn- usage [summary]
-  (print-version)
-  (println (str "* Usage:\n" summary)))
+(defn- usage [config summary]
+  (print-version config)
+  (println "")
+  (println "Usage:")
+  (println (str "  " (str/lower-case (:name config)) " [options] [recipe files]"))
+  (println "")
+  (println (str "Options:\n" summary)))
 
 (defn- fetch-codes [arguments options]
   (let [codes (some->> (seq arguments)
@@ -43,7 +48,7 @@
 
 (defn -main [& args]
   (let [{:keys [arguments options summary errors]} (cli/parse-opts args cli-options)
-        {:keys [debug dry-run no-color help silent version]} options
+        {:keys [debug dry-run no-color repl help silent version]} options
         config (d.config/read-config)
         log-level (cond
                     silent :silent
@@ -52,18 +57,21 @@
         runner-fn (if dry-run
                     d.runner/dry-run-tasks
                     d.runner/run-tasks)]
-    (cond
-      errors (do (doseq [e errors] (println e))
-                 (usage summary)
-                 (System/exit 1))
-      help (usage summary)
-      version (print-version)
-      :else
-      (binding [d.log/*level* log-level
-                d.log/*color* (not no-color)]
+    (binding [d.log/*level* log-level
+              d.log/*color* (not no-color)]
+      (cond
+        errors (do (doseq [e errors] (println e))
+                   (usage config summary)
+                   (System/exit 1))
+        help (usage config summary)
+        version (print-version config)
+        repl (d.repl/start-loop config)
+
+        :else
         (try
           (some->> (fetch-codes arguments options)
                    (d.reader/read-tasks config)
+                   :tasks
                    (runner-fn config))
           (catch Exception ex
             (d.log/error (.getMessage ex) (ex-data ex))

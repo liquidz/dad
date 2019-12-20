@@ -25,5 +25,3 @@ if [ $? -ne 0 ]; then
     echo "pre: failed to pre-uninstall sl."
     exit 1
 fi
-
-helper_cleanup_package > /dev/null 2>&1

@@ -1,5 +1,6 @@
 (ns dad.util
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str])
+  (:import java.security.MessageDigest))
 
 (defn distinct-by [f coll]
   (loop [[first-elm & rest-elms] coll
@@ -28,3 +29,9 @@
     (fn [res k v]
       (str/replace res (str start (name k) end) (str v)))
     s m)))
+
+(defn sha256 [^String s]
+  (->> (.getBytes s "UTF-8")
+       (.digest (MessageDigest/getInstance "SHA-256"))
+       (map (partial format "%02x"))
+       (apply str)))
