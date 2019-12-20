@@ -12,7 +12,7 @@
 
 (declare read-tasks)
 
-(def ^:private task-configs
+(def task-configs
   {'directory, {:destination d.r.impl/directory
                 :resource-name-key :path}
    'execute,   {:destination d.r.impl/execute
@@ -121,7 +121,8 @@
         ctx (update ctx :bindings assoc
                     'dad/doc doc
                     'help doc ;; Alias for easy to remember
-                    'load-file (partial load-file* ctx))]
-    (doall (sci/binding [sci/out *out*]
-             (sci/eval-string code-str ctx)))
-    (d.util/distinct-by :id @tasks)))
+                    'load-file (partial load-file* ctx))
+        res (sci/binding [sci/out *out*]
+              (sci/eval-string code-str ctx))]
+    {:res res
+     :tasks (d.util/distinct-by :id @tasks)}))

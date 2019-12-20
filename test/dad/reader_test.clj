@@ -6,7 +6,7 @@
   (:import clojure.lang.ExceptionInfo))
 
 (def ^:private test-config (h/read-test-config))
-(def ^:private read-tasks #(sut/read-tasks test-config (str %)))
+(def ^:private read-tasks #(->> % str (sut/read-tasks test-config) :tasks))
 (defn- read-one-task [code]
   (let [[task :as res] (read-tasks code)]
     (t/is (= 1 (count res)))
@@ -39,7 +39,7 @@
                     (map #(dissoc % :id))))))))
 
 (t/deftest doc-test
-  (doseq [k (keys (deref #'sut/task-configs))]
+  (doseq [k (keys sut/task-configs)]
     (t/testing (str "extracting " k)
       (t/is (not (str/blank? (#'sut/extract-doc (str k))))))))
 
