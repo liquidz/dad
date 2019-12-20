@@ -114,7 +114,7 @@
 
 (defn read-tasks [config code-str]
   (let [tasks (atom [])
-        env (atom {})
+        env (:env config (atom {}))
         ctx {:bindings (merge (build-task-bindings tasks config)
                               util-bindings)
              :env env}
