@@ -57,13 +57,15 @@ Here is a example to install Clojure https://clojure.org/guides/deps_and_cli[com
 
 == Reference
 
+NOTE: You can refer all documents in *codes*. (evaluate `(dad/doc)` or `(help)`)
+
 === Built-in vars / functions
 
 |===
 | Name         | Var/Func | Description
 
 | link:doc/dad_doc.adoc[dad/doc]         | Func | Print dad documents.
-| link:doc/dad_env[dad/env]              | Var  | Map of environmental variables.
+| link:doc/dad_env.adoc[dad/env]              | Var  | Map of environmental variables.
 | dad/file-exists?                       | Func | Return true if the specified path exists.
 | dad/os-type                            | Func | OS name string such as `"linux"` or `"mac"`.
 | link:doc/dad_render.adoc[dad/render]   | Func | Render a template string with a data.
