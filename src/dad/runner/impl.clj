@@ -43,7 +43,7 @@
   [{:keys [path source variables] :as task}]
   (let [path-hash (and (.exists (io/file path))
                        (-> path slurp str/trim d.util/sha256))
-        source-hash (and (.exists (io/file path))
+        source-hash (and (.exists (io/file source))
                          (-> source (render-template variables) d.util/sha256))]
     (d.log/debug "Comparing template content"
                  {:path path-hash :source source-hash})
