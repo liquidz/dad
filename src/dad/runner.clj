@@ -1,5 +1,6 @@
 (ns dad.runner
   (:require [clojure.java.shell :as sh]
+            [clojure.string :as str]
             [dad.logger :as d.log]
             [dad.runner.impl :as d.r.impl]
             [dad.util :as d.util]))
@@ -146,14 +147,18 @@
        doall))
 
 (defn dry-run-tasks [config tasks]
-  (d.log/info "Dad started tasting.")
-  (doseq [task (->> tasks
-                    (map d.r.impl/dispatch-task)
-                    (expand-tasks config)
-                    (filter has-enough-params?)
-                    distinct-once)]
-    (d.log/info* (generate-info-log task))
-    (d.log/info* (str (if (:not-runnable? task)
-                        (d.log/colorize :red "WILL NOT change")
-                        (d.log/colorize :green "will change"))
-                      "\n"))))
+  (let [compact? (get-in config [:log :compact?] false)]
+    (when-not compact?
+      (d.log/info "Dad started tasting."))
+    (doseq [task (->> tasks
+                      (map d.r.impl/dispatch-task)
+                      (expand-tasks config)
+                      (filter has-enough-params?)
+                      distinct-once)]
+      (cond-> (generate-info-log task)
+        compact? str/triml
+        :always d.log/info*)
+      (d.log/info* (str (if (:not-runnable? task)
+                          (d.log/colorize :red "WILL NOT change")
+                          (d.log/colorize :green "will change"))
+                        "\n")))))
