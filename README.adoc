@@ -17,7 +17,7 @@ This project is heavily inspired by https://github.com/itamae-kitchen/mitamae[mi
 Download binary from https://github.com/liquidz/dad/releases[releases].
 [source,terminal]
 ----
-curl -sfLo dad https://github.com/liquidz/dad/releases/download/0.2.0/dad.linux-amd64
+curl -sfLo dad https://github.com/liquidz/dad/releases/download/0.2.1/dad.linux-amd64
 chmod +x dad
 ./dad your_task.clj
 ----

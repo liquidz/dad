@@ -59,7 +59,7 @@
    (println "### Resources")
    (doseq [x (keys task-configs)]
      (println (str "* " x)))
-   (println "\nTo see detailed document: (doc \"name\")"))
+   (println "\nTo see detailed document: (dad/doc \"name\")"))
   ([resource-name]
    (if-let [s (extract-doc (str resource-name))]
      (println s)

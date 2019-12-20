@@ -29,7 +29,10 @@
                   " v" (d.config/version)
                   " REPL"))
     (println "Please note that evaluations in this REPL *DO NOT AFFECT* your environment.")
-    (println (str "Use " (str/join " or " exit-codes)
+
+    (println (str "  Docs: (dad/doc) or (dad/doc \"name\")\n"
+                  "        (help) is an alias for (dad/doc)"))
+    (println (str "  Exit: " (str/join " or " exit-codes)
                   " to quit this REPL."))
     (println "")
     (loop []

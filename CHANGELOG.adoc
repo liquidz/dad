@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file. This change
 
 == Unreleased (dev)
 
+== 0.2.1 (2019-12-21)
+// {{{
+=== Fixed
+- Fixed typo in `(dad/doc)`.
+// }}}
+
 == 0.2.0 (2019-12-21)
 // {{{
 === Added
