@@ -102,6 +102,29 @@ Resources are called like follows.
 
 |===
 
+== REPL
+
+Dad also provides REPL mode that does not affect your environment. (same as `--dry-run` option)
+
+[source,console]
+----
+$ dad --repl
+
+user=> (println "hello from dad")
+hello from dad
+nil
+
+user=> (+ 1 2 3)
+6
+
+user=> (package "sl")
+apt-update [sl] ... will change
+package-install [sl] ... will change
+
+user=> (package "sl" {:action :uninstall})
+package-uninstall [sl] ... WILL NOT change
+----
+
 == License
 
 Copyright © 2019 https://twitter.com/uochan[Masashi Iizuka]

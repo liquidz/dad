@@ -16,7 +16,7 @@
    ["-e", "--eval CODE", "Evaluate a code"]
    ["-h", "--help",      "Print this help text"]
    [nil,  "--no-color",  "Disable colorize"]
-   [nil,  "--repl",      "Start REPL"]
+   [nil,  "--repl",      "Start REPL(dry-run mode)"]
    ["-s", "--silent",    "Silent mode"]
    ["-v", "--version",   "Print version"]])
 

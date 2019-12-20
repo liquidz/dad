@@ -28,6 +28,7 @@
     (println (str (:name config)
                   " v" (d.config/version)
                   " REPL"))
+    (println "Please note that evaluations in this REPL *DO NOT AFFECT* your environment.")
     (println (str "Use " (str/join " or " exit-codes)
                   " to quit this REPL."))
     (println "")
