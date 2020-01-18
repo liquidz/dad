@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file. This change
 
 == Unreleased (dev)
 
+== 0.2.2 (2020-01-19)
+// {{{
+=== Changed
+- https://github.com/liquidz/dad/issues/12[#12]: Bump GraalVM to 19.3.1.
+
+=== Fixed
+- Fixed REPL evaluation for muti-line codes.
+// }}}
+
 == 0.2.1 (2019-12-21)
 // {{{
 === Fixed
