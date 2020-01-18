@@ -9,14 +9,22 @@
          #(apply dissoc % (keys d.reader/task-configs)))
   env)
 
-(defn- eval* [config code]
+(defn- eval*
+  "Return false when continuing reading line is required."
+  [config code]
   (try
     (let [{:keys [res tasks]} (d.reader/read-tasks config code)]
       (if-let [tasks (seq tasks)]
         (d.runner/dry-run-tasks config tasks)
-        (println res)))
+        (println res))
+      true)
     (catch Exception ex
-      (println (.getMessage ex)))))
+      (if (-> ex ex-data :type
+              #{:edamame/error :reader-exception})
+        ;; parse error, continue to reading line
+        false
+        (do (println (.getMessage ex))
+            true)))))
 
 (defn start-loop [config]
   (let [env (atom {})
@@ -35,11 +43,14 @@
     (println (str "  Exit: " (str/join " or " exit-codes)
                   " to quit this REPL."))
     (println "")
-    (loop []
-      (print prompt)
-      (flush)
+    (loop [last-line "" need-prompt? true]
+      (when need-prompt?
+        (print prompt)
+        (flush))
       (when-let [line (some-> (read-line) str/trim)]
         (when-not (exit-code-set line)
-          (eval* config line)
-          (reset-env! env)
-          (recur))))))
+          (let [line (cond->> line
+                       (not need-prompt?) (str last-line "\n"))
+                need-prompt? (eval* config line)]
+            (reset-env! env)
+            (recur line need-prompt?)))))))
