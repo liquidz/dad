@@ -8,8 +8,8 @@
   :dependencies [[org.clojure/clojure "1.10.1"]
                  [org.clojure/tools.cli "0.4.2"]
 
-                 [aero "1.1.3"]
-                 [borkdude/sci "0.0.12-alpha.6"]
+                 [aero "1.1.5"]
+                 [borkdude/sci "0.0.12"]
                  [camel-snake-kebab "0.4.1"]
                  [metosin/malli "0.0.1-SNAPSHOT"]]
 
