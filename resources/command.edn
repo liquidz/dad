@@ -45,7 +45,7 @@
  :git-clone {:pre-not "test -d %path%"
              :command "git clone %url% %path%"
              :requires #{:url :path}}
- :git-checkout {;; TODO pre
+ :git-checkout {:pre-not "(cd %path% && test $(git symbolic-ref --short HEAD) = %revision%)"
                 :command "(cd %path% && git checkout %revision%)"
                 :requires #{:revision}}
  :git {:command [:git-clone :git-checkout]
