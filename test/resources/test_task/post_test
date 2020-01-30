@@ -73,7 +73,13 @@ fi
 
 ls -l ${BASE_DIR}/world | grep "\-> ${BASE_DIR}/hello" > /dev/null 2>&1
 if [ $? -ne 0 ]; then
-    echo "link: ${BASE_DIR}/world's destrination is not ${BASE_DIR}/hello."
+    echo "link: ${BASE_DIR}/world's destination is not ${BASE_DIR}/hello."
+    exit 1
+fi
+
+${DAD_CMD} --eval "(link {:path \"${BASE_DIR}/world\" :to \"${BASE_DIR}/hello\"})" --dry-run --no-color | grep link | grep 'WILL NOT'
+if [ $? -ne 0 ]; then
+    echo "link: pre-condition is not working correctly."
     exit 1
 fi
 

@@ -59,7 +59,7 @@
  :download {:command [:curl :chmod :chown :chgrp]}
 
  ;; ===== link =====
- :link {;; TODO pre
+ :link {:pre-not "test $(readlink %path%) = %to%"
         :command "ln -sfn %to% %path%"
         :requires #{:path :to}}
 
