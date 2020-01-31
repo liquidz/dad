@@ -1,0 +1,12 @@
+#!/bin/bash
+
+VERSION=$(curl -sL https://raw.githubusercontent.com/liquidz/dad/master/resources/version.txt)
+
+if [ "$(uname)" = 'Darwin' ]; then
+    OS_TYPE='darwin'
+else
+    OS_TYPE='linux'
+fi
+
+curl -sfLo ./dad https://github.com/liquidz/dad/releases/download/${VERSION}/dad.${OS_TYPE}-amd64
+chmod +x ./dad
