@@ -3,11 +3,11 @@
             [clojure.java.io :as io]
             [clojure.string :as str]
             [dad.logger :as d.log]
-            [malli.core :as m]
-            [malli.error :as me]
-            [dad.util :as d.util]
             [dad.os :as d.os]
             [dad.reader.impl :as d.r.impl]
+            [dad.util :as d.util]
+            [malli.core :as m]
+            [malli.error :as me]
             [sci.core :as sci]))
 
 (declare read-tasks)
@@ -90,7 +90,7 @@
 
 (defn- ensure-task-list [x]
   (->> (d.util/ensure-seq x)
-       (remove nil? )
+       (remove nil?)
        (map #(assoc % :id (task-id %)))))
 
 (defn- load-file* [ctx path]
