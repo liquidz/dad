@@ -32,19 +32,19 @@
   (println "")
   (println (str "Options:\n" summary)))
 
-(defn- fetch-codes [arguments options]
+(defn- fetch-codes-by-arguments [arguments options]
   (let [codes (some->> (seq arguments)
                        (map slurp)
-                       (str/join "\n"))
-        codes (if-let [eval-code (:eval options)]
-                (str eval-code " " codes)
-                codes)]
-    (if codes
-      codes
-      (->> *in*
-           io/reader
-           line-seq
-           (str/join "\n")))))
+                       (str/join "\n"))]
+    (if-let [eval-code (:eval options)]
+      (str eval-code " " codes)
+      codes)))
+
+(defn- fetch-codes-by-stdin []
+  (->> *in*
+       io/reader
+       line-seq
+       (str/join "\n")))
 
 (defn -main [& args]
   (let [{:keys [arguments options summary errors]} (cli/parse-opts args cli-options)
@@ -65,11 +65,13 @@
                    (System/exit 1))
         help (usage config summary)
         version (print-version config)
-        repl (d.repl/start-loop config)
+        repl (->> (fetch-codes-by-arguments arguments options)
+                  (d.repl/start-loop config))
 
         :else
         (try
-          (some->> (fetch-codes arguments options)
+          (some->> (or (fetch-codes-by-arguments arguments options)
+                       (fetch-codes-by-stdin))
                    (d.reader/read-tasks config)
                    :tasks
                    (runner-fn config))
