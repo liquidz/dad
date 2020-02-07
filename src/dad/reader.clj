@@ -13,21 +13,21 @@
 (declare read-tasks)
 
 (def task-configs
-  {'directory, {:destination d.r.impl/directory
+  {'directory, {:destination #'d.r.impl/directory
                 :resource-name-key :path}
-   'execute,   {:destination d.r.impl/execute
+   'execute,   {:destination #'d.r.impl/execute
                 :resource-name-key :command}
-   'file,      {:destination d.r.impl/file
+   'file,      {:destination #'d.r.impl/file
                 :resource-name-key :path}
-   'git,       {:destination d.r.impl/git
+   'git,       {:destination #'d.r.impl/git
                 :resource-name-key :path}
-   'download,  {:destination d.r.impl/download
+   'download,  {:destination #'d.r.impl/download
                 :resource-name-key :path}
-   'link,      {:destination d.r.impl/link
+   'link,      {:destination #'d.r.impl/link
                 :resource-name-key :path}
-   'package,   {:destination d.r.impl/package
+   'package,   {:destination #'d.r.impl/package
                 :resource-name-key :name}
-   'template,  {:destination d.r.impl/template
+   'template,  {:destination #'d.r.impl/template
                 :resource-name-key :path}})
 
 (def ^:private util-bindings
@@ -109,7 +109,8 @@
              task-config (assoc v :schema schema)]
          (when-not schema
            (throw (ex-info "no validation schema error" {:name k})))
-         (assoc res k (comp add-tasks (partial dispatch* task-config)))))
+         (assoc res k (with-meta (comp add-tasks (partial dispatch* task-config))
+                        (-> task-config :destination meta)))))
      {} task-configs)))
 
 (defn read-tasks [config code-str]
