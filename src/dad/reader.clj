@@ -106,11 +106,13 @@
     (reduce-kv
      (fn [res k v]
        (let [schema (get-in config [:schema k])
-             task-config (assoc v :schema schema)]
+             task-config (assoc v :schema schema)
+             doc (-> k name extract-doc)]
          (when-not schema
            (throw (ex-info "no validation schema error" {:name k})))
          (assoc res k (with-meta (comp add-tasks (partial dispatch* task-config))
-                        (-> task-config :destination meta)))))
+                        (-> task-config :destination meta
+                            (cond-> doc (assoc :doc doc)))))))
      {} task-configs)))
 
 (defn read-tasks [config code-str]
