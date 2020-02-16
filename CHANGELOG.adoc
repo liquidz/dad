@@ -2,7 +2,15 @@
 
 All notable changes to this project will be documented in this file. This change log follows the conventions of http://keepachangelog.com/[keepachangelog.com].
 
-== Unreleased (dev)
+== 0.2.4 (2020-02-16)
+// {{{
+=== Added
+- https://github.com/liquidz/dad/issues/18[#18]: Add meta data to each resource functions.
+
+=== Fixed
+- https://github.com/liquidz/dad/issues/17[#17]: Command line specified file is not evaluated in REPL mode.
+
+// }}}
 
 == 0.2.3 (2020-01-31)
 // {{{

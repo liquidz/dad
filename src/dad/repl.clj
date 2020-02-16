@@ -26,7 +26,7 @@
         (do (println (.getMessage ex))
             true)))))
 
-(defn start-loop [config]
+(defn start-loop [config init-codes]
   (let [env (atom {})
         config (assoc config
                       :env env
@@ -43,6 +43,11 @@
     (println (str "  Exit: " (str/join " or " exit-codes)
                   " to quit this REPL."))
     (println "")
+
+    (when (seq init-codes)
+      (d.reader/read-tasks config init-codes)
+      (reset-env! env))
+
     (loop [last-line "" need-prompt? true]
       (when need-prompt?
         (print prompt)

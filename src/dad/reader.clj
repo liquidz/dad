@@ -3,31 +3,31 @@
             [clojure.java.io :as io]
             [clojure.string :as str]
             [dad.logger :as d.log]
-            [malli.core :as m]
-            [malli.error :as me]
-            [dad.util :as d.util]
             [dad.os :as d.os]
             [dad.reader.impl :as d.r.impl]
+            [dad.util :as d.util]
+            [malli.core :as m]
+            [malli.error :as me]
             [sci.core :as sci]))
 
 (declare read-tasks)
 
 (def task-configs
-  {'directory, {:destination d.r.impl/directory
+  {'directory, {:destination #'d.r.impl/directory
                 :resource-name-key :path}
-   'execute,   {:destination d.r.impl/execute
+   'execute,   {:destination #'d.r.impl/execute
                 :resource-name-key :command}
-   'file,      {:destination d.r.impl/file
+   'file,      {:destination #'d.r.impl/file
                 :resource-name-key :path}
-   'git,       {:destination d.r.impl/git
+   'git,       {:destination #'d.r.impl/git
                 :resource-name-key :path}
-   'download,  {:destination d.r.impl/download
+   'download,  {:destination #'d.r.impl/download
                 :resource-name-key :path}
-   'link,      {:destination d.r.impl/link
+   'link,      {:destination #'d.r.impl/link
                 :resource-name-key :path}
-   'package,   {:destination d.r.impl/package
+   'package,   {:destination #'d.r.impl/package
                 :resource-name-key :name}
-   'template,  {:destination d.r.impl/template
+   'template,  {:destination #'d.r.impl/template
                 :resource-name-key :path}})
 
 (def ^:private util-bindings
@@ -90,7 +90,7 @@
 
 (defn- ensure-task-list [x]
   (->> (d.util/ensure-seq x)
-       (remove nil? )
+       (remove nil?)
        (map #(assoc % :id (task-id %)))))
 
 (defn- load-file* [ctx path]
@@ -106,10 +106,13 @@
     (reduce-kv
      (fn [res k v]
        (let [schema (get-in config [:schema k])
-             task-config (assoc v :schema schema)]
+             task-config (assoc v :schema schema)
+             doc (-> k name extract-doc)]
          (when-not schema
            (throw (ex-info "no validation schema error" {:name k})))
-         (assoc res k (comp add-tasks (partial dispatch* task-config)))))
+         (assoc res k (with-meta (comp add-tasks (partial dispatch* task-config))
+                        (-> task-config :destination meta
+                            (cond-> doc (assoc :doc doc)))))))
      {} task-configs)))
 
 (defn read-tasks [config code-str]

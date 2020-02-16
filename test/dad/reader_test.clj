@@ -39,9 +39,19 @@
                     (map #(dissoc % :id))))))))
 
 (t/deftest doc-test
-  (doseq [k (keys sut/task-configs)]
-    (t/testing (str "extracting " k)
-      (t/is (not (str/blank? (#'sut/extract-doc (str k))))))))
+  (t/testing "extract-doc"
+    (doseq [k (keys sut/task-configs)]
+      (t/testing (str "extracting " k)
+        (t/is (not (str/blank? (#'sut/extract-doc (str k))))))))
+
+  (t/testing ":doc metadata"
+    (doseq [k (keys sut/task-configs)]
+      (t/testing (str "fetching metadata for " k)
+        (let [m (->> (format "(-> '%s resolve meta)" k)
+                     (sut/read-tasks test-config)
+                     :res)]
+          (t/is (= (:doc m)
+                   (#'sut/extract-doc (str k)))))))))
 
 (t/deftest directory-test
   (t/testing "only resource name"
