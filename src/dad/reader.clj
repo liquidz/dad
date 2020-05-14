@@ -1,14 +1,15 @@
 (ns dad.reader
-  (:require [camel-snake-kebab.core :as csk]
-            [clojure.java.io :as io]
-            [clojure.string :as str]
-            [dad.logger :as d.log]
-            [dad.os :as d.os]
-            [dad.reader.impl :as d.r.impl]
-            [dad.util :as d.util]
-            [malli.core :as m]
-            [malli.error :as me]
-            [sci.core :as sci]))
+  (:require
+   [camel-snake-kebab.core :as csk]
+   [clojure.java.io :as io]
+   [clojure.string :as str]
+   [dad.logger :as d.log]
+   [dad.os :as d.os]
+   [dad.reader.impl :as d.r.impl]
+   [dad.util :as d.util]
+   [malli.core :as m]
+   [malli.error :as me]
+   [sci.core :as sci]))
 
 (declare read-tasks)
 
@@ -39,7 +40,8 @@
    'help              "DUMMY: associated at `read-tasks` formally"
    'load-file         "DUMMY: associated at `read-tasks` formally"})
 
-(defn- extract-doc [resource-name]
+(defn- extract-doc
+  [resource-name]
   (some->> (io/resource "docs.adoc")
            (io/reader)
            (line-seq)
@@ -50,7 +52,7 @@
            (str/join "\n")
            (str/trim)))
 
-(defn- doc
+(defn doc
   ([]
    (println "### Built-in vars/functions")
    (doseq [x (keys util-bindings)]
@@ -65,14 +67,16 @@
      (println s)
      (println (str "Unknown name: " resource-name)))))
 
-(defn- validate [value schema]
+(defn- validate
+  [value schema]
   (if-let [err (some-> schema
                        (m/explain value)
                        me/humanize)]
     (throw (ex-info "validation error" err))
     value))
 
-(defn- dispatch* [task-config & args]
+(defn- dispatch*
+  [task-config & args]
   (let [{:keys [schema destination resource-name-key]} task-config
         [resource-name m] (cond->> args
                             (some-> args first map?) (cons nil))
@@ -82,24 +86,29 @@
         arg-map (validate arg-map schema)]
     (destination arg-map)))
 
-(defn- task-id [m]
+(defn- task-id
+  [m]
   (->> m
        (sort-by (comp str first)) ; sort by map key
        (map (comp str second)) ; extract map val
        (str/join "")))
 
-(defn- ensure-task-list [x]
+(defn- ensure-task-list
+  [x]
   (->> (d.util/ensure-seq x)
        (remove nil?)
        (map #(assoc % :id (task-id %)))))
 
-(defn- load-file* [ctx path]
+(defn load-file*
+  [ctx path]
   (-> path
       slurp
       (sci/eval-string ctx)))
 
-(defn- build-task-bindings [tasks-atom config]
-  (letfn [(add-tasks [tasks]
+(defn- build-task-bindings
+  [tasks-atom config]
+  (letfn [(add-tasks
+            [tasks]
             (doseq [task (ensure-task-list tasks)]
               (d.log/debug "Read task" task)
               (swap! tasks-atom conj task)))]
@@ -115,7 +124,8 @@
                             (cond-> doc (assoc :doc doc)))))))
      {} task-configs)))
 
-(defn read-tasks [config code-str]
+(defn read-tasks
+  [config code-str]
   (let [tasks (atom [])
         env (:env config (atom {}))
         ctx {:bindings (merge (build-task-bindings tasks config)

@@ -1,9 +1,11 @@
 (ns dad.runner-test
-  (:require [clojure.test :as t]
-            [dad.runner :as sut]
-            [dad.runner.impl :as d.r.impl]
-            [dad.test-helper :as h])
-  (:import clojure.lang.ExceptionInfo))
+  (:require
+   [clojure.test :as t]
+   [dad.runner :as sut]
+   [dad.runner.impl :as d.r.impl]
+   [dad.test-helper :as h])
+  (:import
+   clojure.lang.ExceptionInfo))
 
 (def ^:private config
   (h/read-test-config))
@@ -130,9 +132,9 @@
   (h/with-test-sh true
     (t/testing "unknown command"
       (t/is (thrown-with-msg? ExceptionInfo #"Unknown command type"
-                              (nil? (run-tasks [{:type :unknown}]))))))
+              (nil? (run-tasks [{:type :unknown}]))))))
 
   (t/testing "failed to run command"
     (h/with-test-sh false
       (t/is (thrown-with-msg? ExceptionInfo #"Failed to run command"
-                              (nil? (run-tasks [{:type :foo-test :foo "hello"}])))))))
+              (nil? (run-tasks [{:type :foo-test :foo "hello"}])))))))

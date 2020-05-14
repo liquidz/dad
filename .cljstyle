@@ -1,0 +1,8 @@
+{
+ :indents {#"(.*/)?with-" [[:block 1]]}
+ :list-indent-size 1
+ :insert-padding-lines? false
+
+ :file-ignore #{"example" "test/resources/test_task"}
+ }
+; vim:ft=clojure

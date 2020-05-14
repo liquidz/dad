@@ -1,8 +1,9 @@
 (ns dad.runner.impl
-  (:require [clojure.java.io :as io]
-            [clojure.string :as str]
-            [dad.logger :as d.log]
-            [dad.util :as d.util]))
+  (:require
+   [clojure.java.io :as io]
+   [clojure.string :as str]
+   [dad.logger :as d.log]
+   [dad.util :as d.util]))
 
 (defmulti dispatch-task :type)
 (defmethod dispatch-task :default [task] task)
@@ -36,7 +37,8 @@
 (defmulti run-by-code :type)
 (defmethod run-by-code :default [task] task)
 
-(defn- render-template [file variables]
+(defn- render-template
+  [file variables]
   (-> file slurp str/trim (d.util/expand-map-to-str variables "{{" "}}")))
 
 (defmethod run-by-code :_pre-compare-template-content

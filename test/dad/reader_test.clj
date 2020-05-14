@@ -1,13 +1,16 @@
 (ns dad.reader-test
-  (:require [clojure.string :as str]
-            [clojure.test :as t]
-            [dad.reader :as sut]
-            [dad.test-helper :as h])
-  (:import clojure.lang.ExceptionInfo))
+  (:require
+   [clojure.string :as str]
+   [clojure.test :as t]
+   [dad.reader :as sut]
+   [dad.test-helper :as h])
+  (:import
+   clojure.lang.ExceptionInfo))
 
 (def ^:private test-config (h/read-test-config))
 (def ^:private read-tasks #(->> % str (sut/read-tasks test-config) :tasks))
-(defn- read-one-task [code]
+(defn- read-one-task
+  [code]
   (let [[task :as res] (read-tasks code)]
     (t/is (= 1 (count res)))
     (dissoc task :id)))
@@ -68,15 +71,15 @@
 
   (t/testing "empty path"
     (t/is (thrown? ExceptionInfo
-                   (read-one-task '(directory "")))))
+            (read-one-task '(directory "")))))
 
   (t/testing "invalid option"
     (t/is (thrown? ExceptionInfo
-                   (read-one-task '(directory "/tmp/foo/bar" 123)))))
+            (read-one-task '(directory "/tmp/foo/bar" 123)))))
 
   (t/testing "invalid action"
     (t/is (thrown? ExceptionInfo
-                   (read-one-task '(directory "/tmp/foo/bar" {:action :invalid})))))
+            (read-one-task '(directory "/tmp/foo/bar" {:action :invalid})))))
 
   (t/testing "mode, owner, group"
     (t/is (= {:type :directory :path "/tmp/foo" :mode "755" :owner "bar" :group "baz" :action :create}
@@ -99,25 +102,25 @@
     (t/is (= {:type :execute :command "foo" :pre "bar" :cwd nil}
              (read-one-task '(execute {:command "foo" :pre "bar"}))))
     (t/is (thrown? ExceptionInfo
-                   (read-one-task '(execute {:command "foo" :pre 123})))))
+            (read-one-task '(execute {:command "foo" :pre 123})))))
 
   (t/testing "pre-not"
     (t/is (= {:type :execute :command "foo" :pre-not "bar" :cwd nil}
              (read-one-task '(execute {:command "foo" :pre-not "bar"}))))
     (t/is (thrown? ExceptionInfo
-                   (read-one-task '(execute {:command "foo" :pre-not 123})))))
+            (read-one-task '(execute {:command "foo" :pre-not 123})))))
 
   (t/testing "empty command"
     (t/is (thrown? ExceptionInfo
-                   (read-one-task '(execute "")))))
+            (read-one-task '(execute "")))))
 
   (t/testing "invalid option"
     (t/is (thrown? ExceptionInfo
-                   (read-one-task '(execute 123)))))
+            (read-one-task '(execute 123)))))
 
   (t/testing "no command"
     (t/is (thrown? ExceptionInfo
-                   (read-one-task '(execute {:cwd "bar"}))))))
+            (read-one-task '(execute {:cwd "bar"}))))))
 
 (t/deftest git-test
   (t/testing "no revision"
@@ -135,19 +138,19 @@
   (t/testing "error"
     (t/testing "empty path and url"
       (t/is (thrown? ExceptionInfo
-                     (read-tasks '(git {:url "foo" :path ""}))))
+              (read-tasks '(git {:url "foo" :path ""}))))
       (t/is (thrown? ExceptionInfo
-                     (read-tasks '(git {:url "" :path "bar"}))))
+              (read-tasks '(git {:url "" :path "bar"}))))
       (t/is (thrown? ExceptionInfo
-                     (read-tasks '(git {:url "" :path ""})))))
+              (read-tasks '(git {:url "" :path ""})))))
 
     (t/testing "no url"
       (t/is (thrown? ExceptionInfo
-                     (read-tasks "(git {:_url_ \"foo\" :path \"bar\"})"))))
+              (read-tasks "(git {:_url_ \"foo\" :path \"bar\"})"))))
 
     (t/testing "no path"
       (t/is (thrown? ExceptionInfo
-                     (read-tasks "(git {:url \"foo\" :_path_ \"bar\"})"))))))
+              (read-tasks "(git {:url \"foo\" :_path_ \"bar\"})"))))))
 
 (t/deftest download-test
   (t/testing "no optionals"
@@ -160,19 +163,19 @@
 
   (t/testing "empty path and url"
     (t/is (thrown? ExceptionInfo
-                   (read-one-task '(download {:path "foo" :url ""}))))
+            (read-one-task '(download {:path "foo" :url ""}))))
     (t/is (thrown? ExceptionInfo
-                   (read-one-task '(download {:path "" :url "bar"}))))
+            (read-one-task '(download {:path "" :url "bar"}))))
     (t/is (thrown? ExceptionInfo
-                   (read-one-task '(download {:path "" :url ""})))))
+            (read-one-task '(download {:path "" :url ""})))))
 
   (t/testing "no url"
     (t/is (thrown? ExceptionInfo
-                   (read-one-task '(download {:path "foo"})))))
+            (read-one-task '(download {:path "foo"})))))
 
   (t/testing "no path"
     (t/is (thrown? ExceptionInfo
-                   (read-one-task '(download {:url "foo"}))))))
+            (read-one-task '(download {:url "foo"}))))))
 
 (t/deftest package-test
   (t/testing "no action"
@@ -208,13 +211,13 @@
   (t/testing "error"
     (t/testing "empty name"
       (t/is (thrown? ExceptionInfo
-                     (read-one-task '(package "")))))
+              (read-one-task '(package "")))))
 
     (t/testing "invalid action"
       (t/is (thrown? ExceptionInfo
-                     (read-one-task "(package \"foo\" {:action \"invalid\"})")))
+              (read-one-task "(package \"foo\" {:action \"invalid\"})")))
       (t/is (thrown? ExceptionInfo
-                     (read-one-task "(package \"foo\" {:action :invalid})"))))))
+              (read-one-task "(package \"foo\" {:action :invalid})"))))))
 
 (t/deftest template-test
   (t/testing "no variables"
@@ -228,20 +231,22 @@
   (t/testing "error"
     (t/testing "empty path and source"
       (t/is (thrown? ExceptionInfo
-                     (read-one-task '(template {:path "foo" :source ""}))))
+              (read-one-task '(template {:path "foo" :source ""}))))
       (t/is (thrown? ExceptionInfo
-                     (read-one-task '(template {:path "" :source "bar"}))))
+              (read-one-task '(template {:path "" :source "bar"}))))
       (t/is (thrown? ExceptionInfo
-                     (read-one-task '(template {:path "" :source ""})))))
+              (read-one-task '(template {:path "" :source ""})))))
 
     (t/testing "no source"
       (t/is (thrown? ExceptionInfo
-                     (read-one-task "(template \"foo\")"))))))
+              (read-one-task "(template \"foo\")"))))))
 
 (t/deftest load-file-test
   (let [dummy-loaded-content (str/join  '((file (hello "neko"))
                                           (directory (hello "inu"))))
-        dummy-input-code (str/join '((defn hello [s] (str "hello " s))
+        dummy-input-code (str/join '((defn hello
+                                       [s]
+                                       (str "hello " s))
                                      (load-file "dummy.clj")))]
     (with-redefs [slurp (constantly dummy-loaded-content)]
       (t/is (= [{:type :file :path "hello neko" :action :create}

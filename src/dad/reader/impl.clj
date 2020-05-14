@@ -1,8 +1,10 @@
 (ns dad.reader.impl
-  (:require [clojure.string :as str]
-            [dad.util :as d.util]))
+  (:require
+   [clojure.string :as str]
+   [dad.util :as d.util]))
 
-(defn directory [m]
+(defn directory
+  [m]
   (let [{:keys [path action mode owner group] :or {action :create}} m]
     (cond-> {:type :directory
              :action (keyword action)
@@ -11,7 +13,8 @@
       owner (assoc :owner owner)
       group (assoc :group group))))
 
-(defn execute [m]
+(defn execute
+  [m]
   (let [{:keys [cwd command pre pre-not]} m
         command (cond->> command
                   (sequential? command) (str/join "\n"))]
@@ -21,7 +24,8 @@
       pre (assoc :pre pre)
       pre-not (assoc :pre-not pre-not))))
 
-(defn file [m]
+(defn file
+  [m]
   (let [{:keys [path action mode owner group] :or {action :create}} m]
     (cond-> {:type :file
              :path path
@@ -30,7 +34,8 @@
       owner (assoc :owner owner)
       group (assoc :group group))))
 
-(defn git [m]
+(defn git
+  [m]
   (let [{:keys [path url revision mode owner group] :or {revision "master"}} m]
     (cond-> {:type :git
              :url url
@@ -40,7 +45,8 @@
       owner (assoc :owner owner)
       group (assoc :group group))))
 
-(defn download [m]
+(defn download
+  [m]
   (let [{:keys [path url mode owner group]} m]
     (cond-> {:type :download
              :url url
@@ -49,20 +55,23 @@
       owner (assoc :owner owner)
       group (assoc :group group))))
 
-(defn link [m]
+(defn link
+  [m]
   (let [{:keys [path to]} m]
     {:type :link
      :path path
      :to to}))
 
-(defn package [m]
+(defn package
+  [m]
   (let [{:keys [name action] :or {action :install}} m]
     (for [name (if (sequential? name) name [name])]
       {:type :package
        :name (d.util/ensure-str name)
        :action (keyword action)})))
 
-(defn template [m]
+(defn template
+  [m]
   (let [{:keys [path source mode owner group variables]} m]
     (cond-> {:type :template
              :path path

@@ -1,8 +1,11 @@
 (ns dad.util
-  (:require [clojure.string :as str])
-  (:import java.security.MessageDigest))
+  (:require
+   [clojure.string :as str])
+  (:import
+   java.security.MessageDigest))
 
-(defn distinct-by [f coll]
+(defn distinct-by
+  [f coll]
   (loop [[first-elm & rest-elms] coll
          ids #{}
          result []]
@@ -13,12 +16,14 @@
           (recur rest-elms ids result)
           (recur rest-elms (conj ids id) (conj result first-elm)))))))
 
-(defn ensure-str [x]
+(defn ensure-str
+  [x]
   (if (keyword? x)
     (name x)
     (str x)))
 
-(defn ensure-seq [x]
+(defn ensure-seq
+  [x]
   (cond-> x
     (not (sequential? x)) vector))
 
@@ -30,7 +35,8 @@
       (str/replace res (str start (name k) end) (str v)))
     s m)))
 
-(defn sha256 [^String s]
+(defn sha256
+  [^String s]
   (->> (.getBytes s "UTF-8")
        (.digest (MessageDigest/getInstance "SHA-256"))
        (map (partial format "%02x"))

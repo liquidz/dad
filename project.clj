@@ -20,5 +20,4 @@
    :outdated {:dependencies [[antq "RELEASE"]]}
    :uberjar {:aot [dad.core]
              :prep-tasks ["compile"]
-             :uberjar-name "dad.jar"}}
-  )
+             :uberjar-name "dad.jar"}})

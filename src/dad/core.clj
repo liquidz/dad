@@ -1,14 +1,15 @@
 (ns dad.core
   (:gen-class)
-  (:require [clojure.java.io :as io]
-            [clojure.string :as str]
-            [clojure.tools.cli :as cli]
-            [dad.config :as d.config]
-            [dad.logger :as d.log]
-            [dad.os :as d.os]
-            [dad.reader :as d.reader]
-            [dad.repl :as d.repl]
-            [dad.runner :as d.runner]))
+  (:require
+   [clojure.java.io :as io]
+   [clojure.string :as str]
+   [clojure.tools.cli :as cli]
+   [dad.config :as d.config]
+   [dad.logger :as d.log]
+   [dad.os :as d.os]
+   [dad.reader :as d.reader]
+   [dad.repl :as d.repl]
+   [dad.runner :as d.runner]))
 
 (def ^:private cli-options
   [[nil,  "--debug",     "Debug mode"]
@@ -20,11 +21,13 @@
    ["-s", "--silent",    "Silent mode"]
    ["-v", "--version",   "Print version"]])
 
-(defn- print-version [config]
+(defn- print-version
+  [config]
   (println (str (:name config) " v" (d.config/version)))
   (println (str "* Detected OS: " (name (d.os/os-type)))))
 
-(defn- usage [config summary]
+(defn- usage
+  [config summary]
   (print-version config)
   (println "")
   (println "Usage:")
@@ -32,7 +35,8 @@
   (println "")
   (println (str "Options:\n" summary)))
 
-(defn- fetch-codes-by-arguments [arguments options]
+(defn- fetch-codes-by-arguments
+  [arguments options]
   (let [codes (some->> (seq arguments)
                        (map slurp)
                        (str/join "\n"))]
@@ -40,13 +44,15 @@
       (str eval-code " " codes)
       codes)))
 
-(defn- fetch-codes-by-stdin []
+(defn- fetch-codes-by-stdin
+  []
   (->> *in*
        io/reader
        line-seq
        (str/join "\n")))
 
-(defn -main [& args]
+(defn -main
+  [& args]
   (let [{:keys [arguments options summary errors]} (cli/parse-opts args cli-options)
         {:keys [debug dry-run no-color repl help silent version]} options
         config (d.config/read-config)

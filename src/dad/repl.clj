@@ -1,10 +1,12 @@
 (ns dad.repl
-  (:require [clojure.string :as str]
-            [dad.config :as d.config]
-            [dad.reader :as d.reader]
-            [dad.runner :as d.runner]))
+  (:require
+   [clojure.string :as str]
+   [dad.config :as d.config]
+   [dad.reader :as d.reader]
+   [dad.runner :as d.runner]))
 
-(defn- reset-env! [env]
+(defn- reset-env!
+  [env]
   (swap! env update-in [:namespaces 'user]
          #(apply dissoc % (keys d.reader/task-configs)))
   env)
@@ -26,7 +28,8 @@
         (do (println (.getMessage ex))
             true)))))
 
-(defn start-loop [config init-codes]
+(defn start-loop
+  [config init-codes]
   (let [env (atom {})
         config (assoc config
                       :env env

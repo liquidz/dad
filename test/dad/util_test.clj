@@ -1,6 +1,7 @@
 (ns dad.util-test
-  (:require [clojure.test :as t]
-            [dad.util :as sut]))
+  (:require
+   [clojure.test :as t]
+   [dad.util :as sut]))
 
 (t/deftest distinct-by-test
   (let [test-data [{:a 1 :b 2}

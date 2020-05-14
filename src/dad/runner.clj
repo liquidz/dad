@@ -1,9 +1,10 @@
 (ns dad.runner
-  (:require [clojure.java.shell :as sh]
-            [clojure.string :as str]
-            [dad.logger :as d.log]
-            [dad.runner.impl :as d.r.impl]
-            [dad.util :as d.util]))
+  (:require
+   [clojure.java.shell :as sh]
+   [clojure.string :as str]
+   [dad.logger :as d.log]
+   [dad.runner.impl :as d.r.impl]
+   [dad.util :as d.util]))
 
 (declare expand-tasks
          run-task*)
@@ -11,21 +12,25 @@
 (def ^:private main-arg-candidates
   (juxt :title :path :name :command))
 
-(defn- extract-main-arg [task]
+(defn- extract-main-arg
+  [task]
   (some identity (main-arg-candidates task)))
 
-(defn- sh [cmd]
+(defn- sh
+  [cmd]
   (d.log/debug "Running command" {:command cmd})
   (sh/sh "sh" "-c" cmd))
 
-(defn- succeeded? [sh-result]
+(defn- succeeded?
+  [sh-result]
   (let [results (->> sh-result
                      d.util/ensure-seq
                      (remove nil?))]
     (or (empty? results)
         (every? #(= 0 (:exit %)) results))))
 
-(defn- failed? [sh-results]
+(defn- failed?
+  [sh-results]
   (not (succeeded? sh-results)))
 
 (defn- get-task-def
@@ -44,7 +49,8 @@
      (or (empty? requires)
          (every? #(contains? expanded-task %) requires)))))
 
-(defn- expand-pre-tasks [config task]
+(defn- expand-pre-tasks
+  [config task]
   (let [task-def (get-task-def config task)]
     (when-let [pre-task (or (:pre task-def) (:pre-not task-def)
                             (:pre task) (:pre-not task))]
@@ -56,7 +62,8 @@
                                             (dissoc :pre :pre-not)))))
            flatten))))
 
-(defn- runnable? [config task]
+(defn- runnable?
+  [config task]
   (let [task-def (get-task-def config task)
         pre-not? (or (contains? task-def :pre-not)
                      (contains? task :pre-not))]
@@ -66,7 +73,8 @@
         pre-not? not)
       true)))
 
-(defn- expand-task [config task]
+(defn- expand-task
+  [config task]
   (if-let [task-def (get-in config [:command (:type task)])]
     (if (runnable? config task)
       (for [cmd (d.util/ensure-seq (:command task-def))]
@@ -76,13 +84,15 @@
       (assoc task :not-runnable? true))
     (throw (ex-info "Unknown command type" {:task task}))))
 
-(defn- expand-tasks [config tasks]
+(defn- expand-tasks
+  [config tasks]
   (->> tasks
        (map #(expand-task config %))
        flatten
        (remove nil?)))
 
-(defn- distinct-once [tasks]
+(defn- distinct-once
+  [tasks]
   (->> tasks
        (reduce (fn [{:keys [onces] :as res} task]
                  (let [once? (get-in task [:__def__ :once?] false)
@@ -96,35 +106,41 @@
                {:result [] :onces #{}})
        :result))
 
-(defn- task->command [expanded-task]
+(defn- task->command
+  [expanded-task]
   (when-let [command (get-in expanded-task [:__def__ :command])]
     (d.util/expand-map-to-str command (dissoc expanded-task :type :__def__))))
 
-(defn- run-task* [expanded-task]
+(defn- run-task*
+  [expanded-task]
   (let [res (some-> expanded-task
                     d.r.impl/run-by-code)]
     (if res
       (some-> res task->command sh)
       {:exit -1})))
 
-(defn- generate-info-log [expanded-task]
+(defn- generate-info-log
+  [expanded-task]
   (let [type-name (name (:type expanded-task))
         main-arg (extract-main-arg expanded-task)]
     (format "  %s [%s] ... " type-name main-arg)))
 
-(defn- start-info-log [expanded-task]
+(defn- start-info-log
+  [expanded-task]
   (->> expanded-task
        generate-info-log
        (d.log/message :info)
        d.log/info*))
 
-(defn- finish-info-log [result]
+(defn- finish-info-log
+  [result]
   (let [msg (if (failed? result)
               (d.log/colorize :red "ng")
               (d.log/colorize :green "ok"))]
     (d.log/info* (str msg "\n"))))
 
-(defn- run-task [config expanded-task]
+(defn- run-task
+  [config expanded-task]
   (if (runnable? config expanded-task)
     (do (start-info-log expanded-task)
         (let [res (run-task* expanded-task)]
@@ -134,7 +150,8 @@
             res)))
     (d.log/debug "Not runnable task" {:task expanded-task})))
 
-(defn run-tasks [config tasks]
+(defn run-tasks
+  [config tasks]
   (d.log/info "Dad started cooking.")
   (->> tasks
        (map d.r.impl/dispatch-task)
@@ -146,7 +163,8 @@
        (remove nil?)
        doall))
 
-(defn dry-run-tasks [config tasks]
+(defn dry-run-tasks
+  [config tasks]
   (let [compact? (get-in config [:log :compact?] false)]
     (when-not compact?
       (d.log/info "Dad started tasting."))
