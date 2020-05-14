@@ -86,7 +86,7 @@
                   (d.repl/start-loop config))
         nrepl (do (-> config
                       (assoc-in [:nrepl :port] port)
-                      d.nrepl/start-server )
+                      d.nrepl/start-server)
                   @(promise))
 
         :else
