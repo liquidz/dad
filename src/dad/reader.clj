@@ -124,16 +124,21 @@
                             (cond-> doc (assoc :doc doc)))))))
      {} task-configs)))
 
+(defn build-bindings
+  [tasks config]
+  (-> (build-task-bindings tasks config)
+      (merge util-bindings)
+      (assoc 'dad/doc doc
+             ;; Alias for easy to remember
+             'help doc)))
+
 (defn read-tasks
   [config code-str]
   (let [tasks (atom [])
         env (:env config (atom {}))
-        ctx {:bindings (merge (build-task-bindings tasks config)
-                              util-bindings)
+        ctx {:bindings (build-bindings tasks config)
              :env env}
         ctx (update ctx :bindings assoc
-                    'dad/doc doc
-                    'help doc ;; Alias for easy to remember
                     'load-file (partial load-file* ctx))
         res (sci/binding [sci/out *out*]
               (sci/eval-string code-str ctx))]
