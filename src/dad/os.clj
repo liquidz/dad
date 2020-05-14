@@ -1,11 +1,14 @@
 (ns dad.os
-  (:require [clojure.java.io :as io]
-            [clojure.string :as str]))
+  (:require
+   [clojure.java.io :as io]
+   [clojure.string :as str]))
 
-(defn os-name []
+(defn os-name
+  []
   (str/lower-case (System/getProperty "os.name")))
 
-(defn- linux-type []
+(defn- linux-type
+  []
   (let [e? #(.exists (io/file %))]
     (cond
       (e? "/etc/lsb-release") ::ubuntu
@@ -13,7 +16,8 @@
       (e? "/etc/arch-release") ::archlinux
       :else ::unknown-linux)))
 
-(defn os-type []
+(defn os-type
+  []
   (condp #(str/includes? %2 %1) (os-name)
     "linux" (linux-type)
     "mac" ::mac

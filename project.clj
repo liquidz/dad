@@ -6,18 +6,20 @@
             :url "https://www.eclipse.org/legal/epl-2.0/"}
   :deploy-repositories [["releases" :clojars]]
   :dependencies [[org.clojure/clojure "1.10.1"]
-                 [org.clojure/tools.cli "0.4.2"]
+                 [org.clojure/tools.cli "1.0.194"]
 
-                 [aero "1.1.5"]
-                 [borkdude/sci "0.0.12"]
+                 [aero "1.1.6"]
+                 [babashka/babashka.nrepl "0.0.2-SNAPSHOT"]
+                 [borkdude/sci "0.0.13-alpha.22"]
                  [camel-snake-kebab "0.4.1"]
                  [metosin/malli "0.0.1-SNAPSHOT"]]
 
   :main ^{:skip-aot true} dad.core
   :profiles
-  {:dev {:resource-paths ["test/resources"]
+  {:dev {:source-patsh ["dev"]
+         :resource-paths ["test/resources"]
          :global-vars {*warn-on-reflection* true}}
+   :outdated {:dependencies [[antq "RELEASE"]]}
    :uberjar {:aot [dad.core]
              :prep-tasks ["compile"]
-             :uberjar-name "dad.jar"}}
-  )
+             :uberjar-name "dad.jar"}})

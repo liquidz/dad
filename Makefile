@@ -63,6 +63,9 @@ test: prepare
 release:
 	./script/release
 
+outdated:
+	lein with-profile outdated run -m antq.core
+
 clean:
 	lein clean
 	\rm -f dad dad.linux-amd64

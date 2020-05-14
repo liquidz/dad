@@ -10,7 +10,7 @@ jobs:
   linux-amd64:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Install GraalVM
         run: |
           cd /tmp
@@ -40,7 +40,7 @@ jobs:
   darwin-amd64:
     runs-on: macOS-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Install leiningen
         run: brew install leiningen
       - name: Install GraalVM
@@ -73,7 +73,7 @@ jobs:
     if: contains(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: actions/create-release@v1
         id: create_release
         env:
@@ -90,7 +90,7 @@ jobs:
         with:
           name: dad.linux-amd64
           path: tmp
-      - uses: actions/upload-release-asset@v1.0.1
+      - uses: actions/upload-release-asset@v1
         id: upload-linux-release-asset
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -104,7 +104,7 @@ jobs:
         with:
           name: dad.darwin-amd64
           path: tmp
-      - uses: actions/upload-release-asset@v1.0.1
+      - uses: actions/upload-release-asset@v1
         id: upload-darwin-release-asset
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

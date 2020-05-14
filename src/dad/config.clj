@@ -1,10 +1,12 @@
 (ns dad.config
-  (:require [aero.core :as aero]
-            [clojure.java.io :as io]
-            [clojure.string :as str]
-            [dad.os :as d.os]))
+  (:require
+   [aero.core :as aero]
+   [clojure.java.io :as io]
+   [clojure.string :as str]
+   [dad.os :as d.os]))
 
-(defn version []
+(defn version
+  []
   (-> "version.txt" io/resource slurp str/trim))
 
 (defn read-config
