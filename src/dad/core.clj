@@ -6,10 +6,18 @@
    [clojure.tools.cli :as cli]
    [dad.config :as d.config]
    [dad.logger :as d.log]
+   [dad.nrepl :as d.nrepl]
    [dad.os :as d.os]
    [dad.reader :as d.reader]
    [dad.repl :as d.repl]
-   [dad.runner :as d.runner]))
+   [dad.runner :as d.runner])
+  (:import
+   java.net.ServerSocket))
+
+(defn- empty-port
+  []
+  (with-open [sock (ServerSocket. 0)]
+    (.getLocalPort sock)))
 
 (def ^:private cli-options
   [[nil,  "--debug",     "Debug mode"]
@@ -18,6 +26,9 @@
    ["-h", "--help",      "Print this help text"]
    [nil,  "--no-color",  "Disable colorize"]
    [nil,  "--repl",      "Start REPL(dry-run mode)"]
+   [nil,  "--nrepl",     "Start nREPL(dry-run mode)"]
+   ["-p", "--port PORT", "Port number for nREPL" :default (empty-port) :parse-fn #(Integer/parseInt %)
+    :validate [#(< 0 % 0x10000) "Must be a number between 0 and 65536"]]
    ["-s", "--silent",    "Silent mode"]
    ["-v", "--version",   "Print version"]])
 
@@ -54,7 +65,7 @@
 (defn -main
   [& args]
   (let [{:keys [arguments options summary errors]} (cli/parse-opts args cli-options)
-        {:keys [debug dry-run no-color repl help silent version]} options
+        {:keys [debug dry-run no-color repl nrepl port help silent version]} options
         config (d.config/read-config)
         log-level (cond
                     silent :silent
@@ -73,6 +84,10 @@
         version (print-version config)
         repl (->> (fetch-codes-by-arguments arguments options)
                   (d.repl/start-loop config))
+        nrepl (do (-> config
+                      (assoc-in [:nrepl :port] port)
+                      d.nrepl/start-server )
+                  @(promise))
 
         :else
         (try
