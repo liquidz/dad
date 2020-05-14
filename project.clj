@@ -16,7 +16,8 @@
 
   :main ^{:skip-aot true} dad.core
   :profiles
-  {:dev {:resource-paths ["test/resources"]
+  {:dev {:source-patsh ["dev"]
+         :resource-paths ["test/resources"]
          :global-vars {*warn-on-reflection* true}}
    :outdated {:dependencies [[antq "RELEASE"]]}
    :uberjar {:aot [dad.core]
