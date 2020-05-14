@@ -8,3 +8,12 @@ jobs:
       # c.f. https://github.com/borkdude/clj-kondo/blob/master/doc/ci-integration.md#linter-output-integration
       - name: Lint by clj-kondo
         run: docker run --rm -v $(pwd):/tmp/work -w /tmp/work borkdude/clj-kondo clj-kondo --lint src:test --config '{:output {:pattern "::{{level}} file={{filename}},line={{row}},col={{col}}::{{message}}"}}'
+
+  cljstyle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          curl -sfLo cljstyle.tar.gz https://github.com/greglook/cljstyle/releases/download/0.12.1/cljstyle_0.12.1_linux.tar.gz
+          tar xvf cljstyle.tar.gz
+          ./cljstyle check
