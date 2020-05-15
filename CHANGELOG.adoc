@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file. This change log follows the conventions of http://keepachangelog.com/[keepachangelog.com].
 
 == Unreleased (dev)
+// {{{
+=== Fixed
+* Fixed function metadata to be able to refer on nREPL
+// }}}
 
 == 0.3.0 (2020-05-15)
 // {{{
