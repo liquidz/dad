@@ -8,22 +8,26 @@
 
 (defn wrap-runner
   [config tasks-atom f]
-  (fn [& args]
-    (try
-      (let [ret (apply f args)]
-        (when (seq @tasks-atom)
-          (let [out (with-out-str
-                      (d.runner/dry-run-tasks config @tasks-atom))]
-            (sci/eval-string (format "(println %s)" (pr-str out)))))
-        ret)
-      (finally
-        (reset! tasks-atom [])))))
+  (with-meta
+   (fn [& args]
+     (try
+       (let [ret (apply f args)]
+         (when (seq @tasks-atom)
+           (let [out (with-out-str
+                       (d.runner/dry-run-tasks config @tasks-atom))]
+             (sci/eval-string (format "(println %s)" (pr-str out)))))
+         ret)
+       (finally
+         (reset! tasks-atom []))))
+    (meta f)))
 
 (defn wrap-doc
   [f]
-  (fn [& args]
-    (let [out (with-out-str (apply f args))]
-      (sci/eval-string (format "(println %s)" (pr-str out))))))
+  (with-meta
+   (fn [& args]
+     (let [out (with-out-str (apply f args))]
+       (sci/eval-string (format "(println %s)" (pr-str out)))))
+    (meta f)))
 
 (defn build-namespaces
   [config]
