@@ -20,6 +20,7 @@
          :resource-paths ["test/resources"]
          :global-vars {*warn-on-reflection* true}}
    :outdated {:dependencies [[antq "RELEASE"]]}
-   :uberjar {:aot [dad.core]
+   :uberjar {:aot :all
+             :jvm-opts ["-Dclojure.compiler.direct-linking=true"]
              :prep-tasks ["compile"]
              :uberjar-name "dad.jar"}})
