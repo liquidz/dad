@@ -14,14 +14,14 @@ jobs:
       - name: Install GraalVM
         run: |
           cd /tmp
-          if ! [ -d /tmp/graalvm-ce-java11-19.3.1 ]; then
-            curl -O -sL https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-19.3.1/graalvm-ce-java11-linux-amd64-19.3.1.tar.gz
+          if ! [ -d /tmp/graalvm-ce-java11-21.0.0 ]; then
+            curl -O -sL https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-21.0.0/graalvm-ce-java11-linux-amd64-21.0.0.tar.gz
 
-            tar xzf graalvm-ce-java11-linux-amd64-19.3.1.tar.gz
+            tar xzf graalvm-ce-java11-linux-amd64-21.0.0.tar.gz
           fi
       - name: Build native image
         env:
-          GRAALVM_HOME: /tmp/graalvm-ce-java11-19.3.1
+          GRAALVM_HOME: /tmp/graalvm-ce-java11-21.0.0
         run: |
           ${GRAALVM_HOME}/bin/gu install native-image
           make native-image
@@ -46,13 +46,13 @@ jobs:
       - name: Install GraalVM
         run: |
           cd /tmp
-          if ! [ -d /tmp/graalvm-ce-java11-19.3.1 ]; then
-            curl -O -sL https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-19.3.1/graalvm-ce-java11-darwin-amd64-19.3.1.tar.gz
-            tar xzf graalvm-ce-java11-darwin-amd64-19.3.1.tar.gz
+          if ! [ -d /tmp/graalvm-ce-java11-21.0.0 ]; then
+            curl -O -sL https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-21.0.0/graalvm-ce-java11-darwin-amd64-21.0.0.tar.gz
+            tar xzf graalvm-ce-java11-darwin-amd64-21.0.0.tar.gz
           fi
       - name: Build native image
         env:
-          GRAALVM_HOME: /tmp/graalvm-ce-java11-19.3.1/Contents/Home
+          GRAALVM_HOME: /tmp/graalvm-ce-java11-21.0.0/Contents/Home
         run: |
           ${GRAALVM_HOME}/bin/gu install native-image
           make native-image

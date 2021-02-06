@@ -5,14 +5,14 @@
   :license {:name "EPL-2.0 OR GPL-2.0-or-later WITH Classpath-exception-2.0"
             :url "https://www.eclipse.org/legal/epl-2.0/"}
   :deploy-repositories [["releases" :clojars]]
-  :dependencies [[org.clojure/clojure "1.10.1"]
+  :dependencies [[org.clojure/clojure "1.10.2" :scope "provided"]
                  [org.clojure/tools.cli "1.0.194"]
 
                  [aero "1.1.6"]
-                 [babashka/babashka.nrepl "0.0.2-SNAPSHOT"]
-                 [borkdude/sci "0.0.13-alpha.22"]
-                 [camel-snake-kebab "0.4.1"]
-                 [metosin/malli "0.0.1-SNAPSHOT"]]
+                 [babashka/babashka.nrepl "0.0.4-SNAPSHOT"]
+                 [borkdude/sci "0.2.1"]
+                 [camel-snake-kebab "0.4.2"]
+                 [metosin/malli "0.2.1"]]
 
   :main ^{:skip-aot true} dad.core
   :profiles
