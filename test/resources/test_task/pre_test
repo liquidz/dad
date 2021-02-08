@@ -14,9 +14,9 @@ if [ ! -e ${BASE_DIR}/pre/dummy ]; then
     exit 1
 fi
 
-${DAD_CMD} --eval '(package ["git" "cowsay"])'
+${DAD_CMD} --eval '(package ["git" "cowsay" "curl"])'
 if [ $? -ne 0 ]; then
-    echo "pre: failed to pre-install git or cowsay."
+    echo "pre: failed to pre-install git, cowsay  or curl."
     exit 1
 fi
 

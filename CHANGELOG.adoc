@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file. This change
 
 == Unreleased (dev)
 
+== 0.3.2 (2020-01-21)
+// {{{
+=== Changed
+- Bump GraalVM to 21.0.0.
+// }}}
+
 == 0.3.1 (2020-05-16)
 // {{{
 === Fixed
