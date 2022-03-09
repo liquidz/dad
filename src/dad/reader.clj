@@ -3,6 +3,7 @@
    [camel-snake-kebab.core :as csk]
    [clojure.java.io :as io]
    [clojure.string :as str]
+   [dad.const :as d.const]
    [dad.logger :as d.log]
    [dad.os :as d.os]
    [dad.reader.impl :as d.r.impl]
@@ -32,13 +33,13 @@
                 :resource-name-key :path}})
 
 (def ^:private util-bindings
-  {'dad/doc           "DUMMY: associated at `read-tasks` formally"
-   'dad/env,          #(get (System/getenv) (csk/->SCREAMING_SNAKE_CASE_STRING %))
-   'dad/file-exists?, #(some-> % io/file (.exists))
-   'dad/os-type,      (fn [] (name (d.os/os-type)))
-   'dad/render,       #(d.util/expand-map-to-str %1 %2 "{{" "}}")
-   'help              "DUMMY: associated at `read-tasks` formally"
-   'load-file         "DUMMY: associated at `read-tasks` formally"})
+  {'doc          "DUMMY: associated at `read-tasks` formally"
+   'env          #(get (System/getenv) (csk/->SCREAMING_SNAKE_CASE_STRING %))
+   'file-exists? #(some-> % io/file (.exists))
+   'os-type      (fn [] (name (d.os/os-type)))
+   'render       #(d.util/expand-map-to-str %1 %2 "{{" "}}")
+   'help         "DUMMY: associated at `read-tasks` formally"
+   'load-file    "DUMMY: associated at `read-tasks` formally"})
 
 (defn- extract-doc
   [resource-name]
@@ -128,7 +129,7 @@
   [tasks config]
   (-> (build-task-bindings tasks config)
       (merge util-bindings)
-      (assoc 'dad/doc doc
+      (assoc 'doc doc
              ;; Alias for easy to remember
              'help doc)))
 
@@ -136,7 +137,8 @@
   [config code-str]
   (let [tasks (atom [])
         env (:env config (atom {}))
-        ctx {:bindings (build-bindings tasks config)
+        ctx {:namespaces {'babashka.pods {'load-pod (constantly nil)}
+                          d.const/pod-name (build-bindings tasks config)}
              :env env}
         ctx (update ctx :bindings assoc
                     'load-file (partial load-file* ctx))
@@ -144,3 +146,25 @@
               (sci/eval-string code-str ctx))]
     {:res res
      :tasks (d.util/distinct-by :id @tasks)}))
+
+(comment
+  (let [sample "
+
+        (ns my-project.core
+          (:require [babashka.pods :as pods]))
+
+        (pods/load-pod \"pod-liquidz-dad\")
+
+        (require '[pod.liquidz.dad :as dad])
+
+        (println \"neko\")
+        (println (System/getenv \"HOME\"))
+        (dad/directory {:path \"inu\"})
+        (dad/directory {:path \"inu\"})
+
+               "]
+    (try
+      (:tasks (read-tasks (dad.config/read-config) sample))
+      (catch clojure.lang.ExceptionInfo ex
+        (println (ex-message ex) (ex-data ex))))))
+
