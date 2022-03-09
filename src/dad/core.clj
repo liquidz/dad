@@ -8,6 +8,7 @@
    [dad.logger :as d.log]
    [dad.nrepl :as d.nrepl]
    [dad.os :as d.os]
+   [dad.pod :as d.pod]
    [dad.reader :as d.reader]
    [dad.repl :as d.repl]
    [dad.runner :as d.runner])
@@ -88,6 +89,9 @@
                       (assoc-in [:nrepl :port] port)
                       d.nrepl/start-server)
                   @(promise))
+
+        (System/getenv "BABASHKA_POD")
+        (d.pod/start config)
 
         :else
         (try
