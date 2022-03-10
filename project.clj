@@ -10,7 +10,7 @@
 
                  [aero "1.1.6"]
                  [babashka/babashka.nrepl "0.0.4-SNAPSHOT"]
-                 [borkdude/sci "0.2.1"]
+                 [org.babashka/sci "0.3.2"]
                  [camel-snake-kebab "0.4.2"]
                  [metosin/malli "0.2.1"]]
 
