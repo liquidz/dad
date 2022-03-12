@@ -9,7 +9,7 @@
                  [org.clojure/tools.cli "1.0.194"]
 
                  [aero "1.1.6"]
-                 [babashka/babashka.nrepl "0.0.4-SNAPSHOT"]
+                 [babashka/babashka.nrepl "0.0.6"]
                  [org.babashka/sci "0.3.2"]
                  [camel-snake-kebab "0.4.2"]
                  [metosin/malli "0.2.1"]]
