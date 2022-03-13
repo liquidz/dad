@@ -9,11 +9,15 @@
   [:and
    'string?
    [:not= {:error/message "should not be blank"} ""]])
+(def ^:private ?path-actions
+  [:enum
+   :create :delete :remove
+   "create" "delete" "remove"])
 
 (defn directory
   {:malli/schema [:=> [:cat [:map
                              [:path ?non-blank-string]
-                             [:action {:optional true} ?non-blank-string]
+                             [:action {:optional true} ?path-actions]
                              [:mode {:optional true} ?non-blank-string]
                              [:owner {:optional true} ?non-blank-string]
                              [:group {:optional true} ?non-blank-string]]]
@@ -29,9 +33,9 @@
 
 (defn execute
   {:malli/schema [:=> [:cat [:map
-                             [:comand [:or
-                                       ?non-blank-string
-                                       [:vector ?non-blank-string]]]
+                             [:command [:or
+                                        ?non-blank-string
+                                        [:vector ?non-blank-string]]]
                              [:cwd {:optional true} ?non-blank-string]
                              [:pre {:optional true} ?non-blank-string]
                              [:pre-not {:optional true} ?non-blank-string]]]
@@ -49,7 +53,7 @@
 (defn file
   {:malli/schema [:=> [:cat [:map
                              [:path ?non-blank-string]
-                             [:action {:optional true} ?non-blank-string]
+                             [:action {:optional true} ?path-actions]
                              [:mode {:optional true} ?non-blank-string]
                              [:owner {:optional true} ?non-blank-string]
                              [:group {:optional true} ?non-blank-string]]]
