@@ -4,7 +4,10 @@
    [clojure.java.shell :as sh]
    [dad.config :as d.config]
    [dad.logger :as d.log]
-   [dad.os :as d.os]))
+   [dad.os :as d.os]
+   [malli.instrument :as mi]))
+
+(mi/instrument!)
 
 (def test-os-type ::testing)
 
