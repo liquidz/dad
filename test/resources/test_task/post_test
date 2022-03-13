@@ -91,14 +91,14 @@ fi
 
 ### package
 # install
-${DAD_CMD} --eval '(package "sl")' --dry-run --no-color | grep 'package-install' | grep 'WILL NOT'
+${DAD_CMD} --eval '(package {:name "sl"})' --dry-run --no-color | grep 'package-install' | grep 'WILL NOT'
 if [ $? -ne 0 ]; then
     echo "package: sl is not installed."
     exit 1
 fi
 
 # uninstall
-${DAD_CMD} --eval '(package "cowsay" {:action :uninstall})' --dry-run --no-color | grep 'package-uninstall' | grep 'WILL NOT'
+${DAD_CMD} --eval '(package {:name "cowsay" :action :uninstall})' --dry-run --no-color | grep 'package-uninstall' | grep 'WILL NOT'
 if [ $? -ne 0 ]; then
     echo "package: cowsay is installed yet."
     exit 1

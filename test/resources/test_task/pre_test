@@ -14,13 +14,13 @@ if [ ! -e ${BASE_DIR}/pre/dummy ]; then
     exit 1
 fi
 
-${DAD_CMD} --eval '(package ["git" "cowsay" "curl"])'
+${DAD_CMD} --eval '(package {:name ["git" "cowsay" "curl"]})'
 if [ $? -ne 0 ]; then
     echo "pre: failed to pre-install git, cowsay  or curl."
     exit 1
 fi
 
-${DAD_CMD} --eval '(package "sl" {:action :uninstall})'
+${DAD_CMD} --eval '(package {:name "sl" :action :uninstall})'
 if [ $? -ne 0 ]; then
     echo "pre: failed to pre-uninstall sl."
     exit 1
