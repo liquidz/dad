@@ -107,7 +107,7 @@
 (defn load-file*
   [ctx path]
   (-> path
-      slurp
+      (slurp)
       (sci/eval-string ctx)))
 
 (defn- build-task-bindings
@@ -138,8 +138,7 @@
                           d.const/pod-name (build-bindings tasks)
                           'System system-binding}
              :env env}
-        ctx (update ctx :bindings assoc
-                    'load-file (partial load-file* ctx))
+        ctx (assoc-in ctx [:namespaces d.const/pod-name 'load-file] (partial load-file* ctx))
         res (sci/binding [sci/out *out*]
               (sci/eval-string code-str ctx))]
     {:res res
