@@ -92,7 +92,7 @@
   [config tasks]
   (->> tasks
        (map #(expand-task config %))
-       flatten
+       (flatten)
        (remove nil?)))
 
 (defn- distinct-once
