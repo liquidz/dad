@@ -5,6 +5,7 @@
    [clojure.string :as str]
    [clojure.tools.cli :as cli]
    [dad.config :as d.config]
+   [dad.constant :as d.const]
    [dad.logger :as d.log]
    [dad.nrepl :as d.nrepl]
    [dad.os :as d.os]
@@ -63,6 +64,13 @@
        line-seq
        (str/join "\n")))
 
+(defn- complete-require-code
+  [code]
+  (if (str/includes? code (str d.const/pod-name))
+    code
+    (str (format "(require '[%s :refer :all])" d.const/pod-name)
+         code)))
+
 (defn -main
   [& args]
   (let [{:keys [arguments options summary errors]} (cli/parse-opts args cli-options)
@@ -97,6 +105,7 @@
         (try
           (some->> (or (fetch-codes-by-arguments arguments options)
                        (fetch-codes-by-stdin))
+                   (complete-require-code)
                    (d.reader/read-tasks config)
                    :tasks
                    (runner-fn config))
