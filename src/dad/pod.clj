@@ -3,7 +3,7 @@
    [bencode.core :as bencode]
    [clojure.edn :as edn]
    [clojure.string :as str]
-   [dad.const :as d.const]
+   [dad.constant :as d.const]
    [dad.reader :as d.reader]
    [dad.runner :as d.runner])
   (:import

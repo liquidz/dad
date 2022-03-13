@@ -2,7 +2,7 @@
   (:require
    [clojure.string :as str]
    [clojure.test :as t]
-   [dad.const :as d.const]
+   [dad.constant :as d.const]
    [dad.reader :as sut]
    [dad.test-helper :as h])
   (:import

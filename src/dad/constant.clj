@@ -1,4 +1,4 @@
-(ns dad.const)
+(ns dad.constant)
 
 (def pod-name
   'pod.liquidz.dad)

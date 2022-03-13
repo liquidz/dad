@@ -2,7 +2,7 @@
   (:require
    [clojure.java.io :as io]
    [clojure.string :as str]
-   [dad.const :as d.const]
+   [dad.constant :as d.const]
    [dad.logger :as d.log]
    [dad.os :as d.os]
    [dad.reader.impl :as d.r.impl]
