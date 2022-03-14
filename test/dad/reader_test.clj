@@ -23,7 +23,8 @@
     (t/is (= 1 (count res)))
     (dissoc task :id)))
 
-(defn- task-name [x]
+(defn- task-name
+  [x]
   (symbol (str d.const/pod-name) (str x)))
 
 (t/deftest task-id-test

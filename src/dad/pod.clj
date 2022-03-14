@@ -69,7 +69,8 @@
                   var-sym)]
     (get (pod-bindings config) var-sym)))
 
-(defn- tasks? [x]
+(defn- tasks?
+  [x]
   (and (sequential? x)
        (every? #(contains? % :type) x)))
 
