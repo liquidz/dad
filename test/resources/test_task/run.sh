@@ -12,7 +12,7 @@ else
 fi
 
 echo "dad: started"
-${DAD_CMD} tasks.clj
+${DAD_CMD} tasks.dad
 
 if [ $? -ne 0 ]; then
     echo "dad: failed"
