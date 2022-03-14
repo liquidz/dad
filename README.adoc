@@ -104,34 +104,6 @@ Resources are called like follows.
 
 |===
 
-== nREPL
-
-Dad provides nREPL server that does not affect your environment. (same as `--dry-run` option)
-Dad's nREPL server uses random empty port by default.
-
-[source,console]
-----
-$ dad --nrepl
-Started nREPL server at 0.0.0.0:50057
-----
-
-If you'd like to specify port number, use `--port` option.
-
-[source,console]
-----
-$ dad --nrepl --port=1667
-Started nREPL server at 0.0.0.0:1667
-----
-
-After starting nREPL server, you can connect from your client like https://github.com/clojure-emacs/cider[CIDER], https://github.com/liquidz/vim-iced[vim-iced], and so on.
-
-.E.g. vim-iced connection
-[source]
-----
-:IcedConnect 1667
-----
-
-
 == REPL
 
 Dad also provides REPL mode that does not affect your environment. (same as `--dry-run` option)

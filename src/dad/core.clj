@@ -7,7 +7,6 @@
    [dad.config :as d.config]
    [dad.constant :as d.const]
    [dad.logger :as d.log]
-   [dad.nrepl :as d.nrepl]
    [dad.os :as d.os]
    [dad.pod :as d.pod]
    [dad.reader :as d.reader]
@@ -28,9 +27,6 @@
    ["-h", "--help",      "Print this help text"]
    [nil,  "--no-color",  "Disable colorize"]
    [nil,  "--repl",      "Start REPL(dry-run mode)"]
-   [nil,  "--nrepl",     "Start nREPL(dry-run mode)"]
-   ["-p", "--port PORT", "Port number for nREPL" :default (empty-port) :parse-fn #(Integer/parseInt %)
-    :validate [#(< 0 % 0x10000) "Must be a number between 0 and 65536"]]
    ["-s", "--silent",    "Silent mode"]
    ["-v", "--version",   "Print version"]])
 
@@ -74,7 +70,7 @@
 (defn -main
   [& args]
   (let [{:keys [arguments options summary errors]} (cli/parse-opts args cli-options)
-        {:keys [debug dry-run no-color repl nrepl port help silent version]} options
+        {:keys [debug dry-run no-color repl help silent version]} options
         config (d.config/read-config)
         log-level (cond
                     silent :silent
@@ -93,10 +89,6 @@
         version (print-version config)
         repl (->> (fetch-codes-by-arguments arguments options)
                   (d.repl/start-loop config))
-        nrepl (do (-> config
-                      (assoc-in [:nrepl :port] port)
-                      d.nrepl/start-server)
-                  @(promise))
 
         (System/getenv "BABASHKA_POD")
         (d.pod/start config)
