@@ -8,25 +8,23 @@
 
 (defn wrap-runner
   [config tasks-atom f]
-  (with-meta
-   (fn [& args]
-     (try
-       (let [ret (apply f args)]
-         (when (seq @tasks-atom)
-           (let [out (with-out-str
-                       (d.runner/dry-run-tasks config @tasks-atom))]
-             (sci/eval-string (format "(println %s)" (pr-str out)))))
-         ret)
-       (finally
-         (reset! tasks-atom []))))
+  (with-meta (fn [& args]
+               (try
+                 (let [ret (apply f args)]
+                   (when (seq @tasks-atom)
+                     (let [out (with-out-str
+                                 (d.runner/dry-run-tasks config @tasks-atom))]
+                       (sci/eval-string (format "(println %s)" (pr-str out)))))
+                   ret)
+                 (finally
+                   (reset! tasks-atom []))))
     (meta f)))
 
 (defn wrap-doc
   [f]
-  (with-meta
-   (fn [& args]
-     (let [out (with-out-str (apply f args))]
-       (sci/eval-string (format "(println %s)" (pr-str out)))))
+  (with-meta (fn [& args]
+               (let [out (with-out-str (apply f args))]
+                 (sci/eval-string (format "(println %s)" (pr-str out)))))
     (meta f)))
 
 (defn build-namespaces
@@ -40,7 +38,7 @@
          (if (qualified-symbol? sym)
            (assoc-in acc [(symbol (namespace sym)) (symbol (name sym))] (wrap f))
            (assoc-in acc ['user sym] (wrap f)))))
-     {} (d.reader/build-bindings tasks config))))
+     {} (d.reader/build-bindings tasks))))
 
 (defn build-sci-context
   [config]
