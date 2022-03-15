@@ -14,6 +14,8 @@ jobs:
           path: ~/.m2
           key: v1-linux-deps-${{ hashFiles('deps.edn') }}
       - run: make test
+      # clojure command will not be found with `sudo`
+      - run: make uberjar
       - run: sudo make local_jar_test
 
   darwin:

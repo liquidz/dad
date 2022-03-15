@@ -9,8 +9,12 @@ endif
 prepare:
 	\cat doc/*.adoc > resources/docs.adoc
 
-target/dad.jar: prepare
+target/dad.jar:
 	clojure -T:build uberjar
+
+.PHONY: uberjar
+uberjar: target/dad.jar
+
 dad.linux-amd64:
 	./script/linux-build
 
