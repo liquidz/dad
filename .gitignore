@@ -14,3 +14,4 @@ pom.xml.asc
 /dad.linux-amd64
 .clj-kondo/.cache
 /resources/docs.adoc
+.cpcache

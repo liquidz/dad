@@ -1,4 +1,4 @@
-FROM clojure:openjdk-11-lein
+FROM clojure:openjdk-11
 WORKDIR /tmp
 
 ENV GRAALVM_HOME /tmp/graalvm-ce-java11-21.0.0

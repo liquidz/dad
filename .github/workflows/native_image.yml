@@ -41,8 +41,9 @@ jobs:
     runs-on: macOS-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install leiningen
-        run: brew install leiningen
+      - uses: DeLaGuardo/setup-clojure@master
+        with:
+          cli: latest
       - name: Install GraalVM
         run: |
           cd /tmp

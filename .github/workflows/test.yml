@@ -6,11 +6,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: DeLaGuardo/setup-clojure@master
+        with:
+          cli: latest
       - uses: actions/cache@v1
         with:
           path: ~/.m2
-          key: v1-deps-${{ hashFiles('project.clj') }}
-      - run: lein deps
+          key: v1-linux-deps-${{ hashFiles('deps.edn') }}
       - run: make test
       - run: sudo make local_jar_test
 
@@ -18,8 +20,12 @@ jobs:
     runs-on: macOS-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install leiningen
-        run: brew install leiningen
-      - run: lein deps
+      - uses: DeLaGuardo/setup-clojure@master
+        with:
+          cli: latest
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2
+          key: v1-mac-deps-${{ hashFiles('deps.edn') }}
       - run: make test
       - run: make local_jar_test

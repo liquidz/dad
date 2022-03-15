@@ -1,4 +1,5 @@
 {:name "Dad"
+ :version #include "version.txt"
  :command #include "command.edn"
  :repl {:prompt "user=> "
         :exit-codes [":repl/quit" ":repl/exit"]}}
