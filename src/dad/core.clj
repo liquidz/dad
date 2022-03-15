@@ -11,14 +11,7 @@
    [dad.pod :as d.pod]
    [dad.reader :as d.reader]
    [dad.repl :as d.repl]
-   [dad.runner :as d.runner])
-  (:import
-   java.net.ServerSocket))
-
-(defn- empty-port
-  []
-  (with-open [sock (ServerSocket. 0)]
-    (.getLocalPort sock)))
+   [dad.runner :as d.runner]))
 
 (def ^:private cli-options
   [[nil,  "--debug",     "Debug mode"]
