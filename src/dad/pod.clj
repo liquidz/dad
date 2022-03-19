@@ -5,7 +5,8 @@
    [clojure.string :as str]
    [dad.constant :as d.const]
    [dad.reader :as d.reader]
-   [dad.runner :as d.runner])
+   [dad.runner :as d.runner]
+   [dad.schema :as d.schema])
   (:import
    (java.io
     PushbackInputStream)))
@@ -38,10 +39,16 @@
   {"format" "edn"
    "namespaces" [{"name" (str d.const/pod-name)
                   "vars" (map (fn [[k v]]
-                                {"name" (str k)
-                                 "meta" (-> (meta v)
-                                            (select-keys [:name :doc :arglists])
-                                            (pr-str))})
+                                (let [docstr (try
+                                               (-> (d.schema/extract-function-input-schema v)
+                                                   (d.schema/function-schema->docstring))
+                                               (catch Exception _ nil))]
+                                  {"name" (str k)
+                                   "meta" (-> (meta v)
+                                              (select-keys [:name :doc :arglists])
+                                              (cond-> docstr
+                                                (update :doc #(str/replace-first % "{{schema}}" docstr)))
+                                              (pr-str))}))
                               (pod-bindings config))}]})
 
 (defn- read-string*
