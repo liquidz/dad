@@ -26,7 +26,9 @@
   []
   name (d.os/os-type))
 
-(defn render "Render a template string with a data
+(defn render
+  "Render a template string with a data
+
   Examples
   ```clojure
   (render \"hello\" {}) ;; => \"hello\"
