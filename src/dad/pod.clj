@@ -40,8 +40,8 @@
    "namespaces" [{"name" (str d.const/pod-name)
                   "vars" (map (fn [[k v]]
                                 (let [docstr (try
-                                               (-> (d.schema/extract-function-input-schema v)
-                                                   (d.schema/function-schema->docstring))
+                                               (some-> (d.schema/extract-function-input-schema v)
+                                                       (d.schema/function-schema->docstring))
                                                (catch Exception _ nil))]
                                   {"name" (str k)
                                    "meta" (-> (meta v)

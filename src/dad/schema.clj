@@ -7,11 +7,11 @@
 (defn extract-function-input-schema
   [v]
   (let [m (meta v)]
-    (-> (get m :schema
-             (get m :malli/schema))
-        (m/schema)
-        (m/-function-info)
-        (get :input))))
+    (some-> (get m :schema
+                 (get m :malli/schema))
+            (m/schema)
+            (m/-function-info)
+            (get :input))))
 
 ;; ===== TRANSFORMER =====
 
