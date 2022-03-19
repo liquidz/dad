@@ -6,6 +6,7 @@
    [dad.logger :as d.log]
    [dad.os :as d.os]
    [dad.reader.impl :as d.r.impl]
+   [dad.schema :as d.schema]
    [dad.util :as d.util]
    [malli.core :as m]
    [malli.error :as me]
@@ -26,20 +27,11 @@
        (remove nil?)
        (map #(assoc % :id (task-id %)))))
 
-(defn- extract-function-input-schema
-  [v]
-  (let [m (meta v)]
-    (-> (get m :schema
-             (get m :malli/schema))
-        (m/schema)
-        (m/-function-info)
-        (get :input))))
-
 (defn wrap-task
   [function-var]
   (with-meta (fn [& args]
                (let [schema (some-> function-var
-                                    (extract-function-input-schema))]
+                                    (d.schema/extract-function-input-schema))]
                  (when-not schema
                    (throw (ex-info "no validation schema error" {:var function-var})))
                  (if-let [err (some-> schema
