@@ -1,11 +1,10 @@
 (ns dad.reader
   (:require
-   [clojure.java.io :as io]
    [clojure.string :as str]
    [dad.constant :as d.const]
    [dad.logger :as d.log]
-   [dad.os :as d.os]
    [dad.reader.impl :as d.r.impl]
+   [dad.reader.util :as d.r.util]
    [dad.schema :as d.schema]
    [dad.util :as d.util]
    [malli.core :as m]
@@ -44,7 +43,6 @@
                     (apply function-var args)))))
     (meta function-var)))
 
-
 (def task-configs
   (reduce
    (fn [accm function-var]
@@ -61,46 +59,13 @@
     #'d.r.impl/template]))
 
 (def util-bindings
-  {'file-exists? #(some-> % io/file (.exists))
-   'os-type      (fn [] (name (d.os/os-type)))
-   'render       #(d.util/expand-map-to-str %1 %2 "{{" "}}")
+  {'file-exists? #'d.r.util/file-exists?
+   'os-type      #'d.r.util/os-type
+   'render       #'d.r.util/render
    'load-file    "DUMMY: associated at `read-tasks` formally"})
 
 (def ^:private system-binding
   {'getenv #(System/getenv %)})
-
-(defn- extract-doc
-  [resource-name]
-  (some->> (io/resource "docs.adoc")
-           (io/reader)
-           (line-seq)
-           (drop-while #(not= (str "= " resource-name) %))
-           seq
-           (drop 2)
-           (take-while #(not= "// }}}" %))
-           (str/join "\n")
-           (str/trim)))
-
-(defn doc
-  ([]
-   (println "### Built-in vars/functions")
-   (doseq [x (keys util-bindings)]
-     (println (str "* " x)))
-   (println "")
-   (println "### Resources")
-   (doseq [x (keys task-configs)]
-     (println (str "* " x)))
-   (println "\nTo see detailed document: (dad/doc \"name\")"))
-  ([resource-name]
-   (if-let [s (extract-doc (str resource-name))]
-     (println s)
-     (println (str "Unknown name: " resource-name)))))
-
-(defn load-file*
-  [ctx path]
-  (-> path
-      (slurp)
-      (sci/eval-string ctx)))
 
 (defn- build-task-bindings
   [tasks-atom]
@@ -117,10 +82,7 @@
 (defn build-bindings
   [tasks]
   (-> (build-task-bindings tasks)
-      (merge util-bindings)
-      (assoc 'doc doc
-             ;; Alias for easy to remember
-             'help doc)))
+      (merge util-bindings)))
 
 (defn read-tasks
   [config code-str]
@@ -130,7 +92,7 @@
                           d.const/pod-name (build-bindings tasks)
                           'System system-binding}
              :env env}
-        ctx (assoc-in ctx [:namespaces d.const/pod-name 'load-file] (partial load-file* ctx))
+        ctx (assoc-in ctx [:namespaces d.const/pod-name 'load-file] (partial d.r.util/load-file* ctx))
         res (sci/binding [sci/out *out*]
               (sci/eval-string code-str ctx))]
     {:res res

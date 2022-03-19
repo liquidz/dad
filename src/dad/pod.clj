@@ -5,6 +5,7 @@
    [clojure.string :as str]
    [dad.constant :as d.const]
    [dad.reader :as d.reader]
+   [dad.reader.util :as d.r.util]
    [dad.runner :as d.runner]
    [dad.schema :as d.schema])
   (:import
@@ -31,8 +32,11 @@
   [config]
   (merge d.reader/task-configs
          d.reader/util-bindings
-         {'load-file (partial load-file* config)
-          'set-dryrun! #(reset! dryrun? %)}))
+         {'load-file (with-meta (partial load-file* config)
+                       (assoc (meta #'d.r.util/load-file*) :arglists '([path])))
+          'set-dryrun! (with-meta #(reset! dryrun? %) {:arglists '([bool])
+                                                       :name 'set-dryrun!
+                                                       :doc "Turn off (or on) dry running for all tasks"})}))
 
 (defn- describe-map
   [config]
