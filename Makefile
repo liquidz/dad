@@ -5,10 +5,6 @@ else
 	GRAAL_EXTRA_OPTION := "--static"
 endif
 
-.PHONY: prepare
-prepare:
-	\cat doc/*.adoc > resources/docs.adoc
-
 target/dad.jar:
 	clojure -T:build uberjar
 
@@ -66,7 +62,7 @@ example_bin_test: dad.linux-amd64
 	env TARGET=dad.linux-amd64 IMAGE_NAME=ubuntu:latest ./script/example
 
 .PHONY: test
-test: prepare
+test:
 	clojure -M:dev:test
 
 # release:
