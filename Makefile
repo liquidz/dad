@@ -1,9 +1,30 @@
-PLATFORM = $(shell uname -s)
-ifeq ($(PLATFORM), Darwin)
+# GraalVM {{{
+PLATFORM := $(shell uname -s | tr '[:upper:]' '[:lower:]')
+GRAAL_ROOT ?= /tmp/.graalvm
+GRAAL_VERSION ?= 22.0.0.2
+GRAAL_HOME ?= $(GRAAL_ROOT)/graalvm-ce-java11-$(GRAAL_VERSION)
+GRAAL_ARCHIVE := graalvm-ce-java11-$(PLATFORM)-amd64-$(GRAAL_VERSION).tar.gz
+
+ifeq ($(PLATFORM),darwin)
+	GRAAL_HOME := $(GRAAL_HOME)/Contents/Home
 	GRAAL_EXTRA_OPTION :=
 else
 	GRAAL_EXTRA_OPTION := "--static"
 endif
+
+$(GRAAL_ROOT)/fetch/$(GRAAL_ARCHIVE):
+	@mkdir -p $(GRAAL_ROOT)/fetch
+	curl --location --output $@ https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-$(GRAAL_VERSION)/$(GRAAL_ARCHIVE)
+
+$(GRAAL_HOME): $(GRAAL_ROOT)/fetch/$(GRAAL_ARCHIVE)
+	tar -xz -C $(GRAAL_ROOT) -f $<
+
+$(GRAAL_HOME)/bin/native-image: $(GRAAL_HOME)
+	$(GRAAL_HOME)/bin/gu install native-image
+
+.PHONY: graalvm
+graalvm: $(GRAAL_HOME)/bin/native-image
+# }}}
 
 target/dad.jar:
 	clojure -T:build uberjar
@@ -16,23 +37,19 @@ dad.linux-amd64:
 
 .PHONY: dad
 dad: uberjar
-	$(GRAALVM_HOME)/bin/native-image \
+	$(GRAAL_HOME)/bin/native-image \
 		-jar target/dad.jar \
 		-H:Name=dad \
 		-H:+ReportExceptionStackTraces \
 		-J-Dclojure.spec.skip-macros=true \
 		-J-Dclojure.compiler.direct-linking=true \
 		"-H:IncludeResources=command.edn" \
-		"-H:IncludeResources=schema.edn" \
 		"-H:IncludeResources=config.edn" \
 		"-H:IncludeResources=version.txt" \
-		"-H:IncludeResources=docs.adoc" \
-		--initialize-at-build-time  \
 		--report-unsupported-elements-at-runtime \
 		-H:Log=registerResource: \
 		--verbose \
 		--no-fallback \
-		--no-server \
 		$(GRAAL_EXTRA_OPTION) \
 		"-J-Xmx3g"
 
@@ -77,3 +94,5 @@ clean:
 	\rm -rf target .cpcache
 	\rm -f dad dad.linux-amd64
 	\rm -f resources/docs.adoc
+
+# vim:fdl=0:fdm=marker:

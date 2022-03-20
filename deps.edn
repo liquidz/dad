@@ -3,12 +3,12 @@
         org.clojure/tools.cli {:mvn/version "1.0.206"}
 
         aero/aero {:mvn/version "1.1.6"}
-        babashka/babashka.nrepl {:mvn/version "0.0.6"}
         org.babashka/sci {:mvn/version "0.3.2"}
-        camel-snake-kebab/camel-snake-kebab {:mvn/version "0.4.2"}
         metosin/malli {:mvn/version "0.8.4"}
         ;; pod
-        nrepl/bencode {:mvn/version "1.1.0"}}
+        nrepl/bencode {:mvn/version "1.1.0"}
+        ;; GraalVM
+        com.github.clj-easy/graal-build-time {:mvn/version "0.1.4"}}
 
  :aliases
  {:dev {:extra-paths ["test" "test/resources"]
@@ -16,8 +16,9 @@
 
   :test {:main-opts ["-m" "kaocha.runner"]}
 
-  :outdated {:extra-deps {com.github.liquidz/antq "RELEASE"}
-             :main-opts ["-M" "-m" "antq.core"]}
+  :outdated
+  {:extra-deps {com.github.liquidz/antq "RELEASE"}
+   :main-opts ["-M" "-m" "antq.core"]}
 
   :build
   {:deps {io.github.clojure/tools.build {:git/tag "v0.8.0" :git/sha "e3e3532"}}
