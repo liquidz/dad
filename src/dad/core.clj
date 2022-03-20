@@ -25,7 +25,7 @@
 
 (defn- print-version
   [config]
-  (println (str (:name config) " v" (d.config/version)))
+  (println (str (:name config) " v" (:version config)))
   (println (str "* Detected OS: " (name (d.os/os-type)))))
 
 (defn- usage

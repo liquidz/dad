@@ -1,7 +1,6 @@
 (ns dad.repl
   (:require
    [clojure.string :as str]
-   [dad.config :as d.config]
    [dad.reader :as d.reader]
    [dad.runner :as d.runner]))
 
@@ -37,7 +36,7 @@
         {:keys [prompt exit-codes]} (:repl config)
         exit-code-set (set exit-codes)]
     (println (str (:name config)
-                  " v" (d.config/version)
+                  " v" (:version config)
                   " REPL"))
     (println "Please note that evaluations in this REPL *DO NOT AFFECT* your environment.")
 
