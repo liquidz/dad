@@ -82,6 +82,7 @@
         help (usage config summary)
         version (print-version config)
         repl (->> (fetch-codes-by-arguments arguments options)
+                  (complete-require-code)
                   (d.repl/start-loop config))
 
         (System/getenv "BABASHKA_POD")
@@ -89,12 +90,15 @@
 
         :else
         (try
-          (some->> (or (fetch-codes-by-arguments arguments options)
-                       (fetch-codes-by-stdin))
-                   (complete-require-code)
-                   (d.reader/read-tasks config)
-                   :tasks
-                   (runner-fn config))
+          (let [codes (or (fetch-codes-by-arguments arguments options)
+                          (fetch-codes-by-stdin))]
+            (if (seq codes)
+              (some->> codes
+                       (complete-require-code)
+                       (d.reader/read-tasks config)
+                       :tasks
+                       (runner-fn config))
+              (d.repl/start-loop config nil)))
           (catch Exception ex
             (d.log/error (.getMessage ex) (ex-data ex))
             (System/exit 1)))))
