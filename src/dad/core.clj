@@ -48,16 +48,17 @@
 
 (defn- fetch-codes-by-stdin
   []
-  (->> *in*
-       io/reader
-       line-seq
-       (str/join "\n")))
+  (let [rdr (io/reader *in*)]
+    (when (.ready rdr)
+      (->> rdr
+           line-seq
+           (str/join "\n")))))
 
 (defn- complete-require-code
   [code]
-  (if (str/includes? code (str d.const/pod-name))
+  (if (str/includes? (str code) (str d.const/pod-name))
     code
-    (str (format "(require '[%s :refer :all])" d.const/pod-name)
+    (str d.const/require-refer-all-code
          code)))
 
 (defn -main

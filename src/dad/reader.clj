@@ -87,7 +87,7 @@
 (defn read-tasks
   [config code-str]
   (let [tasks (atom [])
-        env (:env config (atom {}))
+        env (or (:env config) (atom {}))
         ctx {:namespaces {'babashka.pods {'load-pod (constantly nil)}
                           d.const/pod-name (build-bindings tasks)
                           'System system-binding}

@@ -2,6 +2,7 @@
   (:require
    [clojure.string :as str]
    [dad.reader :as d.reader]
+   [dad.constant :as d.const]
    [dad.runner :as d.runner]))
 
 (defn- reset-env!
@@ -40,8 +41,7 @@
                   " REPL"))
     (println "Please note that evaluations in this REPL *DO NOT AFFECT* your environment.")
 
-    (println (str "  Docs: (dad/doc) or (dad/doc \"name\")\n"
-                  "        (help) is an alias for (dad/doc)"))
+    (println (str "  Docs: (doc) or (doc \"name\")"))
     (println (str "  Exit: " (str/join " or " exit-codes)
                   " to quit this REPL."))
     (println "")
@@ -58,6 +58,7 @@
         (when-not (exit-code-set line)
           (let [line (cond->> line
                        (not need-prompt?) (str last-line "\n"))
-                need-prompt? (eval* config line)]
+                need-prompt? (eval* config (str d.const/require-refer-all-code
+                                                line))]
             (reset-env! env)
             (recur line need-prompt?)))))))
