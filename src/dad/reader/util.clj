@@ -1,7 +1,9 @@
 (ns dad.reader.util
   (:require
    [clojure.java.io :as io]
+   [clojure.string :as str]
    [dad.os :as d.os]
+   [dad.schema :as d.schema]
    [dad.util :as d.util]
    [sci.core :as sci]))
 
@@ -24,7 +26,7 @@
   (os-type) ;; => \"mac\"
   ```"
   []
-  name (d.os/os-type))
+  (name (d.os/os-type)))
 
 (defn render
   "Render a template string with a data
@@ -51,3 +53,35 @@
   (-> path
       (slurp)
       (sci/eval-string ctx)))
+
+(defn- gen-doc
+  [var-dict sym]
+  (when-let [v (get var-dict sym)]
+    (let [schema-doc (try
+                       (some-> (d.schema/extract-function-input-schema v)
+                               (d.schema/function-schema->docstring))
+                       (catch Exception _ nil))
+          doc (:doc (meta v))]
+      (if (and doc schema-doc)
+        (str/replace-first doc "{{schema}}" schema-doc)
+        doc))))
+
+(defn doc
+  "Print document
+
+  Examples
+  ```clojure
+  (doc \"directory\")
+  ```"
+  [var-dict print? sym]
+  (let [sym (if (string? sym) (symbol sym) sym)
+        docstr (gen-doc var-dict sym)]
+    (cond
+      (and print? docstr)
+      (println docstr)
+
+      (and print? (nil? docstr))
+      (println (str "Document not found: " sym))
+
+      :else
+      docstr)))

@@ -1,8 +1,8 @@
 (ns dad.repl
   (:require
    [clojure.string :as str]
-   [dad.reader :as d.reader]
    [dad.constant :as d.const]
+   [dad.reader :as d.reader]
    [dad.runner :as d.runner]))
 
 (defn- reset-env!

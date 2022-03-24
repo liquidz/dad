@@ -62,7 +62,8 @@
   {'file-exists? #'d.r.util/file-exists?
    'os-type      #'d.r.util/os-type
    'render       #'d.r.util/render
-   'load-file    "DUMMY: associated at `read-tasks` formally"})
+   'load-file    "DUMMY: associated at `read-tasks` formally"
+   'doc          "DUMMY: associated at `read-tasks` formally"})
 
 (def ^:private system-binding
   {'getenv #(System/getenv %)})
@@ -92,7 +93,9 @@
                           d.const/pod-name (build-bindings tasks)
                           'System system-binding}
              :env env}
-        ctx (assoc-in ctx [:namespaces d.const/pod-name 'load-file] (partial d.r.util/load-file* ctx))
+        ctx (-> ctx
+                (assoc-in [:namespaces d.const/pod-name 'load-file] (partial d.r.util/load-file* ctx))
+                (assoc-in [:namespaces d.const/pod-name 'doc] (partial d.r.util/doc (merge task-configs util-bindings) true)))
         res (sci/binding [sci/out *out*]
               (sci/eval-string code-str ctx))]
     {:res res

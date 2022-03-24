@@ -6,8 +6,7 @@
    [dad.constant :as d.const]
    [dad.reader :as d.reader]
    [dad.reader.util :as d.r.util]
-   [dad.runner :as d.runner]
-   [dad.schema :as d.schema])
+   [dad.runner :as d.runner])
   (:import
    (java.io
     PushbackInputStream)))
@@ -16,6 +15,15 @@
 
 (def ^:private stdin
   (PushbackInputStream. System/in))
+
+(defmacro with-out-str-and-ret
+  [& body]
+  `(let [s# (new java.io.StringWriter)]
+     (binding [*out* s#]
+       (let [ret# (do ~@body)
+             out# (str s#)]
+         {:ret ret#
+          :out (when (seq out#) out#)}))))
 
 (defn- run-tasks
   [config tasks]
@@ -30,23 +38,21 @@
 
 (defn- pod-bindings
   [config]
-  (merge d.reader/task-configs
-         d.reader/util-bindings
-         {'load-file (with-meta (partial load-file* config)
-                       (assoc (meta #'d.r.util/load-file*) :arglists '([path])))
-          'set-dryrun! (with-meta #(reset! dryrun? %) {:arglists '([bool])
-                                                       :name 'set-dryrun!
-                                                       :doc "Turn off (or on) dry running for all tasks"})}))
+  (let [dict (merge d.reader/task-configs
+                    d.reader/util-bindings
+                    {'load-file (with-meta (partial load-file* config)
+                                  (assoc (meta #'d.r.util/load-file*) :arglists '([path])))
+                     'set-dryrun! (with-meta #(reset! dryrun? %) {:arglists '([bool])
+                                                                  :name 'set-dryrun!
+                                                                  :doc "Turn off (or on) dry running for all tasks"})})]
+    (assoc dict 'doc (partial d.r.util/doc dict true))))
 
 (defn- describe-map
   [config]
   {"format" "edn"
    "namespaces" [{"name" (str d.const/pod-name)
                   "vars" (map (fn [[k v]]
-                                (let [docstr (try
-                                               (some-> (d.schema/extract-function-input-schema v)
-                                                       (d.schema/function-schema->docstring))
-                                               (catch Exception _ nil))]
+                                (let [docstr (d.r.util/doc {k v} false k)]
                                   {"name" (str k)
                                    "meta" (-> (meta v)
                                               (select-keys [:name :doc :arglists])
@@ -85,10 +91,6 @@
   (and (sequential? x)
        (every? #(contains? % :type) x)))
 
-(defn- debug
-  [& strs]
-  (spit "/tmp/neko" (str (str/join " " strs) "\n") :append true))
-
 (defn- invoke
   [config id msg]
   (if-let [f (get-function config msg)]
@@ -96,17 +98,18 @@
       (let [args (-> (get msg "args")
                      (read-string*)
                      (edn/read-string))
-            ret (apply f args)
+            {:keys [ret out]} (with-out-str-and-ret (apply f args))
             config' (assoc-in config [:log :compact?] true)
 
-            out (when (tasks? ret)
-                  (debug "FIXME" (pr-str ret))
-                  (with-out-str (run-tasks config' ret)))
-            _ (debug "FIXME out" (pr-str out))
-            reply (cond-> {"value" (pr-str (when-not out ret))
+            task-out (when (tasks? ret)
+                       (with-out-str (run-tasks config' ret)))
+            out (->> [out task-out]
+                     (remove nil?)
+                     (str/join "\n"))
+            reply (cond-> {"value" (pr-str (when-not (seq out) ret))
                            "id" id
                            "status" ["done"]}
-                    out (assoc "out" out))]
+                    (seq out) (assoc "out" out))]
         (write* reply))
       (catch clojure.lang.ExceptionInfo ex
         (if (= ::d.reader/validation-error (some-> ex ex-data :type))
