@@ -73,15 +73,23 @@
   ```clojure
   (doc \"directory\")
   ```"
-  [var-dict print? sym]
-  (let [sym (if (string? sym) (symbol sym) sym)
-        docstr (gen-doc var-dict sym)]
-    (cond
-      (and print? docstr)
-      (println docstr)
+  ([var-dict print?]
+   (when print?
+     (println "Available documents:")
+     (doseq [k (->> (keys var-dict)
+                    (remove #(= 'doc %))
+                    (sort))]
+       (println (str " - " k)))))
 
-      (and print? (nil? docstr))
-      (println (str "Document not found: " sym))
+  ([var-dict print? sym]
+   (let [sym (if (string? sym) (symbol sym) sym)
+         docstr (gen-doc var-dict sym)]
+     (cond
+       (and print? docstr)
+       (println docstr)
 
-      :else
-      docstr)))
+       (and print? (nil? docstr))
+       (println (str "Document not found: " sym))
+
+       :else
+       docstr))))
