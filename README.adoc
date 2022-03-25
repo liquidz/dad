@@ -9,8 +9,19 @@ Dad is a small configuration management tool for Clojure.
 This project is heavily inspired by https://github.com/itamae-kitchen/mitamae[mitamae].
 
 == Concept
-- Easy to start -- Download single binary and run it.
-- Minimum to remember -- May not write code for Dad often
+
+=== 🤯 Minimum to remember
+* May not write code for Dad often.
+//* Minimum to remember -- May not write code for Dad often
+* Write codes as a https://github.com/babashka/pods[babashka pod].
+** You can gain benefits from code completion and docstring references.
+//* Easy to start -- Download single binary and run it.
+
+=== 🍟 Easy to start
+* Download single binary and run it.
+* Run the code written as a babashka pod as it is.
+** Dad ignores codes related to loading pods.
+
 
 == Getting Started
 
@@ -26,23 +37,30 @@ Here is a example to install Clojure https://clojure.org/guides/deps_and_cli[com
 [source,clojure]
 ----
 #!/usr/bin/env dad --no-color --dry-run
+(ns example.core
+  (:require
+   [babashka.pods :as pods]))
 
-(package ["curl" "rlwrap"])
+;; Load dad as a babashka pod
+(pods/load-pod "dad")
+(require '[pod.liquidz.dad :as dad])
+
+(dad/package {:name ["curl" "rlwrap"]})
 
 ;; You can define function as you like
 (defn curl [m]
   (let [{:keys [path url]} m]
     ;; `file-exists?` is a built-in function in dad.
-    (when (and (not (file-exists? path))
+    (when (and (not (dad/file-exists? path))
                (string? url))
-      (execute (str "curl -sfLo " path " " url)))))
+      (dad/execute {:command (str "curl -sfLo " path " " url)}))))
 
 (curl {:path "/tmp/install.sh"
        :url "https://download.clojure.org/install/linux-install-1.10.1.489.sh"})
 
-(file {:path "/tmp/install.sh" :mode "755"})
-(execute {:cwd "/tmp" :command "./install.sh"})
-(file {:path "/tmp/install.sh" :action :delete})
+(dad/file {:path "/tmp/install.sh" :mode "755"})
+(dad/execute {:cwd "/tmp" :command "./install.sh"})
+(dad/file {:path "/tmp/install.sh" :action :delete})
 ----
 
 == Supports
@@ -62,45 +80,45 @@ NOTE: You can refer all documents in *codes*. (evaluate `(dad/doc)` or `(help)`)
 === Built-in vars / functions
 
 |===
-| Name         | Var/Func | Description
+| Name | Var/Func | Description
 
-| link:doc/dad_doc.adoc[dad/doc]         | Func | Print dad documents.
-| link:doc/dad_env.adoc[dad/env]              | Var  | Map of environmental variables.
-| dad/file-exists?                       | Func | Return true if the specified path exists.
-| dad/os-type                            | Func | OS name string such as `"linux"` or `"mac"`.
-| link:doc/dad_render.adoc[dad/render]   | Func | Render a template string with a data.
-| link:doc/dad_doc.adoc[help] | Func | Alias for `dad/doc`.
-| link:doc/dad_load_file.adoc[load-file] | Func | Load another recipe file.
+| link:doc/doc.md[doc]
+| Func
+| Print dad documents.
+
+| link:doc/file-exists.md[file-exists?]
+| Func
+| Return true if the specified path exists.
+
+| link:doc/os-type.md[os-type]
+| Func
+| OS name string such as `"linux"` or `"mac"`.
+
+| link:doc/render.md[render]
+| Func
+| Render a template string with a data.
+
+| link:doc/load-file.md[load-file]
+| Func
+| Load another recipe file.
+
 |===
 
 See https://github.com/borkdude/sci/blob/master/src/sci/impl/namespaces.cljc[sci/impl/namespaces.cljc] for other core functions.
 
 === Resources
 
-Resources are called like follows.
-`<main-arg>` will be associated to the main key for the resource.
-
-[source,clojure]
-----
-(resource-name {:key :value ...})
-(resource-name <main-arg> {:key :value ...})
-
-;; E.g. following codes are equivalent because `directory` resource's main key is `path`.
-(directory "foo/bar" {:owner "alice"})
-(directory {:path "foo/bar" :owner "alice"})
-----
-
 |===
 | Resource name | Description
 
-| link:doc/directory.adoc[directory] | Create directories.
-| link:doc/download.adoc[download] | Download a file from remote host.
-| link:doc/execute.adoc[execute] | Execute a shell command.
-| link:doc/file.adoc[file] | Create a file.
-| link:doc/git.adoc[git] | Execute `git` command.
-| link:doc/link.adoc[link] | Create a symbolic link.
-| link:doc/package.adoc[package] | Install packages.
-| link:doc/template.adoc[template] | Create a text file from the specified template files.
+| link:doc/directory.md[directory] | Create directories.
+| link:doc/download.md[download] | Download a file from remote host.
+| link:doc/execute.md[execute] | Execute a shell command.
+| link:doc/file.md[file] | Create a file.
+| link:doc/git.md[git] | Execute `git` command.
+| link:doc/link.md[link] | Create a symbolic link.
+| link:doc/package.md[package] | Install packages.
+| link:doc/template.md[template] | Create a text file from the specified template files.
 
 |===
 
@@ -129,7 +147,7 @@ package-uninstall [sl] ... WILL NOT change
 
 == License
 
-Copyright © 2019-2020 https://twitter.com/uochan[Masashi Iizuka]
+Copyright © 2019-2022 https://twitter.com/uochan[Masashi Iizuka]
 
 This program and the accompanying materials are made available under the
 terms of the Eclipse Public License 2.0 which is available at
