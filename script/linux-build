@@ -2,7 +2,7 @@
 
 TMPDIR=./tmp
 TARGET='dad.linux-amd64'
-IMAGE_NAME='uochan/dad-builder'
+IMAGE_NAME='uochan/dad-linux-builder'
 
 which docker > /dev/null 2>&1
 if [ $? -ne 0 ]; then
@@ -12,7 +12,7 @@ fi
 
 docker images | grep ${IMAGE_NAME} > /dev/null 2>&1
 if [ $? -ne 0 ]; then
-    docker build -t ${IMAGE_NAME} .
+    docker build --platform linux/x86_64 -t ${IMAGE_NAME} .
 fi
 
 if [ -e ./${TARGET} ]; then
@@ -21,12 +21,13 @@ else
     mkdir -p ${TMPDIR}
 
     \cp -p Makefile ${TMPDIR}
-    \cp -p project.clj ${TMPDIR}
+    \cp -p deps.edn ${TMPDIR}
+    \cp -p build.clj ${TMPDIR}
     \cp -pr resources ${TMPDIR}
     \cp -pr doc ${TMPDIR}
     \cp -pr src ${TMPDIR}
 
-    (cd ${TMPDIR} && docker run --rm -v $(pwd):/src ${IMAGE_NAME} make native-image)
+    (cd ${TMPDIR} && docker run --rm -v $(pwd):/src --platform linux/x86_64 ${IMAGE_NAME} make native-image)
 
     \cp -p ${TMPDIR}/dad ./${TARGET}
     # (cd ${TMPDIR} && docker run --rm -it -v $(pwd):/src ${IMAGE_NAME} bash)
