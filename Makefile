@@ -78,6 +78,10 @@ example_jar_test: target/dad.jar
 example_bin_test: dad.linux-amd64
 	env TARGET=dad.linux-amd64 IMAGE_NAME=ubuntu:latest ./script/example
 
+.PHONY: generate_docs
+generate_docs:
+	clojure -M:generate-docs
+
 .PHONY: test
 test:
 	clojure -M:dev:test

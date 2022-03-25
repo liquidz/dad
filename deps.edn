@@ -16,6 +16,8 @@
 
   :test {:main-opts ["-m" "kaocha.runner"]}
 
+  :generate-docs {:main-opts ["-m" "dad.doc"]}
+
   :outdated
   {:extra-deps {com.github.liquidz/antq "RELEASE"}
    :main-opts ["-M" "-m" "antq.core"]}

@@ -92,3 +92,18 @@
                has-required?
                (concat ["" "  (*) REQUIRED"]))]
     (str/join "\n" docs)))
+
+(defn function-schema->markdown-table
+  [?function-schema]
+  (let [transformed (transform (mu/get ?function-schema 0))]
+    (->> ["| Key | Value | Required | Default |"
+          "| --- | ----- | -------- | ------- |"
+          (map (fn [[k v]]
+                 (format "| %s | %s | %s | %s |"
+                         (name k)
+                         (gen-doc v)
+                         (if (:required? v) "Yes" "No")
+                         (or (:default-value v) "")))
+               transformed)]
+         (flatten)
+         (str/join "\n"))))
