@@ -15,6 +15,12 @@ jobs:
       - uses: DeLaGuardo/setup-clojure@master
         with:
           cli: latest
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.m2
+            /tmp/.graalvm
+          key: v1-linux-native-image-${{ hashFiles('Makefile', 'deps.edn') }}
       - name: Build native image
         run: make native-image
       - name: Run tests
@@ -36,6 +42,12 @@ jobs:
       - uses: DeLaGuardo/setup-clojure@master
         with:
           cli: latest
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.m2
+            /tmp/.graalvm
+          key: v1-mac-native-image-${{ hashFiles('Makefile', 'deps.edn') }}
       - name: Build native image
         run: make native-image
       - name: Run tests
