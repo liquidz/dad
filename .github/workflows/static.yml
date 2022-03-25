@@ -7,3 +7,5 @@ jobs:
       - uses: actions/checkout@v2
       - name: version check
         run: bash script/version_check
+      - name: document check
+        run: bash script/document_check
