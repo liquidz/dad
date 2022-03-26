@@ -36,7 +36,7 @@ dad.linux-amd64:
 	./script/linux-build
 
 .PHONY: dad
-dad: uberjar
+dad: graalvm uberjar
 	$(GRAAL_HOME)/bin/native-image \
 		-jar target/dad.jar \
 		-H:Name=dad \
@@ -91,12 +91,11 @@ test:
 
 .PHONY: outdated
 outdated:
-	clojure -M:outdated
+	clojure -M:outdated --upgrade
 
 .PHONY: clean
 clean:
 	\rm -rf target .cpcache
 	\rm -f dad dad.linux-amd64
-	\rm -f resources/docs.adoc
 
 # vim:fdl=0:fdm=marker:

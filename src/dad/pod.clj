@@ -56,8 +56,7 @@
                                   {"name" (str k)
                                    "meta" (-> (meta v)
                                               (select-keys [:name :doc :arglists])
-                                              (cond-> docstr
-                                                (update :doc #(str/replace-first % "{{schema}}" docstr)))
+                                              (cond-> docstr (assoc :doc docstr))
                                               (pr-str))}))
                               (pod-bindings config))}]})
 
