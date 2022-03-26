@@ -72,7 +72,7 @@ bin_test: dad.linux-amd64
 
 .PHONY: example_jar_test
 example_jar_test: target/dad.jar
-	env TARGET=target/dad.jar IMAGE_NAME=clojure:openjdk-11 ./script/example
+	env TARGET=target/dad.jar IMAGE_NAME=openjdk:11 ./script/example
 
 .PHONY: example_bin_test
 example_bin_test: dad.linux-amd64
