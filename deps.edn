@@ -24,6 +24,6 @@
    :main-opts ["-m" "antq.core"]}
 
   :build
-  {:deps {io.github.clojure/tools.build {:git/tag "v0.8.0" :git/sha "e3e3532"}}
+  {:deps {io.github.clojure/tools.build {:git/tag "v0.8.1" :git/sha "7d40500"}}
    :ns-default build}}}
 
