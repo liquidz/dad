@@ -53,24 +53,9 @@
                     (sort-by #(str (:name %) (:action %)))
                     (map #(dissoc % :id))))))))
 
-;; (t/deftest doc-test
-;;   (t/testing "extract-doc"
-;;     (doseq [k (keys sut/task-configs)]
-;;       (t/testing (str "extracting " k)
-;;         (t/is (not (str/blank? (#'sut/extract-doc (str k))))))))
-;;
-;;   (t/testing ":doc metadata"
-;;     (doseq [k (keys sut/task-configs)]
-;;       (t/testing (str "fetching metadata for " k)
-;;         (let [m (->> (format "(-> '%s resolve meta)" k)
-;;                      (sut/read-tasks test-config)
-;;                      :res)]
-;;           (t/is (= (:doc m)
-;;                    (#'sut/extract-doc (str k)))))))))
-
 (t/deftest directory-test
   (let [directory (task-name "directory")]
-    (t/testing "no resource name"
+    (t/testing "required arguments"
       (t/is (= {:type :directory :path "/tmp/foo/bar" :action :create}
                (read-one-task `(~directory {:path "/tmp/foo/bar"})))))
 
@@ -96,7 +81,7 @@
 
 (t/deftest execute-test
   (let [execute (task-name "execute")]
-    (t/testing "no resource name"
+    (t/testing "required arguments"
       (t/is (= {:type :execute :command "foo" :cwd nil}
                (read-one-task `(~execute {:command "foo"})))))
 
@@ -128,9 +113,35 @@
       (t/is (thrown? ExceptionInfo
               (read-one-task `(~execute {:cwd "bar"})))))))
 
+(t/deftest file-test
+  (let [file (task-name "file")]
+    (t/testing "required arguments"
+      (t/is (= {:type :file :path "/tmp/foo" :action :create}
+               (read-one-task `(~file {:path "/tmp/foo"})))))
+
+    (t/testing "action"
+      (t/is (= {:type :file :path "/tmp/foo" :action :delete}
+               (read-one-task `(~file {:path "/tmp/foo" :action "delete"})))))
+
+    (t/testing "no required arguments"
+      (t/is (thrown? ExceptionInfo
+              (read-one-task `(~file {})))))
+
+    (t/testing "empty path"
+      (t/is (thrown? ExceptionInfo
+              (read-one-task `(~file {:path ""})))))
+
+    (t/testing "invalid action"
+      (t/is (thrown? ExceptionInfo
+              (read-one-task `(~file {:path "/tmp/foo" :action "invalid"})))))
+
+    (t/testing "mode, owner, group"
+      (t/is (= {:type :file :path "/tmp/foo" :mode "755" :owner "bar" :group "baz" :action :create}
+               (read-one-task `(~file {:path "/tmp/foo" :mode "755" :owner "bar" :group "baz"})))))))
+
 (t/deftest git-test
   (let [git (task-name "git")]
-    (t/testing "no revision"
+    (t/testing "required arguments"
       (t/is (= {:type :git :url "foo" :path "bar" :revision "master"}
                (read-one-task `(~git {:url "foo" :path "bar"})))))
 
@@ -161,7 +172,7 @@
 
 (t/deftest download-test
   (let [download (task-name "download")]
-    (t/testing "no optionals"
+    (t/testing "required arguments"
       (t/is (= {:type :download :url "foo" :path "bar"}
                (read-one-task `(~download {:url "foo" :path "bar"})))))
 
@@ -185,8 +196,30 @@
       (t/is (thrown? ExceptionInfo
               (read-one-task `(~download {:url "foo"})))))))
 
+(t/deftest link-test
+  (let [link (task-name "link")]
+    (t/testing "required arguments"
+      (t/is (= {:type :link :path "/tmp/foo" :source "/tmp/bar"}
+               (read-one-task `(~link {:path "/tmp/foo" :source "/tmp/bar"})))))
+
+    (t/testing "empty arguments"
+      (t/is (thrown? ExceptionInfo
+              (read-one-task `(~link {:path "" :source "/tmp/bar"}))))
+      (t/is (thrown? ExceptionInfo
+              (read-one-task `(~link {:path "/tmp/foo" :source ""})))))
+
+    (t/testing "no required arguments"
+      (t/is (thrown? ExceptionInfo
+              (read-one-task `(~link {:path "/tmp/foo"}))))
+      (t/is (thrown? ExceptionInfo
+              (read-one-task `(~link {:source "/tmp/foo"})))))))
+
 (t/deftest package-test
   (let [package (task-name "package")]
+    (t/testing "required arguments"
+      (t/is (= {:type :package :name "foo" :action :install}
+               (read-one-task `(~package {:name "foo"})))))
+
     (t/testing "action"
       (t/is (= {:type :package :name "foo" :action :remove}
                (read-one-task `(~package {:name "foo" :action :remove})))))
@@ -222,7 +255,7 @@
 
 (t/deftest template-test
   (let [template (task-name "template")]
-    (t/testing "no variables"
+    (t/testing "required arguments"
       (t/is (= {:type :template :path "foo" :source "bar"}
                (read-one-task `(~template {:path "foo" :source "bar"})))))
 
