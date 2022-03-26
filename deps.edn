@@ -19,8 +19,9 @@
   :generate-docs {:main-opts ["-m" "dad.doc"]}
 
   :outdated
-  {:extra-deps {com.github.liquidz/antq "RELEASE"}
-   :main-opts ["-M" "-m" "antq.core"]}
+  {:extra-deps {com.github.liquidz/antq {:mvn/version "RELEASE"}
+                org.slf4j/slf4j-nop {:mvn/version "RELEASE"}}
+   :main-opts ["-m" "antq.core"]}
 
   :build
   {:deps {io.github.clojure/tools.build {:git/tag "v0.8.0" :git/sha "e3e3532"}}
