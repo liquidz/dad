@@ -1,7 +1,7 @@
 #!/bin/bash
 
 SCRIPT_DIR=$(cd $(dirname $0); pwd)
-VERSION=$(cat ${SCRIPT_DIR}/../resources/version.txt)
+VERSION=$(cat ${SCRIPT_DIR}/../resources/version.txt | tr -d '"')
 
 echo "version_check: Expected verion = ${VERSION}"
 
