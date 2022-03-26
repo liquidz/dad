@@ -120,7 +120,8 @@
                                   (str/join "\n" (map #(str "- " (pr-str %)) errors))
                                   "\n\n"
                                   "Arguments:\n"
-                                  "- " (pr-str args))
+                                  "- " (pr-str args)
+                                  "\n")
                        "status" ["done" "error"]}]
             (write* reply))
           (throw ex))))
