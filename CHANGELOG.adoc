@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file. This change
 
 == Unreleased (dev)
 
+// {{{
+=== Added
+* Added support for babashka pods.
+* Added `--init` option to generate a Dad task template.
+
+=== Changed
+* Bumped clojure to 1.11.0.
+* Bumped sci to 0.3.4.
+* Bumped tools.build to v0.8.1.
+* Bumped kaocha to 1.64.1010.
+* (BREAKING) Renamed `to` parameter for `link` task to `source`.
+
+=== Removed
+
+* (BREAKING) Removed nREPL feature.
+** Use babashka pods feature instead.
+* (BREAKING) Removed `<main-arg>` feature for each resources.
+** Resource arguments are limited to a hash-map for simplicity.
+// }}}
+
 == 0.3.2 (2021-02-09)
 // {{{
 === Changed
