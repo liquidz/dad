@@ -151,16 +151,16 @@
 
   Examples
   ```clojure
-  (link {:path \"~/.lein/profiles.clj\" :to \"/path/to/your/dotfiles/profiles.clj\"})
+  (link {:path \"~/.lein/profiles.clj\" :source \"/path/to/your/dotfiles/profiles.clj\"})
   ```"
   {:malli/schema [:=> [:cat [:map
                              [:path ?non-blank-string]
-                             [:to ?non-blank-string]]]
+                             [:source ?non-blank-string]]]
                   ?task]}
-  [{:keys [path to]}]
+  [{:keys [path source]}]
   {:type :link
    :path path
-   :to to})
+   :source source})
 
 (defn package
   "Install packages.

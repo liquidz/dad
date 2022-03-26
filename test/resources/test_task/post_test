@@ -83,7 +83,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-${DAD_CMD} --eval "(link {:path \"${BASE_DIR}/world\" :to \"${BASE_DIR}/hello\"})" --dry-run --no-color | grep link | grep 'WILL NOT'
+${DAD_CMD} --eval "(link {:path \"${BASE_DIR}/world\" :source \"${BASE_DIR}/hello\"})" --dry-run --no-color | grep link | grep 'WILL NOT'
 if [ $? -ne 0 ]; then
     echo "link: pre-condition is not working correctly."
     exit 1

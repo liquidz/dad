@@ -24,7 +24,7 @@
           :pre-not "test -e hello"})
 
 (link {:path (base-dir "world")
-       :to (base-dir "hello")})
+       :source (base-dir "hello")})
 
 (load-file "loaded_tasks.dad")
 ;; vim:ft=clojure:
