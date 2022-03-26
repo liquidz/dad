@@ -86,8 +86,9 @@ generate_docs:
 test:
 	clojure -M:dev:test
 
-# release:
-# 	./script/release
+.PHONY: release
+release:
+	./script/release
 
 .PHONY: outdated
 outdated:
