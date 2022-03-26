@@ -18,6 +18,7 @@
    [nil,  "--dry-run",   "Check whether recipes will change your environment"]
    ["-e", "--eval CODE", "Evaluate a code"]
    ["-h", "--help",      "Print this help text"]
+   [nil,  "--init NAME", "FIXME"]
    [nil,  "--no-color",  "Disable colorize"]
    [nil,  "--repl",      "Start REPL(dry-run mode)"]
    ["-s", "--silent",    "Silent mode"]
@@ -61,10 +62,22 @@
     (str d.const/require-refer-all-code
          code)))
 
+(defn- generate-template
+  [namespace-name]
+  (try
+    (let [arr  (str/split namespace-name #"\.")
+          file (apply io/file (update arr (dec (count arr)) #(str % ".clj")))
+          content (format (slurp (io/resource "template.clj")) namespace-name)]
+      (.mkdirs (.getParentFile file))
+      (spit file content)
+      file)
+    (catch Exception ex
+      (d.log/error (.getMessage ex) (ex-data ex)))))
+
 (defn -main
   [& args]
   (let [{:keys [arguments options summary errors]} (cli/parse-opts args cli-options)
-        {:keys [debug dry-run no-color repl help silent version]} options
+        {:keys [debug dry-run no-color repl help silent version init]} options
         config (d.config/read-config)
         log-level (cond
                     silent :silent
@@ -76,14 +89,25 @@
     (binding [d.log/*level* log-level
               d.log/*color* (not no-color)]
       (cond
-        errors (do (doseq [e errors] (println e))
-                   (usage config summary)
-                   (System/exit 1))
-        help (usage config summary)
-        version (print-version config)
-        repl (->> (fetch-codes-by-arguments arguments options)
-                  (complete-require-code)
-                  (d.repl/start-loop config))
+        errors
+        (do (doseq [e errors] (println e))
+            (usage config summary)
+            (System/exit 1))
+
+        help
+        (usage config summary)
+
+        version
+        (print-version config)
+
+        repl
+        (->> (fetch-codes-by-arguments arguments options)
+             (complete-require-code)
+             (d.repl/start-loop config))
+
+        init
+        (when-let [file (generate-template init)]
+          (d.log/info "Initialized" (.getPath file)))
 
         (System/getenv "BABASHKA_POD")
         (d.pod/start config)
