@@ -11,7 +11,7 @@ jobs:
   linux-amd64:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: DeLaGuardo/setup-clojure@master
         with:
           cli: latest
@@ -38,7 +38,7 @@ jobs:
   darwin-amd64:
     runs-on: macOS-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: DeLaGuardo/setup-clojure@master
         with:
           cli: latest
@@ -67,7 +67,7 @@ jobs:
     if: contains(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/create-release@v1
         id: create_release
         env:
