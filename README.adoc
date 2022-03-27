@@ -1,6 +1,8 @@
 = Dad
 
-image:https://github.com/liquidz/dad/workflows/test/badge.svg[link="https://github.com/liquidz/dad/actions"]
+image:https://github.com/liquidz/dad/workflows/test/badge.svg[link="https://github.com/liquidz/dad/actions/workflows/test.yml"]
+image:https://github.com/liquidz/dad/actions/workflows/lint.yml/badge.svg[link="https://github.com/liquidz/dad/actions/workflows/lint.yml"]
+image:https://github.com/liquidz/dad/actions/workflows/dependency.yml/badge.svg[link="https://github.com/liquidz/dad/actions/workflows/dependency.yml"]
 image:https://img.shields.io/github/release/liquidz/dad.svg?logo=Github[link="https://github.com/liquidz/dad/releases"]
 
 > My father is a greate chef :)
