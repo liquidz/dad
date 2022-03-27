@@ -20,20 +20,20 @@ if [ -d ${BASE_DIR}/pre/a ]; then
 fi
 
 ### download
-if [ ! -e ${BASE_DIR}/project.clj ]; then
-    echo "download: ${BASE_DIR}/project.clj is not found."
+if [ ! -e ${BASE_DIR}/deps.edn ]; then
+    echo "download: ${BASE_DIR}/deps.edn is not found."
     exit 1
 fi
 
-${DAD_CMD} --eval "(file {:path \"${BASE_DIR}/project.clj\" :mode \"755\"})" --dry-run --no-color | grep chmod | grep 'WILL NOT'
+${DAD_CMD} --eval "(file {:path \"${BASE_DIR}/deps.edn\" :mode \"755\"})" --dry-run --no-color | grep chmod | grep 'WILL NOT'
 if [ $? -ne 0 ]; then
-    echo "download: ${BASE_DIR}/project.clj has a unexpcedted permission."
+    echo "download: ${BASE_DIR}/deps.edn has a unexpcedted permission."
     exit 1
 fi
 
-head -n 1 ${BASE_DIR}/project.clj | grep 'defproject dad' > /dev/null 2>&1
+head -n 1 ${BASE_DIR}/deps.edn | grep 'defproject dad' > /dev/null 2>&1
 if [ $? -ne 0 ]; then
-    echo "download: ${BASE_DIR}/project.clj has a invalid content."
+    echo "download: ${BASE_DIR}/deps.edn has a invalid content."
     exit 1
 fi
 
@@ -49,8 +49,8 @@ if [ -e ${BASE_DIR}/pre/dummy ]; then
 fi
 
 ### git
-if [ ! -e ${BASE_DIR}/dad/project.clj ]; then
-    echo "git: ${BASE_DIR}/dad/project.clj is not found."
+if [ ! -e ${BASE_DIR}/dad/deps.edn ]; then
+    echo "git: ${BASE_DIR}/dad/deps.edn is not found."
     exit 1
 fi
 

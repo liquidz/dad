@@ -2,7 +2,7 @@ name: native_image
 on:
   push:
     branches:
-      - master
+      - main
       - build-test
     tags:
       - '*'

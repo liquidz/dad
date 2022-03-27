@@ -6,8 +6,8 @@
 (directory {:path (base-dir "pre/a") :action :delete})
 (directory {:path (base-dir "post") :mode "744"})
 
-(download {:path (base-dir "project.clj")
-           :url "https://raw.githubusercontent.com/liquidz/dad/master/project.clj"
+(download {:path (base-dir "deps.edn")
+           :url "https://raw.githubusercontent.com/liquidz/dad/main/deps.edn"
            :mode "755"})
 
 (file {:path (base-dir "foo")})
