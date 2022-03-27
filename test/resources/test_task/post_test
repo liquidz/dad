@@ -54,7 +54,7 @@ if [ ! -e ${BASE_DIR}/dad/deps.edn ]; then
     exit 1
 fi
 
-${DAD_CMD} --eval "(git {:url \"https://github.com/liquidz/dad\" :path \"${BASE_DIR}/dad\" :revision \"master\"})" --dry-run --no-color | grep checkout | grep 'WILL NOT'
+${DAD_CMD} --eval "(git {:url \"https://github.com/liquidz/dad\" :path \"${BASE_DIR}/dad\" :revision \"main\"})" --dry-run --no-color | grep checkout | grep 'WILL NOT'
 if [ $? -ne 0 ]; then
     echo "git: ${BASE_DIR}/dad has a unexpcedted revision."
     exit 1
