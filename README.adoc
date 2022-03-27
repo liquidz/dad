@@ -31,7 +31,7 @@ Download binary from https://github.com/liquidz/dad/releases[releases].
 [source,terminal]
 ----
 # Download latest dad to the current working directory
-curl -L https://raw.githubusercontent.com/liquidz/dad/master/script/download | bash
+curl -L https://raw.githubusercontent.com/liquidz/dad/main/script/download | bash
 ./dad your_task.clj
 ----
 

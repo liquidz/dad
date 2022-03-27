@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=$(curl -sL https://raw.githubusercontent.com/liquidz/dad/main/resources/version.txt)
+VERSION=$(curl -sL https://raw.githubusercontent.com/liquidz/dad/main/resources/version.txt | tr -d '"')
 
 if [ "$(uname)" = 'Darwin' ]; then
     OS_TYPE='darwin'
