@@ -142,7 +142,7 @@
 (t/deftest git-test
   (let [git (task-name "git")]
     (t/testing "required arguments"
-      (t/is (= {:type :git :url "foo" :path "bar" :revision "master"}
+      (t/is (= {:type :git :url "foo" :path "bar" :revision "main"}
                (read-one-task `(~git {:url "foo" :path "bar"})))))
 
     (t/testing "revision"
@@ -150,7 +150,7 @@
                (read-one-task `(~git {:url "foo" :path "bar" :revision "baz"})))))
 
     (t/testing "mode, owner, group"
-      (t/is (= {:type :git :url "foo" :path "bar" :revision "master" :mode "644" :owner "alice" :group "baz"}
+      (t/is (= {:type :git :url "foo" :path "bar" :revision "main" :mode "644" :owner "alice" :group "baz"}
                (read-one-task `(~git {:url "foo" :path "bar" :mode "644" :owner "alice" :group "baz"})))))
 
     (t/testing "error"

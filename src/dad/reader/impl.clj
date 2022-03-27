@@ -104,13 +104,13 @@
   {:malli/schema [:=> [:cat [:map
                              [:path ?non-blank-string]
                              [:url ?non-blank-string]
-                             [:revision {:optional true :default "master"} ?non-blank-string]
+                             [:revision {:optional true :default "main"} ?non-blank-string]
                              [:mode {:optional true} ?non-blank-string]
                              [:owner {:optional true} ?non-blank-string]
                              [:group {:optional true} ?non-blank-string]]]
                   ?task]}
   [{:keys [path url revision mode owner group]}]
-  (let [revision (or revision "master")]
+  (let [revision (or revision "main")]
     (cond-> {:type :git
              :url url
              :path path
