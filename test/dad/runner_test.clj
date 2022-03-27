@@ -38,17 +38,20 @@
     (t/is (nil? (test-fn {:type :dummy})))))
 
 (t/deftest expand-tasks-test
-  (let [expand-tasks #(->> % d.r.impl/dispatch-task (#'sut/expand-tasks config))]
+  (let [expand-tasks #(->> %
+                           (d.r.impl/dispatch-task)
+                           (#'sut/expand-tasks config))]
     (t/is (= [{:type :foo-test :__def__ {:command "foo %foo%" :requires #{:foo}}}
               {:type :bar-test :__def__ {:command "bar %bar%" :requires #{:bar}}}]
              (expand-tasks [{:type :multi-ref-test}])))
 
-    (t/is (= [{:type :template-create :path "foo" :source "bar"}
-              {:type :chmod :path "foo" :source "bar"}
-              {:type :chown :path "foo" :source "bar"}
-              {:type :chgrp :path "foo" :source "bar"}]
-             (map #(dissoc % :__def__)
-                  (expand-tasks [{:type :template :path "foo" :source "bar"}]))))
+    (with-redefs [sut/expand-pre-tasks (constantly nil)]
+      (t/is (= [{:type :template-create :path "foo" :source "bar"}
+                {:type :chmod :path "foo" :source "bar"}
+                {:type :chown :path "foo" :source "bar"}
+                {:type :chgrp :path "foo" :source "bar"}]
+               (map #(dissoc % :__def__)
+                    (expand-tasks [{:type :template :path "foo" :source "bar"}])))))
 
     (t/testing "expand with successful pre"
       (h/with-test-sh true

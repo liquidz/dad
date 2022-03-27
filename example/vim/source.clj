@@ -1,4 +1,12 @@
 #!/usr/bin/env dad --no-color --dry-run
+(ns example.vim.source
+  (:require
+   [babashka.pods :as pods]
+   [clojure.string :as str]))
+
+;; Load dad as a babashka pod
+(pods/load-pod "dad")
+(require '[pod.liquidz.dad :as dad])
 
 (def vars
   {:src-dir "/usr/local/src/vim"
@@ -18,21 +26,21 @@
 
 (def render #(dad/render % vars))
 
-(let [{:keys [src-dir packages configure]} vars]
-  (package "vim" {:action :uninstall})
-  (package packages)
+(let [{:keys [src-dir packages]} vars]
+  (dad/package {:name "vim" :action :uninstall})
+  (dad/package {:name packages})
 
-  (git {:path src-dir :url "https://github.com/vim/vim"})
+  (dad/git {:path src-dir :url "https://github.com/vim/vim"})
 
-  (execute {:cwd src-dir
-            :command (render "./configure {{configure}}")
-            :pre-not "test -e src/auto/config.log"})
+  (dad/execute {:cwd src-dir
+                :command (render "./configure {{configure}}")
+                :pre-not "test -e src/auto/config.log"})
 
-  (execute {:cwd src-dir
-            :command "make && make install"
-            :pre-not "test -e /usr/local/bin/vim"})
+  (dad/execute {:cwd src-dir
+                :command "make && make install"
+                :pre-not "test -e /usr/local/bin/vim"})
 
-  (template {:path (render "{{src-dir}}/rebuild.sh")
-             :source "rebuild.sh.tmpl"
-             :variables vars
-             :mode "755"}))
+  (dad/template {:path (render "{{src-dir}}/rebuild.sh")
+                 :source "rebuild.sh.tmpl"
+                 :variables vars
+                 :mode "755"}))

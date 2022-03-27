@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=$(cat resources/version.txt)
+VERSION=$(cat resources/version.txt | tr -d '"')
 
 if [[ "${VERSION}" =~ 'SNAPSHOT' ]]; then
     echo 'Could not release snapshot.'

@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - master
+      - build-test
     tags:
       - '*'
 
@@ -10,21 +11,18 @@ jobs:
   linux-amd64:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Install GraalVM
-        run: |
-          cd /tmp
-          if ! [ -d /tmp/graalvm-ce-java11-21.0.0 ]; then
-            curl -O -sL https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-21.0.0/graalvm-ce-java11-linux-amd64-21.0.0.tar.gz
-
-            tar xzf graalvm-ce-java11-linux-amd64-21.0.0.tar.gz
-          fi
+      - uses: actions/checkout@v3
+      - uses: DeLaGuardo/setup-clojure@master
+        with:
+          cli: latest
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.m2
+            /tmp/.graalvm
+          key: v1-linux-native-image-${{ hashFiles('Makefile', 'deps.edn') }}
       - name: Build native image
-        env:
-          GRAALVM_HOME: /tmp/graalvm-ce-java11-21.0.0
-        run: |
-          ${GRAALVM_HOME}/bin/gu install native-image
-          make native-image
+        run: make native-image
       - name: Run tests
         run: |
           cp -f dad test/resources/test_task/
@@ -40,22 +38,18 @@ jobs:
   darwin-amd64:
     runs-on: macOS-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Install leiningen
-        run: brew install leiningen
-      - name: Install GraalVM
-        run: |
-          cd /tmp
-          if ! [ -d /tmp/graalvm-ce-java11-21.0.0 ]; then
-            curl -O -sL https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-21.0.0/graalvm-ce-java11-darwin-amd64-21.0.0.tar.gz
-            tar xzf graalvm-ce-java11-darwin-amd64-21.0.0.tar.gz
-          fi
+      - uses: actions/checkout@v3
+      - uses: DeLaGuardo/setup-clojure@master
+        with:
+          cli: latest
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.m2
+            /tmp/.graalvm
+          key: v1-mac-native-image-${{ hashFiles('Makefile', 'deps.edn') }}
       - name: Build native image
-        env:
-          GRAALVM_HOME: /tmp/graalvm-ce-java11-21.0.0/Contents/Home
-        run: |
-          ${GRAALVM_HOME}/bin/gu install native-image
-          make native-image
+        run: make native-image
       - name: Run tests
         run: |
           cp -f dad test/resources/test_task/
@@ -73,7 +67,7 @@ jobs:
     if: contains(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/create-release@v1
         id: create_release
         env:

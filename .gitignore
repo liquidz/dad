@@ -13,4 +13,5 @@ pom.xml.asc
 /dad
 /dad.linux-amd64
 .clj-kondo/.cache
-/resources/docs.adoc
+.cpcache
+dad.build_artifacts.txt

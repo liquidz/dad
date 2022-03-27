@@ -1,0 +1,20 @@
+#!/bin/bash
+
+SCRIPT_DIR=$(cd $(dirname $0); pwd)
+
+ROOT_DIR="${SCRIPT_DIR}/.."
+
+(cd ${ROOT_DIR} && make generate_docs)
+
+if [ $? -ne 0 ]; then
+    echo 'document_check: Failed to generate documents'
+    exit 1
+fi
+
+git diff --exit-code ${SCRIPT_DIR}/../doc
+if [ $? -ne 0 ]; then
+    echo 'document_check: Documents seem not up-to-date'
+    exit 1
+fi
+
+exit 0

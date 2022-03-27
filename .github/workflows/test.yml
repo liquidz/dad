@@ -5,21 +5,29 @@ jobs:
   linux:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v1
+      - uses: actions/checkout@v3
+      - uses: DeLaGuardo/setup-clojure@master
+        with:
+          cli: latest
+      - uses: actions/cache@v3
         with:
           path: ~/.m2
-          key: v1-deps-${{ hashFiles('project.clj') }}
-      - run: lein deps
+          key: v1-linux-deps-${{ hashFiles('deps.edn') }}
       - run: make test
+      # clojure command will not be found with `sudo`
+      - run: make uberjar
       - run: sudo make local_jar_test
 
   darwin:
     runs-on: macOS-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Install leiningen
-        run: brew install leiningen
-      - run: lein deps
+      - uses: actions/checkout@v3
+      - uses: DeLaGuardo/setup-clojure@master
+        with:
+          cli: latest
+      - uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: v1-mac-deps-${{ hashFiles('deps.edn') }}
       - run: make test
       - run: make local_jar_test

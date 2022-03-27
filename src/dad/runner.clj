@@ -21,6 +21,10 @@
   (d.log/debug "Running command" {:command cmd})
   (sh/sh "sh" "-c" cmd))
 
+(defn- compact-log?
+  [config]
+  (get-in config [:log :compact?] false))
+
 (defn- succeeded?
   [sh-result]
   (let [results (->> sh-result
@@ -88,7 +92,7 @@
   [config tasks]
   (->> tasks
        (map #(expand-task config %))
-       flatten
+       (flatten)
        (remove nil?)))
 
 (defn- distinct-once
@@ -126,11 +130,17 @@
     (format "  %s [%s] ... " type-name main-arg)))
 
 (defn- start-info-log
-  [expanded-task]
-  (->> expanded-task
-       generate-info-log
-       (d.log/message :info)
-       d.log/info*))
+  [config expanded-task]
+  (let [compact? (compact-log? config)]
+    (cond->> (generate-info-log expanded-task)
+      compact-log?
+      (str/triml)
+
+      (not compact?)
+      (d.log/message :info)
+
+      :always
+      (d.log/info*))))
 
 (defn- finish-info-log
   [result]
@@ -142,7 +152,7 @@
 (defn- run-task
   [config expanded-task]
   (if (runnable? config expanded-task)
-    (do (start-info-log expanded-task)
+    (do (start-info-log config expanded-task)
         (let [res (run-task* expanded-task)]
           (finish-info-log res)
           (if (failed? res)
@@ -152,7 +162,8 @@
 
 (defn run-tasks
   [config tasks]
-  (d.log/info "Dad started cooking.")
+  (when-not (compact-log? config)
+    (d.log/info "Dad started cooking."))
   (->> tasks
        (map d.r.impl/dispatch-task)
        (expand-tasks config)
@@ -165,7 +176,7 @@
 
 (defn dry-run-tasks
   [config tasks]
-  (let [compact? (get-in config [:log :compact?] false)]
+  (let [compact? (compact-log? config)]
     (when-not compact?
       (d.log/info "Dad started tasting."))
     (doseq [task (->> tasks

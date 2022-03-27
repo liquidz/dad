@@ -1,4 +1,2 @@
-{
- :file-ignore #{"test_task"}
- }
+{:files {:ignore #{"test_task"}}}
 ; vim:ft=clojure

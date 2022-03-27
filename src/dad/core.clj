@@ -5,36 +5,28 @@
    [clojure.string :as str]
    [clojure.tools.cli :as cli]
    [dad.config :as d.config]
+   [dad.constant :as d.const]
    [dad.logger :as d.log]
-   [dad.nrepl :as d.nrepl]
    [dad.os :as d.os]
+   [dad.pod :as d.pod]
    [dad.reader :as d.reader]
    [dad.repl :as d.repl]
-   [dad.runner :as d.runner])
-  (:import
-   java.net.ServerSocket))
-
-(defn- empty-port
-  []
-  (with-open [sock (ServerSocket. 0)]
-    (.getLocalPort sock)))
+   [dad.runner :as d.runner]))
 
 (def ^:private cli-options
   [[nil,  "--debug",     "Debug mode"]
    [nil,  "--dry-run",   "Check whether recipes will change your environment"]
    ["-e", "--eval CODE", "Evaluate a code"]
    ["-h", "--help",      "Print this help text"]
+   [nil,  "--init NAME", "FIXME"]
    [nil,  "--no-color",  "Disable colorize"]
    [nil,  "--repl",      "Start REPL(dry-run mode)"]
-   [nil,  "--nrepl",     "Start nREPL(dry-run mode)"]
-   ["-p", "--port PORT", "Port number for nREPL" :default (empty-port) :parse-fn #(Integer/parseInt %)
-    :validate [#(< 0 % 0x10000) "Must be a number between 0 and 65536"]]
    ["-s", "--silent",    "Silent mode"]
    ["-v", "--version",   "Print version"]])
 
 (defn- print-version
   [config]
-  (println (str (:name config) " v" (d.config/version)))
+  (println (str (:name config) " v" (:version config)))
   (println (str "* Detected OS: " (name (d.os/os-type)))))
 
 (defn- usage
@@ -57,15 +49,35 @@
 
 (defn- fetch-codes-by-stdin
   []
-  (->> *in*
-       io/reader
-       line-seq
-       (str/join "\n")))
+  (let [rdr (io/reader *in*)]
+    (when (.ready rdr)
+      (->> rdr
+           line-seq
+           (str/join "\n")))))
+
+(defn- complete-require-code
+  [code]
+  (if (str/includes? (str code) (str d.const/pod-name))
+    code
+    (str d.const/require-refer-all-code
+         code)))
+
+(defn- generate-template
+  [namespace-name]
+  (try
+    (let [arr  (str/split namespace-name #"\.")
+          file (apply io/file (update arr (dec (count arr)) #(str % ".clj")))
+          content (format (slurp (io/resource "template.clj")) namespace-name)]
+      (.mkdirs (.getParentFile file))
+      (spit file content)
+      file)
+    (catch Exception ex
+      (d.log/error (.getMessage ex) (ex-data ex)))))
 
 (defn -main
   [& args]
   (let [{:keys [arguments options summary errors]} (cli/parse-opts args cli-options)
-        {:keys [debug dry-run no-color repl nrepl port help silent version]} options
+        {:keys [debug dry-run no-color repl help silent version init]} options
         config (d.config/read-config)
         log-level (cond
                     silent :silent
@@ -77,25 +89,40 @@
     (binding [d.log/*level* log-level
               d.log/*color* (not no-color)]
       (cond
-        errors (do (doseq [e errors] (println e))
-                   (usage config summary)
-                   (System/exit 1))
-        help (usage config summary)
-        version (print-version config)
-        repl (->> (fetch-codes-by-arguments arguments options)
-                  (d.repl/start-loop config))
-        nrepl (do (-> config
-                      (assoc-in [:nrepl :port] port)
-                      d.nrepl/start-server)
-                  @(promise))
+        errors
+        (do (doseq [e errors] (println e))
+            (usage config summary)
+            (System/exit 1))
+
+        help
+        (usage config summary)
+
+        version
+        (print-version config)
+
+        repl
+        (->> (fetch-codes-by-arguments arguments options)
+             (complete-require-code)
+             (d.repl/start-loop config))
+
+        init
+        (when-let [file (generate-template init)]
+          (d.log/info "Initialized" (.getPath file)))
+
+        (System/getenv "BABASHKA_POD")
+        (d.pod/start config)
 
         :else
         (try
-          (some->> (or (fetch-codes-by-arguments arguments options)
-                       (fetch-codes-by-stdin))
-                   (d.reader/read-tasks config)
-                   :tasks
-                   (runner-fn config))
+          (let [codes (or (fetch-codes-by-arguments arguments options)
+                          (fetch-codes-by-stdin))]
+            (if (seq codes)
+              (some->> codes
+                       (complete-require-code)
+                       (d.reader/read-tasks config)
+                       :tasks
+                       (runner-fn config))
+              (d.repl/start-loop config nil)))
           (catch Exception ex
             (d.log/error (.getMessage ex) (ex-data ex))
             (System/exit 1)))))

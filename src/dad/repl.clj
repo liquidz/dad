@@ -1,7 +1,7 @@
 (ns dad.repl
   (:require
    [clojure.string :as str]
-   [dad.config :as d.config]
+   [dad.constant :as d.const]
    [dad.reader :as d.reader]
    [dad.runner :as d.runner]))
 
@@ -37,12 +37,11 @@
         {:keys [prompt exit-codes]} (:repl config)
         exit-code-set (set exit-codes)]
     (println (str (:name config)
-                  " v" (d.config/version)
+                  " v" (:version config)
                   " REPL"))
     (println "Please note that evaluations in this REPL *DO NOT AFFECT* your environment.")
 
-    (println (str "  Docs: (dad/doc) or (dad/doc \"name\")\n"
-                  "        (help) is an alias for (dad/doc)"))
+    (println (str "  Docs: (doc) or (doc \"name\")"))
     (println (str "  Exit: " (str/join " or " exit-codes)
                   " to quit this REPL."))
     (println "")
@@ -59,6 +58,7 @@
         (when-not (exit-code-set line)
           (let [line (cond->> line
                        (not need-prompt?) (str last-line "\n"))
-                need-prompt? (eval* config line)]
+                need-prompt? (eval* config (str d.const/require-refer-all-code
+                                                line))]
             (reset-env! env)
             (recur line need-prompt?)))))))
