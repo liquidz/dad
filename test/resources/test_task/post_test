@@ -31,7 +31,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-head -n 1 ${BASE_DIR}/deps.edn | grep 'defproject dad' > /dev/null 2>&1
+head -n 1 ${BASE_DIR}/deps.edn | grep ':paths \["src"' > /dev/null 2>&1
 if [ $? -ne 0 ]; then
     echo "download: ${BASE_DIR}/deps.edn has a invalid content."
     exit 1
