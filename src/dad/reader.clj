@@ -7,8 +7,7 @@
    [dad.reader.util :as d.r.util]
    [dad.schema :as d.schema]
    [dad.util :as d.util]
-   [malli.core :as m]
-   [malli.error :as me]
+   [malli.dev.pretty :as mdp]
    [sci.core :as sci]))
 
 (declare read-tasks)
@@ -33,9 +32,9 @@
                                     (d.schema/extract-function-input-schema))]
                  (when-not schema
                    (throw (ex-info "no validation schema error" {:var function-var})))
-                 (if-let [err (some-> schema
-                                      (m/explain args)
-                                      (me/humanize))]
+                 (if-let [err (:out (d.util/with-out-str-and-ret
+                                      (some-> schema
+                                              (mdp/explain args))))]
                    (throw (ex-info "validation error" {:type ::validation-error
                                                        :args args
                                                        :errors err}))

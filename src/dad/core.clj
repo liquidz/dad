@@ -11,7 +11,9 @@
    [dad.pod :as d.pod]
    [dad.reader :as d.reader]
    [dad.repl :as d.repl]
-   [dad.runner :as d.runner]))
+   [dad.runner :as d.runner])
+  (:import
+   java.io.File))
 
 (def ^:private cli-options
   [[nil,  "--debug",     "Debug mode"]
@@ -62,13 +64,14 @@
     (str d.const/require-refer-all-code
          code)))
 
-(defn- generate-template
+(defn- ^File generate-template
   [namespace-name]
   (try
     (let [arr  (str/split namespace-name #"\.")
-          file (apply io/file (update arr (dec (count arr)) #(str % ".clj")))
+          file ^File (apply io/file (update arr (dec (count arr)) #(str % ".clj")))
           content (format (slurp (io/resource "template.clj")) namespace-name)]
-      (.mkdirs (.getParentFile file))
+      (when-let [parent (.getParentFile file)]
+        (.mkdirs parent))
       (spit file content)
       file)
     (catch Exception ex

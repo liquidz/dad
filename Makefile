@@ -46,6 +46,7 @@ dad: graalvm uberjar
 		"-H:IncludeResources=command.edn" \
 		"-H:IncludeResources=config.edn" \
 		"-H:IncludeResources=version.txt" \
+		"-H:IncludeResources=template.clj" \
 		--report-unsupported-elements-at-runtime \
 		-H:Log=registerResource: \
 		--verbose \
