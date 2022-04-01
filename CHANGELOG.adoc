@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file. This change
 
 == Unreleased (dev)
 
+// {{{
+=== Changed
+* Updated to show more pretty validation errors.
+
+=== Fixed
+* https://github.com/liquidz/dad/issues/29[#29]: Fixed `--init` option to work correctly.
+// }}}
+
 == 1.0.0 (2022-03-27)
 // {{{
 === Added
