@@ -41,3 +41,12 @@
        (.digest (MessageDigest/getInstance "SHA-256"))
        (map (partial format "%02x"))
        (apply str)))
+
+(defmacro with-out-str-and-ret
+  [& body]
+  `(let [s# (new java.io.StringWriter)]
+     (binding [*out* s#]
+       (let [ret# (do ~@body)
+             out# (str s#)]
+         {:ret ret#
+          :out (when (seq out#) out#)}))))

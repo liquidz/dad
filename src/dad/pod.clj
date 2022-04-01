@@ -6,7 +6,8 @@
    [dad.constant :as d.const]
    [dad.reader :as d.reader]
    [dad.reader.util :as d.r.util]
-   [dad.runner :as d.runner])
+   [dad.runner :as d.runner]
+   [dad.util :as d.util])
   (:import
    (java.io
     PushbackInputStream)))
@@ -15,15 +16,6 @@
 
 (def ^:private stdin
   (PushbackInputStream. System/in))
-
-(defmacro with-out-str-and-ret
-  [& body]
-  `(let [s# (new java.io.StringWriter)]
-     (binding [*out* s#]
-       (let [ret# (do ~@body)
-             out# (str s#)]
-         {:ret ret#
-          :out (when (seq out#) out#)}))))
 
 (defn- run-tasks
   [config tasks]
@@ -97,7 +89,7 @@
       (let [args (-> (get msg "args")
                      (read-string*)
                      (edn/read-string))
-            {:keys [ret out]} (with-out-str-and-ret (apply f args))
+            {:keys [ret out]} (d.util/with-out-str-and-ret (apply f args))
             config' (assoc-in config [:log :compact?] true)
 
             task-out (when (tasks? ret)
