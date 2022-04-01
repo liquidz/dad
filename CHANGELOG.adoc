@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file. This change
 
 == Unreleased (dev)
 
+== 1.0.1 (2022-04-02)
 // {{{
 === Changed
 * Updated to show more pretty validation errors.
