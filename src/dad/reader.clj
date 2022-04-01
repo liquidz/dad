@@ -9,6 +9,7 @@
    [dad.util :as d.util]
    [malli.core :as m]
    [malli.error :as me]
+   [malli.dev.pretty :as mdp]
    [sci.core :as sci]))
 
 (declare read-tasks)
@@ -34,8 +35,8 @@
                  (when-not schema
                    (throw (ex-info "no validation schema error" {:var function-var})))
                  (if-let [err (some-> schema
-                                      (m/explain args)
-                                      (me/humanize))]
+                                      (mdp/explain args)
+                                      (:out))]
                    (throw (ex-info "validation error" {:type ::validation-error
                                                        :args args
                                                        :errors err}))
