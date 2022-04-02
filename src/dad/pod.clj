@@ -104,7 +104,7 @@
         (write* reply))
       (catch clojure.lang.ExceptionInfo ex
         (if (= ::d.reader/validation-error (some-> ex ex-data :type))
-          (let [{:keys [args errors]} (ex-data ex)
+          (let [{:keys [errors]} (ex-data ex)
                 reply {"ex-message" (ex-message ex)
                        "ex-data" (pr-str (ex-data ex))
                        "id" id
