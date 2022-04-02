@@ -108,12 +108,7 @@
                 reply {"ex-message" (ex-message ex)
                        "ex-data" (pr-str (ex-data ex))
                        "id" id
-                       "out" (str "Validation error:\n"
-                                  (str/join "\n" (map #(str "- " (pr-str %)) errors))
-                                  "\n\n"
-                                  "Arguments:\n"
-                                  "- " (pr-str args)
-                                  "\n")
+                       "out" errors
                        "status" ["done" "error"]}]
             (write* reply))
           (throw ex))))
