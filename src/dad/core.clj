@@ -64,7 +64,8 @@
     (str d.const/require-refer-all-code
          code)))
 
-(defn- ^File generate-template
+(defn- generate-template
+  ^File
   [namespace-name]
   (try
     (let [arr  (str/split namespace-name #"\.")
