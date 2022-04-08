@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file. This change
 
 == Unreleased (dev)
 
+== 1.0.2 (2022-04-09)
+// {{{
+=== Changed
+* Bumped clojure to 1.11.1.
+// }}}
+
 == 1.0.1 (2022-04-02)
 // {{{
 === Changed

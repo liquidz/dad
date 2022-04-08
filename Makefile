@@ -91,6 +91,11 @@ test:
 release:
 	./script/release
 
+.PHONY: lint
+lint:
+	cljstyle check
+	clj-kondo --lint src:test
+
 .PHONY: outdated
 outdated:
 	clojure -M:outdated --upgrade
