@@ -1,0 +1,11 @@
+{:lib com.github.liquidz/dad
+ :description "Small configuration management tool for Clojure"
+ :version "1.0.{{git/commit-count}}"
+ :main dad.core
+ :uber-file "target/dad.jar"
+ :documents [{:file "resources/version.txt"
+              :action :create
+              :text "\"{{version}}\""}]
+
+ :github-actions? true}
+

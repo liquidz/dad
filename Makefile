@@ -103,6 +103,6 @@ outdated:
 .PHONY: clean
 clean:
 	\rm -rf target .cpcache
-	\rm -f dad dad.linux-amd64
+	\rm -f dad dad.linux-amd64 dad.darwin-amd64
 
 # vim:fdl=0:fdm=marker:
