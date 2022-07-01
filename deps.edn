@@ -3,8 +3,8 @@
         org.clojure/tools.cli {:mvn/version "1.0.206"}
 
         aero/aero {:mvn/version "1.1.6"}
-        org.babashka/sci {:mvn/version "0.3.4"}
         metosin/malli {:mvn/version "0.8.4"}
+        org.babashka/sci {:mvn/version "0.3.32"}
         ;; pod
         nrepl/bencode {:mvn/version "1.1.0"}
         ;; GraalVM
