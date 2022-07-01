@@ -1,9 +1,5 @@
 name: Build native image and maybe release
 on:
-  push:
-    branches:
-      - main
-      - build-test
   workflow_dispatch:
     inputs:
       release:
@@ -87,8 +83,6 @@ jobs:
         with:
           name: dad.darwin-amd64
           path: ./dad.darwin-amd64
-
-            #     - run: echo "hello []"
 
   create-release:
     needs: [change-version, linux-amd64, darwin-amd64]
