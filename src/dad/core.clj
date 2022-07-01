@@ -20,7 +20,7 @@
    [nil,  "--dry-run",   "Check whether recipes will change your environment"]
    ["-e", "--eval CODE", "Evaluate a code"]
    ["-h", "--help",      "Print this help text"]
-   [nil,  "--init NAME", "FIXME"]
+   [nil,  "--init NAME", "Generate initial recipe file"]
    [nil,  "--no-color",  "Disable colorize"]
    [nil,  "--repl",      "Start REPL(dry-run mode)"]
    ["-s", "--silent",    "Silent mode"]
