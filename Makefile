@@ -87,10 +87,6 @@ generate_docs:
 test:
 	clojure -M:dev:test
 
-.PHONY: release
-release:
-	./script/release
-
 .PHONY: lint
 lint:
 	cljstyle check
