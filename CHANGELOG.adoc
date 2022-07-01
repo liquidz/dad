@@ -5,7 +5,10 @@ All notable changes to this project will be documented in this file. This change
 == Unreleased (dev)
 // {{{
 === Changed
-* Bumped kaocha to 1.65.1029.
+* Changed to build by build.edn.
+* Bumped sci to 0.3.32.
+* Bumped malli to 0.8.9.
+* Bumped kaocha to 1.68.1059.
 // }}}
 
 == 1.0.2 (2022-04-09)
