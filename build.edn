@@ -5,7 +5,10 @@
  :uber-file "target/dad.jar"
  :documents [{:file "resources/version.txt"
               :action :create
-              :text "\"{{version}}\""}]
-
+              :text "\"{{version}}\""}
+             {:file "CHANGELOG.adoc"
+              :match "Unreleased"
+              :action :append-after
+              :text "\n== {{version}} ({{now/yyyy}}-{{now/mm}}-{{now/dd}})"}]
  :github-actions? true}
 
