@@ -1,14 +1,39 @@
-name: native_image
+name: Build native image and maybe release
 on:
   push:
     branches:
       - main
       - build-test
-    tags:
-      - '*'
+  workflow_dispatch:
+    inputs:
+      release:
+        description: 'True to release'
+        required: true
+        type: boolean
 
 jobs:
+  change-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.document.outputs.version }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Update and commit version file
+        if:  ${{ inputs.release }}
+        id: document
+        run: |
+          clojure -T:build update-documents
+          git diff
+          git config --global user.email "github-actions@example.com"
+          git config --global user.name "github-actions"
+          git add -A
+          git commit -m "Update for release" || exit 0
+          git push
+
   linux-amd64:
+    needs: [change-version]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -36,6 +61,7 @@ jobs:
           path: ./dad.linux-amd64
 
   darwin-amd64:
+    needs: [change-version]
     runs-on: macOS-latest
     steps:
       - uses: actions/checkout@v3
@@ -62,9 +88,11 @@ jobs:
           name: dad.darwin-amd64
           path: ./dad.darwin-amd64
 
+            #     - run: echo "hello []"
+
   create-release:
-    needs: [linux-amd64, darwin-amd64]
-    if: contains(github.ref, 'refs/tags/')
+    needs: [change-version, linux-amd64, darwin-amd64]
+    if:  ${{ inputs.release }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -73,10 +101,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
-          body: |
-            released
+          tag_name: ${{ needs.change-version.outputs.version }}
+          release_name: ${{ needs.change-version.outputs.version }}
+          body: released
           draft: false
           prerelease: false
 
