@@ -70,7 +70,7 @@
   (try
     (let [arr  (str/split namespace-name #"\.")
           file ^File (apply io/file (update arr (dec (count arr)) #(str % ".clj")))
-          content (format (slurp (io/resource "template.clj")) namespace-name)]
+          content (format (slurp (io/resource "template.clj.txt")) namespace-name)]
       (when-let [parent (.getParentFile file)]
         (.mkdirs parent))
       (spit file content)
