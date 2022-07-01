@@ -46,7 +46,7 @@ dad: graalvm uberjar
 		"-H:IncludeResources=command.edn" \
 		"-H:IncludeResources=config.edn" \
 		"-H:IncludeResources=version.txt" \
-		"-H:IncludeResources=template.clj" \
+		"-H:IncludeResources=template.clj.txt" \
 		--report-unsupported-elements-at-runtime \
 		-H:Log=registerResource: \
 		--verbose \
@@ -87,10 +87,6 @@ generate_docs:
 test:
 	clojure -M:dev:test
 
-.PHONY: release
-release:
-	./script/release
-
 .PHONY: lint
 lint:
 	cljstyle check
@@ -103,6 +99,6 @@ outdated:
 .PHONY: clean
 clean:
 	\rm -rf target .cpcache
-	\rm -f dad dad.linux-amd64
+	\rm -f dad dad.linux-amd64 dad.darwin-amd64
 
 # vim:fdl=0:fdm=marker:

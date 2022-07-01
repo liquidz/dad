@@ -20,7 +20,7 @@
    [nil,  "--dry-run",   "Check whether recipes will change your environment"]
    ["-e", "--eval CODE", "Evaluate a code"]
    ["-h", "--help",      "Print this help text"]
-   [nil,  "--init NAME", "FIXME"]
+   [nil,  "--init NAME", "Generate initial recipe file"]
    [nil,  "--no-color",  "Disable colorize"]
    [nil,  "--repl",      "Start REPL(dry-run mode)"]
    ["-s", "--silent",    "Silent mode"]
@@ -70,7 +70,7 @@
   (try
     (let [arr  (str/split namespace-name #"\.")
           file ^File (apply io/file (update arr (dec (count arr)) #(str % ".clj")))
-          content (format (slurp (io/resource "template.clj")) namespace-name)]
+          content (format (slurp (io/resource "template.clj.txt")) namespace-name)]
       (when-let [parent (.getParentFile file)]
         (.mkdirs parent))
       (spit file content)
