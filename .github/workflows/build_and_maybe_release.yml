@@ -28,7 +28,7 @@ jobs:
           git config --global user.email "github-actions@example.com"
           git config --global user.name "github-actions"
           git add -A
-          git commit -m "Update for release" || exit 0
+          git commit -m "Update for release [skip ci]" || exit 0
           git push
 
   linux-amd64:
@@ -36,6 +36,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - run: git pull origin main
+
       - uses: DeLaGuardo/setup-clojure@master
         with:
           cli: latest
@@ -64,6 +66,8 @@ jobs:
     runs-on: macOS-latest
     steps:
       - uses: actions/checkout@v3
+      - run: git pull origin main
+
       - uses: DeLaGuardo/setup-clojure@master
         with:
           cli: latest
@@ -93,6 +97,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - run: git pull origin main
+
       - uses: actions/create-release@v1
         id: create_release
         env:
