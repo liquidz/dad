@@ -3,6 +3,8 @@
 All notable changes to this project will be documented in this file. This change log follows the conventions of http://keepachangelog.com/[keepachangelog.com].
 
 == Unreleased (dev)
+
+== 1.0.326 (2022-07-02)
 // {{{
 === Fixed
 * Fixed release workflow to apply version number correctly.
